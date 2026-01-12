@@ -1,0 +1,196 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+
+
+/* LIGHT THEME */
+[data-theme="light"] {
+  /* ===== Backgrounds ===== */
+  --bg-base: #FAFAFA;          /* Off-White */
+  --bg-surface: #FFFFFF;       /* White */
+  --bg-surface-alt: #F1F5F9;   /* Slate-100 */
+
+  /* ===== Brand / Primary ===== */
+  --primary: #2563EB;          /* Blue-600 */
+  --primary-hover: #1D4ED8;    /* Blue-700 */
+  --primary-soft: #DBEAFE;     /* Blue-100 */
+
+  /* ===== Accent ===== */
+  --accent: #F59E0B;           /* Amber-500 */
+  --accent-hover: #D97706;     /* Amber-600 */
+  --accent-soft: #FEF3C7;      /* Amber-100 */
+
+  /* ===== Borders / Inputs / Focus ===== */
+  --border-base: #E2E8F0;      /* Slate-200 */
+  --input-border: #E2E8F0;     /* Slate-200 */
+  --input-bg: #FFFFFF;         /* White */
+  --ring: #2563EB;             /* Blue-600 */
+
+  /* ===== Text ===== */
+  --text-primary: #0F172A;     /* Slate-900 */
+  --text-secondary: #334155;   /* Slate-700 */
+  --text-muted: #64748B;       /* Slate-500 */
+  --text-inverted: #FFFFFF;    /* White */
+  --text-accent: #1D4ED8;      /* Blue-700 */
+
+  /* ===== Status (General) ===== */
+  --success: #10B981;          /* Emerald-500 */
+  --warning: #F59E0B;          /* Amber-500 */
+  --error: #EF4444;            /* Red-500 */
+  --info: #3B82F6;             /* Blue-500 */
+
+  /* ===== Issue Progress Status (ADD FIX) ===== */
+  --status-pending: #F59E0B;       /* Amber-500 */
+  --status-in-progress: #3B82F6;   /* Blue-500 */
+  --status-resolved: #10B981;      /* Emerald-500 */
+  --status-closed: #94A3B8;        /* Slate-400 */
+  --status-rejected: #EF4444;      /* Red-500 */
+
+  /* ===== Charts ===== */
+  --chart-1: #2563EB;          /* Blue-600 */
+  --chart-2: #10B981;          /* Emerald-500 */
+  --chart-3: #F59E0B;          /* Amber-500 */
+  --chart-4: #8B5CF6;          /* Violet-500 */
+  --chart-5: #EC4899;          /* Pink-500 */
+
+  /* ===== Sidebar ===== */
+  --sidebar-bg: #FFFFFF;       /* White */
+  --sidebar-text: #0F172A;     /* Slate-900 */
+  --sidebar-border: #E2E8F0;   /* Slate-200 */
+}
+
+
+/* DARK THEME */
+[data-theme="dark"] {
+  /* ===== Backgrounds ===== */
+  --bg-base: #0F172A;          /* Slate-900 */
+  --bg-surface: #1E293B;       /* Slate-800 */
+  --bg-surface-alt: #334155;   /* Slate-700 */
+
+  /* ===== Brand / Primary ===== */
+  --primary: #3B82F6;          /* Blue-500 */
+  --primary-hover: #2563EB;    /* Blue-600 */
+  --primary-soft: #1E3A8A;     /* Blue-900 */
+
+  /* ===== Accent ===== */
+  --accent: #FBBF24;           /* Amber-400 */
+  --accent-hover: #F59E0B;     /* Amber-500 */
+  --accent-soft: #3A2A0A;      /* Warm Dark Tint */
+
+  /* ===== Borders / Inputs / Focus ===== */
+  --border-base: #334155;      /* Slate-700 */
+  --input-border: #334155;     /* Slate-700 */
+  --input-bg: #1E293B;         /* Slate-800 */
+  --ring: #3B82F6;             /* Blue-500 */
+
+  /* ===== Text ===== */
+  --text-primary: #F1F5F9;     /* Slate-100 */
+  --text-secondary: #CBD5E1;   /* Slate-300 */
+  --text-muted: #94A3B8;       /* Slate-400 */
+  --text-inverted: #0F172A;    /* Slate-900 */
+  --text-accent: #60A5FA;      /* Blue-400 */
+
+  /* ===== Status (General) ===== */
+  --success: #34D399;          /* Emerald-400 */
+  --warning: #FBBF24;          /* Amber-400 */
+  --error: #F87171;            /* Red-400 */
+  --info: #60A5FA;             /* Blue-400 */
+
+  /* ===== Issue Progress Status ===== */
+  --status-pending: #FBBF24;       /* Amber-400 */
+  --status-in-progress: #60A5FA;   /* Blue-400 */
+  --status-resolved: #34D399;      /* Emerald-400 */
+  --status-closed: #94A3B8;        /* Slate-400 */
+  --status-rejected: #F87171;      /* Red-400 */
+
+  /* ===== Charts ===== */
+  --chart-1: #3B82F6;          /* Blue-500 */
+  --chart-2: #34D399;          /* Emerald-400 */
+  --chart-3: #FBBF24;          /* Amber-400 */
+  --chart-4: #A78BFA;          /* Violet-400 */
+  --chart-5: #F472B6;          /* Pink-400 */
+
+  /* ===== Sidebar ===== */
+  --sidebar-bg: #1E293B;       /* Slate-800 */
+  --sidebar-text: #F1F5F9;     /* Slate-100 */
+  --sidebar-border: #334155;   /* Slate-700 */
+}
+
+
+/* UTILITY CLASSES (USING VARIABLES) */
+
+/* ===== Backgrounds ===== */
+.bg-base { background-color: var(--bg-base); }
+.bg-surface { background-color: var(--bg-surface); }
+.bg-surface-alt { background-color: var(--bg-surface-alt); }
+
+.bg-primary { background-color: var(--primary); }
+.bg-primary-soft { background-color: var(--primary-soft); }
+
+.bg-accent { background-color: var(--accent); }
+.bg-accent-soft { background-color: var(--accent-soft); }
+
+/* Hover helpers */
+.hover\:bg-primary-hover:hover { background-color: var(--primary-hover); }
+.hover\:bg-accent-hover:hover { background-color: var(--accent-hover); }
+
+
+/* ===== Borders ===== */
+.border-base { border-color: var(--border-base); }
+
+
+/* ===== Text ===== */
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-muted { color: var(--text-muted); }
+.text-inverted { color: var(--text-inverted); }
+.text-accent { color: var(--text-accent); }
+
+
+/* ===== Status Text (General) ===== */
+.text-success { color: var(--success); }
+.text-warning { color: var(--warning); }
+.text-error { color: var(--error); }
+.text-info { color: var(--info); }
+
+/* ===== Status BG (General) ===== */
+.bg-success { background-color: var(--success); }
+.bg-warning { background-color: var(--warning); }
+.bg-error { background-color: var(--error); }
+.bg-info { background-color: var(--info); }
+
+
+/* ===== Issue Progress Status (Text) ===== */
+.text-status-pending { color: var(--status-pending); }
+.text-status-in-progress { color: var(--status-in-progress); }
+.text-status-resolved { color: var(--status-resolved); }
+.text-status-closed { color: var(--status-closed); }
+.text-status-rejected { color: var(--status-rejected); }
+
+/* ===== Issue Progress Status (BG) ===== */
+.bg-status-pending { background-color: var(--status-pending); }
+.bg-status-in-progress { background-color: var(--status-in-progress); }
+.bg-status-resolved { background-color: var(--status-resolved); }
+.bg-status-closed { background-color: var(--status-closed); }
+.bg-status-rejected { background-color: var(--status-rejected); }
+
+/* Optional: readable text color on strong status BG */
+.text-on-status { color: var(--text-inverted); }
+
+
+/* ===== Sidebar helpers ===== */
+.bg-sidebar { background-color: var(--sidebar-bg); }
+.text-sidebar { color: var(--sidebar-text); }
+.border-sidebar { border-color: var(--sidebar-border); }
+
+
+/* ===== Inputs ===== */
+.bg-input { background-color: var(--input-bg); }
+.border-input { border-color: var(--input-border); }
+
+
+/* ===== Focus ring helper ===== */
+.ring-theme:focus {
+  outline: 2px solid transparent;
+  box-shadow: 0 0 0 2px var(--ring);
+}
