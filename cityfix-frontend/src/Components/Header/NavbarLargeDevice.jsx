@@ -1,10 +1,14 @@
 import React from 'react';
+import { NavLink } from 'react-router';
 
 const NavbarLargeDevice = () => {
     return (
-        <div>
-            Navbar large device
-        </div>
+        <nav className='hidden md:flex items-center gap-7'>
+            <NavLink to='/' className="hover:text-accent">Home</NavLink>
+            <NavLink to='/all-issues' className="hover:text-accent">All Issues</NavLink>
+            <NavLink to='/about' className="hover:text-accent">About Us</NavLink>
+            <NavLink to='/contact' className="hover:text-accent">Contact</NavLink>
+        </nav>
     );
 };
 

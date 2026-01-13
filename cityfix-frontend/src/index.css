@@ -1,7 +1,12 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
-
+.active{
+  color: #2563EB;
+  background-color: #DBEAFE;
+  padding: 8px;
+  border-radius: 10px;
+}
 
 /* LIGHT THEME */
 [data-theme="light"] {
