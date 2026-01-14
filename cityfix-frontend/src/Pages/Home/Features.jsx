@@ -9,10 +9,10 @@ const Features = () => {
   return (
     <div className="bg-surface-alt py-20">
       <div className="mb-12">
-        <h1 className="text-2xl md:text-4xl font-bold text-center">
+        <h1 className="text-3xl md:text-4xl font-bold text-center">
           Platform Features
         </h1>
-        <p className="text-muted text-center md:text-lg w-11/12 md:w-[50%] mx-auto mt-4">
+        <p className="text-muted text-sm text-center md:text-lg w-11/12 md:w-[50%] mx-auto mt-4">
           Our platform provides all the tools you need to effectively report
           infrastructure issues and track their resolution in real-time.
         </p>
@@ -48,7 +48,7 @@ const Features = () => {
 
           <div className="p-6 bg-surface shadow-md flex flex-col space-y-3 rounded-lg items-center md:items-start">
             <span className="bg-primary-soft p-2 w-fit rounded-lg">
-              <MdOutlineWatchLater className="text-2xl text-red-500" />
+              <MdOutlineWatchLater className="text-2xl text-red-400" />
             </span>
 
             <h3 className="text-xl font-semibold flex items-center my-2">

@@ -78,7 +78,7 @@
   --primary-soft: #1E3A8A;     /* Blue-900 */
 
   /* ===== Accent ===== */
-  --accent: #ed9907;           /* Amber-400 */
+  --accent: #ED9907;           /* Amber-400 */
   --accent-hover: #F59E0B;     /* Amber-500 */
   --accent-soft: #3A2A0A;      /* Warm Dark Tint */
 
@@ -96,15 +96,15 @@
   --text-accent: #60A5FA;      /* Blue-400 */
 
   /* ===== Status (General) ===== */
-  --success: #34D399;          /* Emerald-400 */
-  --warning: #FBBF24;          /* Amber-400 */
+  --success: #199459;          /* Emerald-400 */
+  --warning: #ED9907;          /* Amber-400 */
   --error: #F87171;            /* Red-400 */
   --info: #60A5FA;             /* Blue-400 */
 
   /* ===== Issue Progress Status ===== */
-  --status-pending: #FBBF24;       /* Amber-400 */
-  --status-in-progress: #60A5FA;   /* Blue-400 */
-  --status-resolved: #34D399;      /* Emerald-400 */
+  --status-pending: #ED9907;       /* Amber-400 */
+  --status-in-progress: #3D6fAD;   /* Blue-400 */
+  --status-resolved: #199459;      /* Emerald-400 */
   --status-closed: #94A3B8;        /* Slate-400 */
   --status-rejected: #F87171;      /* Red-400 */
 
