@@ -78,7 +78,7 @@
   --primary-soft: #1E3A8A;     /* Blue-900 */
 
   /* ===== Accent ===== */
-  --accent: #FBBF24;           /* Amber-400 */
+  --accent: #ed9907;           /* Amber-400 */
   --accent-hover: #F59E0B;     /* Amber-500 */
   --accent-soft: #3A2A0A;      /* Warm Dark Tint */
 
@@ -198,4 +198,25 @@
 .ring-theme:focus {
   outline: 2px solid transparent;
   box-shadow: 0 0 0 2px var(--ring);
+}
+
+/* ===== Theme-based Hero Gradient ===== */
+.bg-hero {
+  background: linear-gradient(
+    135deg,
+    #F8FAFC 0%,
+    #E0E7FF 45%,
+    #DBEAFE 75%,
+    #FEF3C7 100%
+  );
+}
+
+[data-theme="dark"] .bg-hero {
+  background: linear-gradient(
+    135deg,
+    #020617 0%,
+    #0F172A 35%,
+    #1E3A8A 65%,
+    #312E81 100%
+  );
 }

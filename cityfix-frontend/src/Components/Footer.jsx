@@ -56,16 +56,16 @@ const Footer = () => {
           <div className="flex-1 mt-10 md:mt-0 text-center md:text-start">
             <h4 className="font-semibold">Services</h4>
             <div className="mt-6 flex flex-col space-y-3 text-sm text-muted">
-              <Link to="/" className="hover:underline">
+              <Link to="/report-issue" className="hover:underline">
                 Report Issue
               </Link>
-              <Link to="/all-issues" className="hover:underline">
+              <Link to="/track-status" className="hover:underline">
                 Track Status
               </Link>
-              <Link to="/about" className="hover:underline">
+              <Link to="/be-premium-citizen" className="hover:underline">
                 Premium Plan
               </Link>
-              <Link to="/contact" className="hover:underline">
+              <Link to="/faq" className="hover:underline">
                 FAQ
               </Link>
             </div>

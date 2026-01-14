@@ -9,6 +9,7 @@ import { CiDark } from "react-icons/ci";
 
 const Header = () => {
   const [openMenu, setOpenMenu] = useState(false);
+
   const [theme, setTheme] = useState(
     () => localStorage.getItem("theme") || "light"
   );
@@ -20,7 +21,7 @@ const Header = () => {
   }, [theme]);
 
   return (
-    <div className="bg-surface py-5">
+    <div className="bg-surface py-5 fixed w-full z-50">
       <Container>
         <div className="flex items-center justify-between">
           <div className="flex items-center">
@@ -37,17 +38,24 @@ const Header = () => {
             <h1 className="text-2xl font-bold">CityFix</h1>
           </div>
 
-          <NavbarLargeDevice openMenu={openMenu} setOpenMenu={setOpenMenu}></NavbarLargeDevice>
+          <NavbarLargeDevice
+            openMenu={openMenu}
+            setOpenMenu={setOpenMenu}
+          ></NavbarLargeDevice>
 
           <div className="flex items-center gap-4">
-            <CiLight
-              onClick={() => setTheme("light")}
-              className="text-3xl cursor-pointer"
-            />
-            <CiDark
-              onClick={() => setTheme("dark")}
-              className="text-3xl cursor-pointer"
-            />
+            {theme === "light" ? (
+              <CiDark
+                onClick={() => setTheme("dark")}
+                className="text-3xl cursor-pointer"
+              />
+            ) : (
+              <CiLight
+                onClick={() => setTheme("light")}
+                className="text-3xl cursor-pointer"
+              />
+            )}
+
             <UserDropdown></UserDropdown>
           </div>
         </div>
