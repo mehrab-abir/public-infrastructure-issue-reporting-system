@@ -4,6 +4,7 @@ import Features from './Features';
 import HowItWorks from './HowItWorks';
 import Stats from './Stats';
 import GetStartedSection from './GetStartedSection';
+import WhyChoose from './WhyChoose';
 
 const Home = () => {
     return (
@@ -13,6 +14,7 @@ const Home = () => {
             <Features></Features>
             <HowItWorks></HowItWorks>
             <GetStartedSection></GetStartedSection>
+            <WhyChoose></WhyChoose>
         </>
     );
 };

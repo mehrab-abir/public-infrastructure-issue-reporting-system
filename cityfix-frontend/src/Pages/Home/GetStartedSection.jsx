@@ -18,7 +18,7 @@ const GetStartedSection = () => {
                 our city's infrastructure. Report issues, track progress, and
                 see real change happen.
               </p>
-              <div className="flex items-center gap-4 justify-center md:justify-start">
+              <div className="flex items-center gap-4 justify-center md:justify-start mt-8">
                 <Link
                   to="report-issue"
                   className="btn bg-surface shadow-none border-none"
@@ -60,7 +60,7 @@ const GetStartedSection = () => {
                     <IoMdCheckmark /> Detailed Analytics Access
                   </li>
                 </ul>
-                <button className="bg-orange-400 w-full btn border-none shadow-none text-white mt-3 hover:bg-orange-600! rounded-lg">
+                <button className="bg-accent w-full btn border-none shadow-none text-white mt-3 hover:bg-orange-500! rounded-lg">
                   Upgrade to Premium
                 </button>
               </div>

@@ -29,7 +29,7 @@ const Banner = () => {
             <div className="flex items-center md:items-start justify-center md:justify-start gap-4 mt-5">
               <Link
                 to="report-issue"
-                className="btn bg-accent border-none shadow-lg text-primary"
+                className="btn bg-accent border-none shadow-lg text-white"
               >
                 Report Issue
               </Link>
