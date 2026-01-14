@@ -5,13 +5,10 @@ import { Link } from "react-router";
 import fin from "../../assets/hero-images/img-1.JPG";
 import george from "../../assets/hero-images/img-2.JPG";
 import cn from "../../assets/hero-images/img-5.jpeg";
-import { CiClock2 } from "react-icons/ci";
-import { CiCircleCheck } from "react-icons/ci";
-import { BsFillPeopleFill } from "react-icons/bs";
 
 const Banner = () => {
   return (
-    <div className="bg-hero pt-36 md:pt-42 pb-10 md:pb-24">
+    <div className="bg-hero pt-36 md:pt-42 pb-10 md:pb-36">
       <Container>
         <div className="grid grid-cols-1 md:grid-cols-2 items-center justify-between">
           <div className="flex flex-col space-y-3.5 flex-1 px-4">
@@ -42,36 +39,6 @@ const Banner = () => {
               >
                 All Issues
               </Link>
-            </div>
-
-            <div className="mt-10 flex items-center space-x-10 space-y-2 flex-wrap">
-              <div className="flex-1 flex flex-col items-center justify-center">
-                <h1 className="flex gap-1 items-center md:text-2xl lg:text-4xl font-bold">
-                  <CiCircleCheck className="text-sm sm:text-lg md:text-xl text-accent" />
-                  2,562
-                </h1>
-                <span className="text-muted text-xs md:text-sm lg:text-base text-center">
-                  Issues Resolved
-                </span>
-              </div>
-              <div className="flex-1 flex flex-col items-center justify-center">
-                <h1 className="flex gap-1 items-center md:text-2xl lg:text-4xl font-bold">
-                  <CiClock2 className="text-sm sm:text-lg md:text-xl text-accent" />
-                  &lt; 48h
-                </h1>
-                <span className="text-muted text-xs md:text-sm lg:text-base text-center">
-                  Avg. Response Time
-                </span>
-              </div>
-              <div className="flex-1 flex flex-col items-center justify-center">
-                <h1 className="flex gap-1 items-center md:text-2xl lg:text-4xl font-bold">
-                  <BsFillPeopleFill className="text-sm sm:text-lg md:text-xl text-accent" />
-                  15,000+
-                </h1>
-                <span className="text-muted text-xs md:text-sm lg:text-base text-center">
-                  Active Citizens
-                </span>
-              </div>
             </div>
           </div>
 
