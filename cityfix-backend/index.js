@@ -25,6 +25,21 @@ async function run() {
     try {
         await client.connect();
 
+        const db = client.db("cityfix-db");
+        const usersCollection = db.collection("users");
+
+        app.post("/test",async (req,res)=>{
+            const user = req.body;
+            console.log("user",user);
+
+            const result = await usersCollection.insertOne(user);
+
+            console.log("result", result);
+            
+            res.send(result);
+        })
+
+
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");

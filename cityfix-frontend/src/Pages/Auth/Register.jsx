@@ -2,8 +2,21 @@ import React from 'react';
 import logo from '../../assets/logo.png'
 import GoogleSignIn from './GoogleSignIn';
 import { Link } from 'react-router';
+import useAxiosBasic from '../../Hooks/Axios/useAxiosBasic';
 
 const Register = () => {
+  const axios = useAxiosBasic();
+
+  const test = async ()=>{
+    const response = await axios.post("/test",{name: "Steve",Age :"105"});
+    console.log(response);
+    
+    if(response.data.insertedId){
+      alert("OK");
+    }
+  }
+  
+
     return (
       <div className="pt-36 pb-24 bg-base">
         <div className="mb-12">
@@ -68,6 +81,8 @@ const Register = () => {
             <p className='text-center text-secondary my-2'>Already have an account? <Link to='/auth/signin' className='text-accent hover:underline'>Sign In Here</Link></p>
           </form>
         </div>
+
+        <button className='btn' onClick={test}>Test</button>
       </div>
     );
 };
