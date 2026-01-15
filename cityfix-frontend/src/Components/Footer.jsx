@@ -12,11 +12,11 @@ import { CiMail } from "react-icons/ci";
 
 const Footer = () => {
   return (
-    <footer className="bg-surface py-10 border-t border-base">
+    <footer className="bg-surface pt-10 pb-5 border-t border-base">
       <Container>
         <div className="flex flex-col md:flex-row items-center md:items-start justify-between border-b border-base pb-10">
           <div className="flex-1 text-center md:text-start flex flex-col items-center md:items-start justify-center">
-            <Link to='/' className="flex items-center w-12 mr-20 md:mr-0">
+            <Link to="/" className="flex items-center w-12 mr-20 md:mr-0">
               <img src={logo} alt="" />
               <h2 className="text-2xl font-semibold">CityFix</h2>
             </Link>
@@ -89,13 +89,25 @@ const Footer = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col md:flex-row justify-between items-center pt-5">
-            <p className="text-muted text-sm">&copy; {new Date().getFullYear()} CityFix. All Rights Reserved</p>
-            <div className="flex items-center gap-6 text-muted text-sm mt-4 md:mt-0">
-                <Link>Privacy Policy</Link>
-                <Link>Terms of Service</Link>
-                <Link>Accessibility</Link>
-            </div>
+        <div className="flex flex-col-reverse md:flex-row justify-between items-center pt-5">
+          <div className="text-center md:text-start mt-5 md:mt-0">
+            <p className="text-muted text-sm">
+              &copy; {new Date().getFullYear()} CityFix. All Rights Reserved.
+            </p>
+            <Link
+              to="https://github.com/mehrab-abir"
+              target="blank"
+              className="text-cyan-700 hover:underline"
+            >
+              Mehrab Jalil Abir
+            </Link>
+          </div>
+
+          <div className="flex items-center gap-6 text-muted text-sm mt-4 md:mt-0">
+            <Link>Privacy Policy</Link>
+            <Link>Terms of Service</Link>
+            <Link>Accessibility</Link>
+          </div>
         </div>
       </Container>
     </footer>

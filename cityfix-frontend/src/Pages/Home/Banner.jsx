@@ -4,11 +4,11 @@ import { SlLocationPin } from "react-icons/sl";
 import { Link } from "react-router";
 import fin from "../../assets/hero-images/img-1.JPG";
 import george from "../../assets/hero-images/img-2.JPG";
-import cn from "../../assets/hero-images/img-5.jpeg";
+import cn from "../../assets/hero-images/img-3.jpeg";
 
 const Banner = () => {
   return (
-    <div className="bg-hero pt-36 md:pt-42 pb-10 md:pb-36">
+    <div className="bg-hero pt-36 md:pt-42 pb-10 md:pb-42">
       <Container>
         <div className="grid grid-cols-1 md:grid-cols-2 items-center justify-between">
           <div className="flex flex-col space-y-3.5 flex-1 px-4">
@@ -44,15 +44,15 @@ const Banner = () => {
 
           <div className="hidden flex-1 md:relative md:flex mt-10 lg:mt-0">
             <div
-              className="p-1 bg-surface-alt w-1/3 md:absolute 
+              className="p-1 bg-primary-soft w-1/3 md:absolute 
              md:-top-50 md:right-20 lg:-top-50 lg:right-20 z-15 rounded-xl"
             >
               <img src={george} alt="" className="object-cover rounded-xl" />
             </div>
-            <div className="p-1 bg-surface w-1/3 md:absolute md:left-30 md:-top-20 lg:left-40 lg:-top-20 z-20 rounded-xl">
+            <div className="p-1 bg-primary-soft w-1/3 md:absolute md:left-30 md:-top-20 lg:left-40 lg:-top-20 z-20 rounded-xl">
               <img src={cn} alt="" className="object-cover rounded-xl" />
             </div>
-            <div className="p-1 bg-surface w-1/3 md:absolute md:-top-15 md:right-0 lg:top-0 lg:right-0 z-10 rounded-xl">
+            <div className="p-1 bg-primary-soft w-1/3 md:absolute md:-top-15 md:right-0 lg:top-0 lg:right-0 z-10 rounded-xl">
               <img src={fin} alt="" className="object-cover rounded-xl" />
             </div>
           </div>
