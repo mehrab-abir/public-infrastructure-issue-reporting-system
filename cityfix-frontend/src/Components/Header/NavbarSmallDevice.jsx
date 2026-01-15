@@ -23,6 +23,12 @@ const NavbarSmallDevice = ({openMenu, setOpenMenu}) => {
           <NavLink to="/contact" className="hover:text-accent text-lg" onClick={()=>setOpenMenu(!openMenu)}>
             Contact
           </NavLink>
+          <NavLink to="/auth/signin" className="hover:text-accent text-lg" onClick={()=>setOpenMenu(!openMenu)}>
+            Sign In
+          </NavLink>
+          <NavLink to="/auth/register" className="hover:text-accent text-lg" onClick={()=>setOpenMenu(!openMenu)}>
+            Create an Account
+          </NavLink>
         </nav>
       </div>
     );

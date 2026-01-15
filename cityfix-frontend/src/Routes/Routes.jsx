@@ -7,6 +7,7 @@ import All_Issues from "../Pages/All_Issues";
 import Auth from "../Layouts/AuthLayout/Auth";
 import SignIn from "../Pages/Auth/SignIn";
 import Register from "../Pages/Auth/Register";
+import ContactUs from "../Pages/ContactUs";
 
 const router = createBrowserRouter([
     {
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
             {
                 path : '/about',
                 Component : About
+            },
+            {
+                path : '/contact',
+                Component : ContactUs
             }
         ]
     },

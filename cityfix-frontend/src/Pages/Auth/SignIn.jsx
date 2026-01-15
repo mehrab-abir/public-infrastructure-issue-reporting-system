@@ -5,17 +5,17 @@ import GoogleSignIn from "./GoogleSignIn";
 
 const SignIn = () => {
     return (
-      <div className="pt-36 pb-24 bg-surface-alt">
+      <div className="pt-36 pb-24 bg-base">
         <div className="mb-12">
           <h1 className="text-3xl md:text-4xl font-bold text-center text-primary">
             Welcome Back
           </h1>
-          <p className="text-muted text-sm text-center md:text-lg w-11/12 md:w-[50%] mx-auto mt-4">
+          <p className="text-muted text-center md:text-lg w-11/12 md:w-[50%] mx-auto mt-4">
             Sign In to Your CityFix Account
           </p>
         </div>
 
-        <div className="bg-surface p-6 w-11/12 md:w-8/12 lg:w-1/2 mx-auto rounded-xl">
+        <div className="bg-surface p-6 w-11/12 md:w-8/12 lg:w-1/2 mx-auto rounded-xl drop-shadow-md">
           <img src={logo} alt="" className="mx-auto w-16" />
           <form className="mt-5 space-y-3">
             <div className="flex flex-col">

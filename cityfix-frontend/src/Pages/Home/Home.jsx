@@ -6,7 +6,6 @@ import Stats from './Stats';
 import GetStartedSection from './GetStartedSection';
 import WhyChoose from './WhyChoose';
 import LatestResolvedIssues from './LatestResolvedIssues';
-import Disclaimer from './Disclaimer';
 
 const Home = () => {
     return (
@@ -17,7 +16,6 @@ const Home = () => {
             <Features></Features>
             <HowItWorks></HowItWorks>
             <GetStartedSection></GetStartedSection>
-            <Disclaimer></Disclaimer>
             <WhyChoose></WhyChoose>
         </>
     );

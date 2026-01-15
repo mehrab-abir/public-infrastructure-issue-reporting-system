@@ -145,7 +145,7 @@ const HowItWorks = () => {
         <div className="space-y-2.5 md:hidden">
           <div className="relative rounded-2xl bg-surface px-8 py-7 border border-blue-500">
             {/* Right icon */}
-            <div className="absolute right-6 top-6 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-white">
+            <div className="absolute right-6 top-6 flex h-12 w-12 items-center justify-center rounded-xl bg-gray-500 text-white">
               <HiOutlineDocumentReport className="text-3xl" />
             </div>
 
@@ -165,7 +165,7 @@ const HowItWorks = () => {
           </div>
           <div className="relative rounded-2xl bg-surface px-8 py-7 border  border-blue-500">
             {/* Left icon */}
-            <div className="absolute left-6 top-6 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-white">
+            <div className="absolute left-6 top-6 flex h-12 w-12 items-center justify-center rounded-xl bg-status-pending text-white">
               <FaUserCheck className="text-2xl" />
             </div>
 
@@ -185,7 +185,7 @@ const HowItWorks = () => {
           </div>
           <div className="relative rounded-2xl bg-surface px-8 py-7 border border-blue-500">
             {/* Right icon */}
-            <div className="absolute right-6 top-6 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-white">
+            <div className="absolute right-6 top-6 flex h-12 w-12 items-center justify-center rounded-xl bg-status-in-progress text-white">
               <VscTools className="text-3xl" />
             </div>
 
@@ -205,7 +205,7 @@ const HowItWorks = () => {
           </div>
           <div className="relative rounded-2xl bg-surface px-8 py-7 border border-blue-500">
             {/* Right icon */}
-            <div className="absolute left-6 top-6 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-white">
+            <div className="absolute left-6 top-6 flex h-12 w-12 items-center justify-center rounded-xl bg-status-resolved text-white">
               <CiCircleCheck className="text-2xl" />
             </div>
 

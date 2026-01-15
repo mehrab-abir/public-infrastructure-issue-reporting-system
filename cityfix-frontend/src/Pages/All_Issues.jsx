@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import Container from "../Components/Container";
 import { IoIosSearch, IoMdEye } from "react-icons/io";
-import sampleImg from "../assets/pothole.jfif";
-import { SlLocationPin } from "react-icons/sl";
-import { IoArrowUp } from "react-icons/io5";
+import IssueCard from "../Components/IssueCard";
 
 const All_Issues = () => {
   const [categories, setCategories] = useState("");
@@ -11,7 +9,7 @@ const All_Issues = () => {
   const [priority, setPriority] = useState("");
 
   return (
-    <div className="bg-surface-alt pt-36 pb-24">
+    <div className="bg-base pt-36 pb-24">
       <Container>
         <div className="mb-12">
           <h1 className="text-3xl md:text-4xl font-bold text-center">
@@ -76,49 +74,8 @@ const All_Issues = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-6 mt-10">
-          {[...Array(10)].map((item, index) => {
-            return (
-              <div key={index} className="shadow-md rounded-xl overflow-hidden">
-                <div className="overflow-hidden">
-                  <img
-                    src={sampleImg}
-                    alt=""
-                    className="object-cover hover:scale-105 transition-all duration-300 w-full h-52"
-                  />
-                </div>
-
-                <div className="bg-surface p-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-accent text-sm md:text-base">
-                      Pothole(category)
-                    </span>
-                    <span className="bg-green-500 text-white px-2 rounded-xl text-sm md:text-base">
-                      Resolved
-                    </span>
-                  </div>
-                  <h2 className="text-xl lg:text-2xl font-semibold">
-                    Large Pothole On Bloor St.
-                  </h2>
-                  <p className="flex items-center gap-1 text-muted text-sm md:text-base">
-                    <SlLocationPin className="" />
-                    324 Bloor St. W, Toronto
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <button
-                      className="btn btn-sm flex items-center gap-1 bg-surface-alt text-accent border border-blue-500 rounded-lg cursor-pointer tooltip"
-                      data-tip="upvote"
-                    >
-                      <IoArrowUp className="text-lg" />
-                      <span>25</span>
-                    </button>
-                    <button className="btn btn-sm lg:btn-md hover:bg-primary-hover hover:text-white! text-sm md:text-base border-base">
-                      <IoMdEye className="text-xl" />
-                      View Details
-                    </button>
-                  </div>
-                </div>
-              </div>
-            );
+          {[...Array(10)].map((issue,index) => {
+            return <IssueCard key={index} issue={issue}></IssueCard>;
           })}
         </div>
       </Container>

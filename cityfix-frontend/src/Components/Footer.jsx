@@ -80,7 +80,7 @@ const Footer = () => {
                 Toronto, ON
               </p>
               <p className="flex items-center gap-2 text-center md:text-start">
-                <PiPhoneCallThin className="text-2xl" />
+                <PiPhoneCallThin className="text-2xl" /> 
                 +1 (555) 123-4567
               </p>
               <p className="flex items-center gap-2 text-center md:text-start">
