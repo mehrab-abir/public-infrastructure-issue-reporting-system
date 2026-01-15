@@ -4,6 +4,7 @@ import sampleImg from "../../assets/pothole.jfif";
 import { SlLocationPin } from "react-icons/sl";
 import { IoArrowUp } from "react-icons/io5";
 import { IoMdEye } from "react-icons/io";
+import { Link } from "react-router";
 
 const LatestResolvedIssues = () => {
   return (
@@ -28,14 +29,14 @@ const LatestResolvedIssues = () => {
                   <img
                     src={sampleImg}
                     alt=""
-                    className="object-cover hover:scale-105 transition-all duration-300 cursor-pointer w-full h-52"
+                    className="object-cover hover:scale-105 transition-all duration-300 w-full h-52"
                   />
                 </div>
 
                 <div className="bg-surface p-4 space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-accent text-sm md:text-base">
-                      Pothole(tag)
+                      Pothole(category)
                     </span>
                     <span className="bg-green-500 text-white px-2 rounded-xl text-sm md:text-base">
                       Resolved
@@ -49,7 +50,7 @@ const LatestResolvedIssues = () => {
                     324 Bloor St. W, Toronto
                   </p>
                   <div className="flex items-center justify-between">
-                    <button className="btn btn-sm flex items-center gap-1 bg-surface-alt text-accent border border-blue-500 rounded-lg cursor-pointer">
+                    <button className="btn btn-sm flex items-center gap-1 bg-surface-alt text-accent border border-blue-500 rounded-lg cursor-pointer tooltip" data-tip="upvote">
                       <IoArrowUp className="text-lg" />
                       <span>25</span>
                     </button>
@@ -62,6 +63,9 @@ const LatestResolvedIssues = () => {
               </div>
             );
           })}
+        </div>
+        <div className="flex items-center justify-center mt-10">
+            <Link to='all-issues' className="btn bg-primary text-white">View All Issues</Link>
         </div>
       </Container>
     </div>
