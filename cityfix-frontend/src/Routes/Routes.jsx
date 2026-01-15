@@ -4,6 +4,9 @@ import Home from "../Pages/Home/Home";
 import ErrorPage from "../Components/ErrorPage";
 import About from "../Pages/About";
 import All_Issues from "../Pages/All_Issues";
+import Auth from "../Layouts/AuthLayout/Auth";
+import SignIn from "../Pages/Auth/SignIn";
+import Register from "../Pages/Auth/Register";
 
 const router = createBrowserRouter([
     {
@@ -21,6 +24,24 @@ const router = createBrowserRouter([
             {
                 path : '/about',
                 Component : About
+            }
+        ]
+    },
+    {
+        path : '/auth',
+        Component : Auth,
+        children : [
+            {
+                index : true,
+                Component : SignIn
+            },
+            {
+                path : '/auth/signin',
+                Component : SignIn
+            },
+            {
+                path : '/auth/register',
+                Component : Register
             }
         ]
     },

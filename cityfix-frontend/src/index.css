@@ -3,9 +3,10 @@
 
 .active{
   color: #2563EB;
-  background-color: #DBEAFE;
+  background-color: #cae1ff;
   padding: 5px 9px;
   border-radius: 10px;
+  font-weight: 500;
 }
 
 /* LIGHT THEME */
@@ -138,7 +139,6 @@
 /* Hover helpers */
 .hover\:bg-primary-hover:hover { background-color: var(--primary-hover); }
 .hover\:bg-accent-hover:hover { background-color: var(--accent-hover); }
-
 
 /* ===== Borders ===== */
 .border-base { border-color: var(--border-base); }
