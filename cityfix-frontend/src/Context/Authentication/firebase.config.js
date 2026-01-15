@@ -2,12 +2,12 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyAojmJezOKJE2acnK0BSzRJQMN64GCdPqM",
-    authDomain: "cityfix-report.firebaseapp.com",
-    projectId: "cityfix-report",
-    storageBucket: "cityfix-report.firebasestorage.app",
-    messagingSenderId: "788979794746",
-    appId: "1:788979794746:web:e7607a40c86f5a2c114603"
+    apiKey: import.meta.env.VITE_apiKey,
+    authDomain: import.meta.env.VITE_authDomain,
+    projectId: import.meta.env.VITE_projectId,
+    storageBucket: import.meta.env.VITE_storageBucket,
+    messagingSenderId: import.meta.env.VITE_messagingSenderId,
+    appId: import.meta.env.VITE_appId
 };
 
 // Initialize Firebase

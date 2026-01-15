@@ -6,6 +6,7 @@ import UserDropdown from "./UserDropdown";
 import NavbarSmallDevice from "./NavbarSmallDevice";
 import { CiLight } from "react-icons/ci";
 import { CiDark } from "react-icons/ci";
+import { Link } from "react-router";
 
 const Header = () => {
   const [openMenu, setOpenMenu] = useState(false);
@@ -34,8 +35,10 @@ const Header = () => {
               <span className="h-1 w-5 bg-primary rounded-md"></span>
               <span className="h-1 w-7 bg-primary rounded-md"></span>
             </div>
-            <img src={logo} alt="" className="w-12" />
-            <h1 className="text-2xl font-bold">CityFix</h1>
+            <Link to="/" className="flex items-center gap-1">
+              <img src={logo} alt="" className="w-10 md:w-12" />
+              <h1 className="text-2xl font-bold">CityFix</h1>
+            </Link>
           </div>
 
           <NavbarLargeDevice
