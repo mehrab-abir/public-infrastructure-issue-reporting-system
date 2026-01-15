@@ -10,7 +10,7 @@ const Stats = () => {
     return (
       <div className="bg-base py-10">
         <Container>
-          <div className="flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0">
+          <div className="flex flex-col md:flex-row items-center justify-between space-y-6 md:space-y-0 bg-surface rounded-md">
             <div className=" rounded-lg flex flex-col items-center space-y-2 w-full py-8 shadow-lg md:shadow-none">
               <span className="bg-surface-alt p-3 rounded-xl">
                 <CiCircleCheck className="text-2xl text-accent font-semibold" />

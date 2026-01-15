@@ -5,12 +5,14 @@ import HowItWorks from './HowItWorks';
 import Stats from './Stats';
 import GetStartedSection from './GetStartedSection';
 import WhyChoose from './WhyChoose';
+import LatestResolvedIssues from './LatestResolvedIssues';
 
 const Home = () => {
     return (
         <>
             <Banner></Banner>
             <Stats></Stats>
+            <LatestResolvedIssues></LatestResolvedIssues>
             <Features></Features>
             <HowItWorks></HowItWorks>
             <GetStartedSection></GetStartedSection>
