@@ -9,24 +9,24 @@ import { useState } from "react";
 import { useEffect } from "react";
 
 const UserDropdown = () => {
-  const { user, signOutUser, setLoading } = useAuth();
+  const { user, signOutUser, setLoading, loading } = useAuth();
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
 
   const [showDropdown, setShowDropdown] = useState(false);
 
-  useEffect(()=>{
-    const closeDropdown = (e) =>{
-        if(dropdownRef.current && !dropdownRef.current.contains(e.target)){
-            setShowDropdown(false);
-        }
+  useEffect(() => {
+    const closeDropdown = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setShowDropdown(false);
+      }
     };
     document.addEventListener("mousedown", closeDropdown);
 
-    return (()=>{
-        document.removeEventListener("mousedown",closeDropdown);
-    })
-  },[])
+    return () => {
+      document.removeEventListener("mousedown", closeDropdown);
+    };
+  }, []);
 
   const handleSignOut = async () => {
     navigate("/", { replace: true });
@@ -46,7 +46,8 @@ const UserDropdown = () => {
     });
   };
 
-  const userPhoto = user?.photoURL || user?.providerData[0]?.photoURL || defaultAvatar;
+  const userPhoto =
+    user?.photoURL || user?.providerData[0]?.photoURL || defaultAvatar;
 
   return (
     <div className="flex items-center gap-4" ref={dropdownRef}>
@@ -54,17 +55,21 @@ const UserDropdown = () => {
         onClick={() => setShowDropdown(!showDropdown)}
         className="flex items-center gap-2 cursor-pointer"
       >
-        <img
-          src={userPhoto}
-          referrerPolicy="no-referrer"
-          className="w-12 h-12 object-cover rounded-full"
-          alt=""
-        />
+        {loading ? (
+          <span className="loading loading-spinner text-info"></span>
+        ) : (
+          <img
+            src={userPhoto}
+            referrerPolicy="no-referrer"
+            className="w-12 h-12 object-cover rounded-full"
+            alt=""
+          />
+        )}
         <MdOutlineArrowDropDownCircle className="text-xl text-gray-400" />
       </div>
 
       <div
-        className={`absolute right-5 bg-base rounded-xl drop-shadow-lg p-3 w-48 ${
+        className={`absolute right-3 bg-base rounded-xl drop-shadow-md p-3 w-52 ${
           showDropdown
             ? "opacity-100 pointer-events-auto top-20"
             : "opacity-0 pointer-events-none top-24"

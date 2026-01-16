@@ -1,37 +1,98 @@
-import React from 'react';
-import { NavLink } from 'react-router';
+import React from "react";
+import { NavLink, useNavigate } from "react-router";
 import { FaRegTimesCircle } from "react-icons/fa";
+import useAuth from "../../Hooks/Auth/useAuth";
+import { Bounce, toast } from "react-toastify";
 
-const NavbarSmallDevice = ({openMenu, setOpenMenu}) => {
-    return (
-      <div
-        className={`w-full h-screen fixed top-0 left-0 bg-surface-alt ${
-          openMenu ? "" : "-translate-x-full"
-        } transition-all duration-400`}
-      >
-        <FaRegTimesCircle className='text-3xl absolute top-6 right-7 cursor-pointer' onClick={()=>setOpenMenu(!openMenu)} />
-        <nav className="flex flex-col items-center space-y-3 justify-center mt-15">
-          <NavLink to="/" className="hover:text-accent text-lg" onClick={()=>setOpenMenu(!openMenu)}>
-            Home
-          </NavLink>
-          <NavLink to="/all-issues" className="hover:text-accent text-lg" onClick={()=>setOpenMenu(!openMenu)}>
-            All Issues
-          </NavLink>
-          <NavLink to="/about" className="hover:text-accent text-lg" onClick={()=>setOpenMenu(!openMenu)}>
-            About Us
-          </NavLink>
-          <NavLink to="/contact" className="hover:text-accent text-lg" onClick={()=>setOpenMenu(!openMenu)}>
-            Contact
-          </NavLink>
-          <NavLink to="/auth/signin" className="hover:text-accent text-lg" onClick={()=>setOpenMenu(!openMenu)}>
-            Sign In
-          </NavLink>
-          <NavLink to="/auth/register" className="hover:text-accent text-lg" onClick={()=>setOpenMenu(!openMenu)}>
-            Create an Account
-          </NavLink>
-        </nav>
-      </div>
-    );
+const NavbarSmallDevice = ({ openMenu, setOpenMenu }) => {
+  const { user, signOutUser, setLoading } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    navigate("/", { replace: true });
+    await signOutUser();
+    setLoading(false);
+
+    toast.info("Signed Out", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: false,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      transition: Bounce,
+    });
+  };
+
+  return (
+    <div
+      className={`w-full h-screen fixed top-0 left-0 bg-surface-alt ${
+        openMenu ? "" : "-translate-x-full"
+      } transition-all duration-400`}
+    >
+      <FaRegTimesCircle
+        className="text-3xl absolute top-6 right-7 cursor-pointer"
+        onClick={() => setOpenMenu(!openMenu)}
+      />
+      <nav className="flex flex-col items-center space-y-3 justify-center mt-15">
+        <NavLink
+          to="/"
+          className="hover:text-accent text-lg"
+          onClick={() => setOpenMenu(!openMenu)}
+        >
+          Home
+        </NavLink>
+        <NavLink
+          to="/all-issues"
+          className="hover:text-accent text-lg"
+          onClick={() => setOpenMenu(!openMenu)}
+        >
+          All Issues
+        </NavLink>
+        <NavLink
+          to="/about"
+          className="hover:text-accent text-lg"
+          onClick={() => setOpenMenu(!openMenu)}
+        >
+          About Us
+        </NavLink>
+        <NavLink
+          to="/contact"
+          className="hover:text-accent text-lg"
+          onClick={() => setOpenMenu(!openMenu)}
+        >
+          Contact
+        </NavLink>
+        {user ? (
+          <button
+            onClick={() => handleSignOut()}
+            className="btn btn-sm bg-surface border-red-500 cursor-pointer"
+          >
+            Sign Out
+          </button>
+        ) : (
+          <>
+            <NavLink
+              to="/auth/signin"
+              className="hover:text-accent text-lg"
+              onClick={() => setOpenMenu(!openMenu)}
+            >
+              Sign In
+            </NavLink>
+            <NavLink
+              to="/auth/register"
+              className="hover:text-accent text-lg"
+              onClick={() => setOpenMenu(!openMenu)}
+            >
+              Create an Account
+            </NavLink>
+          </>
+        )}
+      </nav>
+    </div>
+  );
 };
 
 export default NavbarSmallDevice;

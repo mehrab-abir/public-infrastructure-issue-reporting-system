@@ -25,7 +25,7 @@ const Header = () => {
   }, [theme]);
 
   if(loading){
-    return <p>Loading...</p>
+    return <span className="loading loading-spinner text-info"></span>;
   }
 
   return (

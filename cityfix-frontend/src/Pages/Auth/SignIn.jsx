@@ -71,10 +71,7 @@ const SignIn = () => {
 
       <div className="bg-surface p-6 w-11/12 md:w-8/12 lg:w-1/2 mx-auto rounded-xl drop-shadow-md">
         <img src={logo} alt="" className="mx-auto w-16" />
-        <form
-          onSubmit={handleSubmit(handleSignIn)}
-          className="mt-5 space-y-3"
-        >
+        <form onSubmit={handleSubmit(handleSignIn)} className="mt-5 space-y-3">
           <div className="flex flex-col">
             <label className="text-secondary">Email:</label>
             <input
@@ -89,7 +86,7 @@ const SignIn = () => {
           <div className="flex flex-col relative">
             <label className="text-secondary">Password:</label>
             <input
-              type={`${showPassword ? 'text' : 'password'}`}
+              type={`${showPassword ? "text" : "password"}`}
               {...register("password")}
               className="input outline-none w-full"
               placeholder="Password"
@@ -118,16 +115,16 @@ const SignIn = () => {
           >
             {submitting ? <i>Signing in...</i> : "Sign In"}
           </button>
-          <p className="my-3 text-secondary text-center">Or</p>
-          <GoogleSignIn></GoogleSignIn>
-
-          <p className="text-center text-secondary my-2">
-            Don't have an account?{" "}
-            <Link to="/auth/register" className="text-accent hover:underline">
-              Register Here
-            </Link>
-          </p>
         </form>
+        <p className="my-3 text-secondary text-center">Or</p>
+        <GoogleSignIn></GoogleSignIn>
+
+        <p className="text-center text-secondary my-2">
+          Don't have an account?{" "}
+          <Link to="/auth/register" className="text-accent hover:underline">
+            Register Here
+          </Link>
+        </p>
       </div>
     </div>
   );

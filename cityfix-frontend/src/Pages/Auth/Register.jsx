@@ -192,16 +192,16 @@ const Register = () => {
           >
             {submitting ? <i>Siging up...</i> : "Sign Up"}
           </button>
-          <p className="my-3 text-secondary text-center">Or</p>
-          <GoogleSignIn></GoogleSignIn>
-
-          <p className="text-center text-secondary my-2">
-            Already have an account?{" "}
-            <Link to="/auth/signin" className="text-accent hover:underline">
-              Sign In Here
-            </Link>
-          </p>
         </form>
+        <p className="my-3 text-secondary text-center">Or</p>
+        <GoogleSignIn></GoogleSignIn>
+
+        <p className="text-center text-secondary my-2">
+          Already have an account?{" "}
+          <Link to="/auth/signin" className="text-accent hover:underline">
+            Sign In Here
+          </Link>
+        </p>
       </div>
     </div>
   );
