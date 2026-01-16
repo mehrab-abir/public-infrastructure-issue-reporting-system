@@ -52,6 +52,13 @@ const NavbarSmallDevice = ({ openMenu, setOpenMenu }) => {
           All Issues
         </NavLink>
         <NavLink
+          to="/report-issue"
+          className="hover:text-accent text-lg"
+          onClick={() => setOpenMenu(!openMenu)}
+        >
+          Report Issue
+        </NavLink>
+        <NavLink
           to="/about"
           className="hover:text-accent text-lg"
           onClick={() => setOpenMenu(!openMenu)}

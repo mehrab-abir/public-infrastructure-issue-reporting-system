@@ -8,6 +8,7 @@ import Auth from "../Layouts/AuthLayout/Auth";
 import SignIn from "../Pages/Auth/SignIn";
 import Register from "../Pages/Auth/Register";
 import ContactUs from "../Pages/ContactUs";
+import ReportIssue from "../Pages/ReportIssue";
 
 const router = createBrowserRouter([
     {
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
             {
                 path : '/contact',
                 Component : ContactUs
+            },
+            {
+                path : '/report-issue',
+                Component : ReportIssue
             }
         ]
     },
