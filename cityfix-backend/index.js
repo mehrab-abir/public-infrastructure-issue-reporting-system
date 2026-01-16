@@ -28,14 +28,17 @@ async function run() {
         const db = client.db("cityfix-db");
         const usersCollection = db.collection("users");
 
-        app.post("/test",async (req,res)=>{
-            const user = req.body;
-            console.log("user",user);
+        app.post("/users",async (req,res)=>{
+            const newUser = req.body;
 
-            const result = await usersCollection.insertOne(user);
+            const userExists = await usersCollection.findOne({email:newUser.email});
 
-            console.log("result", result);
-            
+            if(userExists){
+                return res.send({userExists : "user already exists, not posted"});
+            }
+
+            const result = await usersCollection.insertOne(newUser);
+
             res.send(result);
         })
 
