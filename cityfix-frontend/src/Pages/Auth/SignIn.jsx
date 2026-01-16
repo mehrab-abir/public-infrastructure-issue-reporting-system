@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router";
-import { Bounce, ToastContainer, toast } from "react-toastify";
+import { Bounce, toast } from "react-toastify";
 import logo from "../../assets/logo.png";
 import GoogleSignIn from "./GoogleSignIn";
 import { useForm } from "react-hook-form";
@@ -26,6 +26,7 @@ const SignIn = () => {
 
     try {
       await signInUser(email, password);
+      navigate(location.state || "/", { replace: true });
 
       toast.success("Welcome Back!", {
         position: "top-right",
@@ -38,8 +39,6 @@ const SignIn = () => {
         theme: "light",
         transition: Bounce,
       });
-
-      navigate(location.state || "/", { replace: true });
       reset();
     } catch (error) {
       // console.log(error);
@@ -130,19 +129,6 @@ const SignIn = () => {
           </p>
         </form>
       </div>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick={false}
-        rtl={false}
-        pauseOnFocusLoss={false}
-        draggable
-        pauseOnHover={false}
-        theme="light"
-        transition={Bounce}
-      />
     </div>
   );
 };

@@ -7,8 +7,11 @@ import NavbarSmallDevice from "./NavbarSmallDevice";
 import { CiLight } from "react-icons/ci";
 import { CiDark } from "react-icons/ci";
 import { Link } from "react-router";
+import useAuth from "../../Hooks/Auth/useAuth";
 
 const Header = () => {
+  const {user,loading} = useAuth();
+
   const [openMenu, setOpenMenu] = useState(false);
 
   const [theme, setTheme] = useState(
@@ -20,6 +23,10 @@ const Header = () => {
     html.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
   }, [theme]);
+
+  if(loading){
+    return <p>Loading...</p>
+  }
 
   return (
     <div className="bg-surface py-5 fixed w-full z-50">
@@ -59,7 +66,24 @@ const Header = () => {
               />
             )}
 
-            <UserDropdown></UserDropdown>
+            {user ? (
+              <UserDropdown></UserDropdown>
+            ) : (
+              <>
+                <Link
+                  to="/auth/signin"
+                  className="btn btn-sm border border-blue-500 text-primary"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  to="/auth/register"
+                  className="btn btn-sm border-none bg-primary text-white"
+                >
+                  Sign Up
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </Container>

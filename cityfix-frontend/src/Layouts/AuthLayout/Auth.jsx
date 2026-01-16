@@ -5,11 +5,11 @@ import Footer from '../../Components/Footer';
 
 const Auth = () => {
     return (
-        <>
-            <Header></Header>
-            <Outlet></Outlet>
-            <Footer></Footer>
-        </>
+      <>
+        <Header></Header>
+        <Outlet></Outlet>
+        <Footer></Footer>
+      </>
     );
 };
 
