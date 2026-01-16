@@ -1,63 +1,150 @@
-import React from 'react';
-import { Link } from 'react-router';
+import React from "react";
+import { Link, useLocation, useNavigate } from "react-router";
+import { Bounce, ToastContainer, toast } from "react-toastify";
 import logo from "../../assets/logo.png";
 import GoogleSignIn from "./GoogleSignIn";
+import { useForm } from "react-hook-form";
+import useAuth from "../../Hooks/Auth/useAuth";
+import { useState } from "react";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const SignIn = () => {
-    return (
-      <div className="pt-36 pb-24 bg-base">
-        <div className="mb-12">
-          <h1 className="text-3xl md:text-4xl font-bold text-center text-primary">
-            Welcome Back
-          </h1>
-          <p className="text-muted text-center md:text-lg w-11/12 md:w-[50%] mx-auto mt-4">
-            Sign In to Your CityFix Account
-          </p>
-        </div>
+  const { signInUser, setLoading } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-        <div className="bg-surface p-6 w-11/12 md:w-8/12 lg:w-1/2 mx-auto rounded-xl drop-shadow-md">
-          <img src={logo} alt="" className="mx-auto w-16" />
-          <form className="mt-5 space-y-3">
-            <div className="flex flex-col">
-              <label className="text-secondary">Email:</label>
-              <input
-                type="email"
-                className="input outline-none w-full"
-                placeholder="Your Email"
-              />
-            </div>
+  const { register, handleSubmit, reset } = useForm();
 
-            <div className="flex flex-col">
-              <label className="text-secondary">Password:</label>
-              <input
-                type="password"
-                className="input outline-none w-full"
-                placeholder="Password"
-              />
-            </div>
-            <p className="mt-1 text-sm hover:text-accent hover:underline cursor-pointer">
-              Forgot Password?
-            </p>
+  const [submitting, setSubmiting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-            <button
-              type="submit"
-              className="btn bg-primary w-full text-white cursor-pointer mt-4 border-none"
-            >
-              Sign In
-            </button>
-            <p className="my-3 text-secondary text-center">Or</p>
-            <GoogleSignIn></GoogleSignIn>
+  const handleSignIn = async (data) => {
+    setSubmiting(true);
 
-            <p className="text-center text-secondary my-2">
-              Don't have an account?{" "}
-              <Link to="/auth/register" className="text-accent hover:underline">
-                Register Here
-              </Link>
-            </p>
-          </form>
-        </div>
+    const email = data.email;
+    const password = data.password;
+
+    try {
+      await signInUser(email, password);
+
+      toast.success("Welcome Back!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+
+      navigate(location.state || "/", { replace: true });
+      reset();
+    } catch (error) {
+      // console.log(error);
+      toast.error(`${error.code}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    } finally {
+      setLoading(false);
+      setSubmiting(false);
+    }
+  };
+  return (
+    <div className="pt-36 pb-24 bg-base">
+      <div className="mb-12">
+        <h1 className="text-3xl md:text-4xl font-bold text-center text-primary">
+          Welcome Back
+        </h1>
+        <p className="text-muted text-center md:text-lg w-11/12 md:w-[50%] mx-auto mt-4">
+          Sign In to Your CityFix Account
+        </p>
       </div>
-    );
+
+      <div className="bg-surface p-6 w-11/12 md:w-8/12 lg:w-1/2 mx-auto rounded-xl drop-shadow-md">
+        <img src={logo} alt="" className="mx-auto w-16" />
+        <form
+          onSubmit={handleSubmit(handleSignIn)}
+          className="mt-5 space-y-3"
+        >
+          <div className="flex flex-col">
+            <label className="text-secondary">Email:</label>
+            <input
+              type="email"
+              {...register("email")}
+              className="input outline-none w-full"
+              placeholder="Your Email"
+              required
+            />
+          </div>
+
+          <div className="flex flex-col relative">
+            <label className="text-secondary">Password:</label>
+            <input
+              type={`${showPassword ? 'text' : 'password'}`}
+              {...register("password")}
+              className="input outline-none w-full"
+              placeholder="Password"
+              required
+            />
+            {showPassword ? (
+              <FaEye
+                className="text-2xl absolute top-8 right-3 cursor-pointer"
+                onClick={() => setShowPassword(!showPassword)}
+              />
+            ) : (
+              <FaEyeSlash
+                className="text-2xl absolute top-8 right-3 cursor-pointer"
+                onClick={() => setShowPassword(!showPassword)}
+              />
+            )}
+          </div>
+          <p className="mt-1 text-sm hover:text-accent hover:underline cursor-pointer">
+            Forgot Password?
+          </p>
+
+          <button
+            type="submit"
+            className="btn bg-primary w-full text-white cursor-pointer mt-4 border-none"
+            disabled={submitting}
+          >
+            {submitting ? <i>Signing in...</i> : "Sign In"}
+          </button>
+          <p className="my-3 text-secondary text-center">Or</p>
+          <GoogleSignIn></GoogleSignIn>
+
+          <p className="text-center text-secondary my-2">
+            Don't have an account?{" "}
+            <Link to="/auth/register" className="text-accent hover:underline">
+              Register Here
+            </Link>
+          </p>
+        </form>
+      </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss={false}
+        draggable
+        pauseOnHover={false}
+        theme="light"
+        transition={Bounce}
+      />
+    </div>
+  );
 };
 
 export default SignIn;
