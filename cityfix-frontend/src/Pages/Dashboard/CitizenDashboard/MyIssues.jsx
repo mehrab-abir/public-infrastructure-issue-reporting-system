@@ -25,8 +25,8 @@ const MyIssues = () => {
   }
 
   return (
-    <div className="pt-32 pb-20 ml-10">
-      <Container>
+    <div className="pt-5 pb-20 ml-10 lg:ml-0">
+      <DashboardContainer>
         <div className="flex flex-col md:flex-row md:items-center justify-between">
           <div>
             <h1 className="text-3xl md:text-4xl font-bold">My Issues</h1>
@@ -42,7 +42,7 @@ const MyIssues = () => {
         <p>Showing issues: {myIssues.length}</p>
 
         <div className="mt-5">
-          <div className="overflow-x-auto bg-surface rounded-xl w-full">
+          <div className={`overflow-x-auto bg-surface rounded-lg w-full ${myIssues.length < 4 && 'h-[50vh]'}`}>
             <table className="table table-zebra table-sm md:table-md">
               {/* head */}
               <thead>
@@ -87,7 +87,7 @@ const MyIssues = () => {
             </table>
           </div>
         </div>
-      </Container>
+      </DashboardContainer>
     </div>
   );
 };

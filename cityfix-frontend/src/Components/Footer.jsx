@@ -14,7 +14,7 @@ const Footer = () => {
   return (
     <footer className="bg-surface pt-10 pb-5 border-t border-base">
       <Container>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 items-center md:items-start justify-between border-b border-base pb-10 md:px-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 items-center md:items-start justify-between border-b border-base pb-10">
           <div className="flex-1 text-center md:text-start flex flex-col items-center md:items-start justify-center">
             <Link to="/" className="flex items-center w-12 mr-20 md:mr-0">
               <img src={logo} alt="" />

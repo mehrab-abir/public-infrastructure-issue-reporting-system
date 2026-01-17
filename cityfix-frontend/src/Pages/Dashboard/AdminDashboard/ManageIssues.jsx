@@ -2,7 +2,7 @@ import React from 'react';
 
 const ManageIssues = () => {
     return (
-        <div>
+        <div className=''>
             
         </div>
     );
