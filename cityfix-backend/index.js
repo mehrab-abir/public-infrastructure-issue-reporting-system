@@ -27,7 +27,16 @@ async function run() {
 
         const db = client.db("cityfix-db");
         const usersCollection = db.collection("users");
+        const issueCollection = db.collection("issues");
 
+        //post an issue
+        app.post("/issues",async (req,res)=>{
+            const newIssue = req.body;
+            const afterPost = await issueCollection.insertOne(newIssue);
+            res.send(afterPost);
+        })
+
+        //post user to db
         app.post("/users",async (req,res)=>{
             const newUser = req.body;
 

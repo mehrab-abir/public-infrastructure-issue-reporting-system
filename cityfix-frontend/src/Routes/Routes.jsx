@@ -9,6 +9,9 @@ import SignIn from "../Pages/Auth/SignIn";
 import Register from "../Pages/Auth/Register";
 import ContactUs from "../Pages/ContactUs";
 import ReportIssue from "../Pages/ReportIssue";
+import DashboardLayout from "../Layouts/DashboardLayout.jsx/DashboardLayout";
+import Dashboard from "../Pages/Dashboard/Dashboard";
+import MyIssues from "../Pages/Dashboard/CitizenDashboard/MyIssues";
 
 const router = createBrowserRouter([
     {
@@ -52,6 +55,20 @@ const router = createBrowserRouter([
             {
                 path : '/auth/register',
                 Component : Register
+            }
+        ]
+    },
+    {
+        path : "/dashboard",
+        Component : DashboardLayout,
+        children : [
+            {
+                index : true,
+                Component : Dashboard
+            },
+            {
+                path : '/dashboard/my-issues',
+                Component : MyIssues
             }
         ]
     },

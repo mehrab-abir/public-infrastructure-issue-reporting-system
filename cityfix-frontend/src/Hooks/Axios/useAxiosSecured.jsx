@@ -6,7 +6,7 @@ import { useRef } from 'react';
 import { useNavigate } from 'react-router';
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:3000/",
+  baseURL: "http://localhost:3000",
 });
 
 const useAxiosSecured = () => {
