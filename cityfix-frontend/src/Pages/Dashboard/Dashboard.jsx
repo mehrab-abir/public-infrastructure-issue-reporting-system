@@ -2,8 +2,11 @@ import React from 'react';
 
 const Dashboard = () => {
     return (
-        <div className='pt-36 pb-24'>
-            Dashboard common
+        <div className='py-15'>
+            <div className='ml-66'>
+                Dashboard common---stats, charts etc....
+            </div>
+            
         </div>
     );
 };

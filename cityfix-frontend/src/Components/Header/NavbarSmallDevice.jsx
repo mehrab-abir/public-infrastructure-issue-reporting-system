@@ -30,7 +30,7 @@ const NavbarSmallDevice = ({ openMenu, setOpenMenu }) => {
     <div
       className={`w-full h-screen fixed top-0 left-0 bg-surface-alt ${
         openMenu ? "" : "-translate-x-full"
-      } transition-all duration-400`}
+      } transition-all duration-400 z-50`}
     >
       <FaRegTimesCircle
         className="text-3xl absolute top-6 right-7 cursor-pointer"
@@ -71,6 +71,13 @@ const NavbarSmallDevice = ({ openMenu, setOpenMenu }) => {
           onClick={() => setOpenMenu(!openMenu)}
         >
           Contact
+        </NavLink>
+        <NavLink
+          to="/dashboard"
+          className="hover:text-accent text-lg"
+          onClick={() => setOpenMenu(!openMenu)}
+        >
+          Dashboard
         </NavLink>
         {user ? (
           <button

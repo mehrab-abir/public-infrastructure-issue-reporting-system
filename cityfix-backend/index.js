@@ -36,6 +36,13 @@ async function run() {
             res.send(afterPost);
         })
 
+        //my issues - issues reported by a citizen
+        app.get("/issues/:email",async (req,res)=>{
+            const {email} = req.params;
+            const issues = await issueCollection.find({reporterEmail:email}).toArray();
+            res.send(issues);
+        })
+
         //post user to db
         app.post("/users",async (req,res)=>{
             const newUser = req.body;
