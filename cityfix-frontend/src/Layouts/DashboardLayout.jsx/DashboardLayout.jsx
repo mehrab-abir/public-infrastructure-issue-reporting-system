@@ -27,7 +27,7 @@ const DashboardLayout = () => {
         {/* sidebar opener */}
         <div
           onClick={() => setShowSideBar(!showSideBar)}
-          className="bg-surface w-10 h-screen cursor-pointer fixed top-22 left-0"
+          className="bg-surface w-10 h-screen cursor-pointer fixed top-20 left-0"
         >
           <IoChevronForwardCircleOutline className="text-3xl ml-1 text-secondary absolute top-2 left-0" />
           <IoMdSettings className="text-3xl ml-1 text-secondary absolute top-13 left-0" />
@@ -36,7 +36,7 @@ const DashboardLayout = () => {
 
         {/* sidebar */}
         <div
-          className={`bg-surface p-3 top-0 left-0 w-full md:w-2/5 lg:w-1/5 h-screen fixed shadow-md ${showSideBar ? "" : "-translate-x-full"} transition-all duration-500 z-50`}
+          className={`bg-surface p-3 top-0 left-0 w-3/5 md:w-2/5 lg:w-1/5 h-screen fixed shadow-md ${showSideBar ? "" : "-translate-x-full"} transition-all duration-500 z-50`}
         >
           <div className="flex items-center justify-between">
             <img src={logo} className="w-14" alt="" />

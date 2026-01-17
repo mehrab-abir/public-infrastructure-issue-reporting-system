@@ -14,13 +14,13 @@ const Footer = () => {
   return (
     <footer className="bg-surface pt-10 pb-5 border-t border-base">
       <Container>
-        <div className="flex flex-col md:flex-row items-center md:items-start justify-between border-b border-base pb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 items-center md:items-start justify-between border-b border-base pb-10 md:px-10">
           <div className="flex-1 text-center md:text-start flex flex-col items-center md:items-start justify-center">
             <Link to="/" className="flex items-center w-12 mr-20 md:mr-0">
               <img src={logo} alt="" />
               <h2 className="text-2xl font-semibold">CityFix</h2>
             </Link>
-            <p className="text-sm text-muted mt-3 md:w-[90%]">
+            <p className="text-sm text-muted mt-3 w-[80%] md:w-[90%]">
               Empowering citizens to report and track public infrastructure
               issues for a better community.
             </p>
@@ -53,7 +53,8 @@ const Footer = () => {
               </Link>
             </div>
           </div>
-          <div className="flex-1 mt-10 md:mt-0 text-center md:text-start">
+
+          <div className="flex-1 mt-10 lg:mt-0 text-center md:text-start">
             <h4 className="font-semibold">Services</h4>
             <div className="mt-6 flex flex-col space-y-3 text-sm text-muted">
               <Link to="/report-issue" className="hover:underline">
@@ -70,7 +71,7 @@ const Footer = () => {
               </Link>
             </div>
           </div>
-          <div className="flex-1 mt-10 md:mt-0">
+          <div className="flex-1 mt-10 lg:mt-0 mx-auto md:mx-0">
             <h4 className="font-semibold text-center md:text-start">
               Contact Us
             </h4>
@@ -80,7 +81,7 @@ const Footer = () => {
                 Toronto, ON
               </p>
               <p className="flex items-center gap-2 text-center md:text-start">
-                <PiPhoneCallThin className="text-2xl" /> 
+                <PiPhoneCallThin className="text-2xl" />
                 +1 (555) 123-4567
               </p>
               <p className="flex items-center gap-2 text-center md:text-start">
@@ -88,8 +89,10 @@ const Footer = () => {
               </p>
             </div>
           </div>
-        </div>
-        <div className="flex flex-col-reverse md:flex-row justify-between items-center pt-5">
+        </div>{" "}
+        {/* parent div */}
+        {/* footer of the Footer */}
+        <div className="flex flex-col-reverse md:flex-row justify-between items-center pt-5 md:px-10">
           <div className="text-center md:text-start mt-5 md:mt-0">
             <p className="text-muted text-sm">
               &copy; {new Date().getFullYear()} CityFix. All Rights Reserved.
