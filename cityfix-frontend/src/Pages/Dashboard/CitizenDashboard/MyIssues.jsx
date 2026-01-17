@@ -5,6 +5,8 @@ import useAuth from "../../../Hooks/Auth/useAuth";
 import useAxiosSecured from "../../../Hooks/Axios/useAxiosSecured";
 import LoaderSpinner from "../../../Components/LoaderSpinner";
 import Container from "../../../Components/Container";
+import { FiPlus } from "react-icons/fi";
+import { Link } from "react-router";
 
 const MyIssues = () => {
   const { user } = useAuth();
@@ -25,12 +27,19 @@ const MyIssues = () => {
   return (
     <div className="pt-32 pb-20 ml-10">
       <Container>
-        <h1 className="text-3xl md:text-4xl font-bold">My Issues</h1>
-        <p className="text-muted text-sm md:text-lg mt-2">
-          Manage All Your Reported Issues
-        </p>
+        <div className="flex flex-col md:flex-row md:items-center justify-between">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold">My Issues</h1>
+            <p className="text-muted text-sm md:text-lg mt-2">
+              Manage All Your Reported Issues
+            </p>
+          </div>
+          <div className="my-5">
+            <Link to='/report-issuse' className="text-white btn btn-sm md:btn-md bg-primary"><FiPlus className="text-xl" />Report New Issue</Link>
+          </div>
+        </div>
 
-        <p>Number of issues: {myIssues.length}</p>
+        <p>Showing issues: {myIssues.length}</p>
 
         <div className="mt-5">
           <div className="overflow-x-auto bg-surface rounded-xl w-full">

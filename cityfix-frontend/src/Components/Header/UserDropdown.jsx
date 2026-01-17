@@ -61,7 +61,7 @@ const UserDropdown = () => {
           <img
             src={userPhoto}
             referrerPolicy="no-referrer"
-            className="w-12 h-12 object-cover rounded-full"
+            className="w-11 h-11 object-cover rounded-full"
             alt=""
           />
         )}
