@@ -16,6 +16,29 @@ admin.initializeApp({
 app.use(express.json());
 app.use(cors());
 
+//middleware, --verify token
+const verifyToken = async (req,res,next)=>{
+    if(!req.headers.authorization){
+        return res.status(401).sned({message : "unauthorized access"});
+    }
+
+    const token = req.headers.authorization.split(' ')[1];
+    
+    if(!token){
+        return res.status(401).send({message : "unauthorized access"});
+    }
+
+    try{
+        const decode = await admin.auth().verifyIdToken(token);
+        req.token_email = decode.email;
+
+        next();
+    }
+    catch{
+        return res.status(401).send({ message: "unauthorized access" });
+    }
+}
+
 const client = new MongoClient(uri, {
     serverApi: {
         version: ServerApiVersion.v1,
@@ -35,6 +58,17 @@ async function run() {
         const db = client.db("cityfix-db");
         const usersCollection = db.collection("users");
         const issueCollection = db.collection("issues");
+
+        //middleware to verify role - admin
+        const verifyAdmin = async (req,res,next)=>{
+            const email = req.token_email;
+            const user = await usersCollection.findOne({email});
+
+            if(!user || user.role != "admin"){
+                return res.status(403).send({message : "forbidden access"});
+            }
+            next();
+        }
 
         // apis for users/citizens 
         //post an issue
@@ -60,7 +94,7 @@ async function run() {
         })
 
         //get all issues
-        app.get("/all-issues",async (req,res)=>{
+        app.get("/all-issues",verifyToken,verifyAdmin,async (req,res)=>{
             const issues = await issueCollection.find().toArray();
             res.send(issues);
         })

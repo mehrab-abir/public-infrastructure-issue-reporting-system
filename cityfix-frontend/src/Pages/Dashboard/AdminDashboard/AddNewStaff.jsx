@@ -7,9 +7,13 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import useAuth from "../../../Hooks/Auth/useAuth";
 import { useNavigate } from "react-router";
 import Swal from "sweetalert2";
+import useRole from "../../../Hooks/Role/useRole";
+import LoaderSpinner from "../../../Components/LoaderSpinner";
 
 const AddNewStaff = () => {
     const {user} = useAuth();
+    const {role, isLoading} = useRole();
+
     const navigate = useNavigate();
 
   const {
@@ -45,11 +49,17 @@ const AddNewStaff = () => {
         })
     }
     finally{
-        setLoading(false);
+        // setLoading(false);
         setSubmitting(false);
     }
 
   };
+
+  if(isLoading){
+    return <LoaderSpinner></LoaderSpinner>
+  }
+
+  console.log("This user's role: ", role);
 
   return (
     <DashboardContainer>
