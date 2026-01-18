@@ -25,7 +25,7 @@ const MyIssues = () => {
   }
 
   return (
-    <div className="pt-5 pb-20 ml-10 lg:ml-0">
+    <>
       <DashboardContainer>
         <div className="flex flex-col md:flex-row md:items-center justify-between">
           <div>
@@ -88,7 +88,7 @@ const MyIssues = () => {
           </div>
         </div>
       </DashboardContainer>
-    </div>
+    </>
   );
 };
 

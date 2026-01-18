@@ -29,6 +29,7 @@ async function run() {
         const usersCollection = db.collection("users");
         const issueCollection = db.collection("issues");
 
+        // apis for users/citizens 
         //post an issue
         app.post("/issues",async (req,res)=>{
             const newIssue = req.body;
@@ -36,12 +37,27 @@ async function run() {
             res.send(afterPost);
         })
 
-        //my issues - issues reported by a citizen
+        //get all my issues - issues reported by a citizen
         app.get("/issues/:email",async (req,res)=>{
             const {email} = req.params;
             const issues = await issueCollection.find({reporterEmail:email}).toArray();
             res.send(issues);
         })
+
+
+        //apis for admin
+        //get all users
+        app.get("/users",async (req,res)=>{
+            const users = await usersCollection.find().toArray();
+            res.send(users);
+        })
+
+        //get all issues
+        app.get("/all-issues",async (req,res)=>{
+            const issues = await issueCollection.find().toArray();
+            res.send(issues);
+        })
+
 
         //post user to db
         app.post("/users",async (req,res)=>{
