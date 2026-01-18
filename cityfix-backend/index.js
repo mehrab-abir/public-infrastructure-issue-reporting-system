@@ -5,6 +5,13 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 const cors = require('cors');
 const port = process.env.PORT || 3000;
 const uri = `${process.env.URI}`;
+const admin = require("firebase-admin");
+
+const serviceAccount = require("./cityfix-firebase-service-key.json");
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+});
 
 app.use(express.json());
 app.use(cors());
@@ -56,6 +63,17 @@ async function run() {
         app.get("/all-issues",async (req,res)=>{
             const issues = await issueCollection.find().toArray();
             res.send(issues);
+        })
+
+        //get one user's role
+        app.get("/user/:email/role",async (req,res)=>{
+            const {email} = req.params;
+            const userRole = await usersCollection.findOne({email :email},{
+                projection : {
+                    role : 1
+                }
+            });
+            res.send({role : userRole?.role});
         })
 
 
