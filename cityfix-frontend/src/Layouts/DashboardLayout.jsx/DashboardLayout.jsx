@@ -16,7 +16,6 @@ import { FaUsersCog } from "react-icons/fa";
 import { FaTasks } from "react-icons/fa";
 import { IoChevronForwardCircleOutline } from "react-icons/io5";
 import { IoMdSettings } from "react-icons/io";
-import Header from "../../Components/Header/Header";
 import { CiDark, CiLight } from "react-icons/ci";
 
 const DashboardLayout = () => {
@@ -34,8 +33,6 @@ const DashboardLayout = () => {
 
   return (
     <div className="bg-base relative">
-      <div className="lg:hidden">{/* <Header></Header> */}</div>
-
       <h1 className="text-2xl font-bold text-accent text-center lg:text-start lg:ml-78 pt-2">
         Dashboard
       </h1>
@@ -47,7 +44,6 @@ const DashboardLayout = () => {
       >
         <IoChevronForwardCircleOutline className="text-3xl ml-1 text-secondary absolute top-2 left-0" />
         <IoMdSettings className="text-3xl ml-1 text-secondary absolute top-13 left-0" />
-        <FaRegCircleUser className="text-3xl ml-1 text-secondary absolute top-24 left-0" />
       </div>
 
       {/* sidebar */}
@@ -76,7 +72,8 @@ const DashboardLayout = () => {
             className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
             onClick={() => setShowSideBar(!showSideBar)}
           >
-            <TbReportSearch className="text-xl" /> <span>Browse All Issues</span>
+            <TbReportSearch className="text-xl" />{" "}
+            <span>Browse All Issues</span>
           </NavLink>
           <NavLink
             to="/dashboard"
@@ -149,7 +146,7 @@ const DashboardLayout = () => {
             <span>All Payments</span>
           </NavLink>
           <NavLink
-            to="/manage-profile"
+            to="/dashboard/manage-profile"
             className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
             onClick={() => setShowSideBar(!showSideBar)}
           >
@@ -165,7 +162,9 @@ const DashboardLayout = () => {
                 onClick={() => setTheme("dark")}
               >
                 <CiDark className="text-xl md:text-2xl font-semibold" />{" "}
-                <span className="font-semibold text-sm md:text-base">Switch to Dark Mode</span>
+                <span className="font-semibold text-sm md:text-base">
+                  Switch to Dark Mode
+                </span>
               </div>
             ) : (
               <div
@@ -173,7 +172,9 @@ const DashboardLayout = () => {
                 onClick={() => setTheme("light")}
               >
                 <CiLight className="text-xl md:text-2xl font-semibold" />{" "}
-                <span className="font-semibold text-sm md:text-base">Switch to Light Mode</span>
+                <span className="font-semibold text-sm md:text-base">
+                  Switch to Light Mode
+                </span>
               </div>
             )}
           </div>

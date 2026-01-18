@@ -49,7 +49,7 @@ const Banner = () => {
             >
               <img src={george} alt="" className="object-cover rounded-xl" />
             </div>
-            <div className="p-1 bg-primary-soft w-1/3 md:absolute md:left-30 md:-top-20 lg:left-40 lg:-top-20 z-20 rounded-xl">
+            <div className="p-1 bg-primary-soft w-1/3 md:absolute md:left-30 md:-top-20 lg:left-40 lg:-top-20 z-19 rounded-xl">
               <img src={cn} alt="" className="object-cover rounded-xl" />
             </div>
             <div className="p-1 bg-primary-soft w-1/3 md:absolute md:-top-15 md:right-0 lg:top-0 lg:right-0 z-10 rounded-xl">

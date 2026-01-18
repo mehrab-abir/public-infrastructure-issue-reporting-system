@@ -74,6 +74,40 @@ async function run() {
             res.send(result);
         })
 
+        //update user profile -displayName or photURL
+        app.patch("/update-profile/:email",async (req,res)=>{
+            const {displayName, photoURL} = req.body;
+            const {email} = req.params;
+
+            if(displayName){
+                const updateName = await usersCollection.updateOne({email : email},{
+                    $set : {
+                        displayName : displayName
+                    }
+                });
+                res.send(updateName);
+                return;
+            }
+
+            if(photoURL){
+                const updatePhoto = await usersCollection.updateOne({email : email},{
+                    $set : {
+                        photoURL : photoURL
+                    }
+                });
+                res.send(updatePhoto);
+                return;
+            }
+        })
+        
+
+        //get one user --for profile info
+        app.get("/users/:email",async (req,res)=>{
+            const {email} = req.params;
+            const thisUser = await usersCollection.findOne({email : email});
+            res.send(thisUser);
+        })
+
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });

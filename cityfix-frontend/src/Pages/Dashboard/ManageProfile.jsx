@@ -1,11 +1,258 @@
-import React from 'react';
+import React from "react";
+import DashboardContainer from "./DashboardContainer";
+import useAuth from "../../Hooks/Auth/useAuth";
+import defaultAvatar from "../../assets/defaultAvatar.png";
+import { useQuery } from "@tanstack/react-query";
+import LoaderSpinner from "../../Components/LoaderSpinner";
+import useAxiosSecured from "../../Hooks/Axios/useAxiosSecured";
+import { LuCrown } from "react-icons/lu";
+import { BiSolidEdit } from "react-icons/bi";
+import { IoMdCheckmark } from "react-icons/io";
+import { useState } from "react";
+import { IoSaveOutline } from "react-icons/io5";
+import { useRef } from "react";
+import Swal from "sweetalert2";
+import { Bounce, toast } from "react-toastify";
 
 const ManageProfile = () => {
-    return (
+  const { user, loading, setLoading, updateUserProfile, setUser } = useAuth();
+  const axios = useAxiosSecured();
+
+  const [editEnable, setEditEnable] = useState(false);
+  const nameRef = useRef(null);
+
+  const [submitting, setSubmitting] = useState(false);
+
+  const { data: thisUser, isLoading } = useQuery({
+    queryKey: ["user-info", user?.email],
+    queryFn: async () => {
+      const response = await axios.get(`/users/${user?.email}`);
+      return response.data;
+    },
+  });
+
+  const handleNameSave = async () => {
+    setSubmitting(true);
+
+    const displayName = nameRef.current.value;
+    // console.log(displayName);
+
+    if(displayName.length < 2){
+        toast.error(`Name must have minimum 2 characters`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+        setSubmitting(false);
+        return;
+    }
+
+    try {
+      //update in firebase
+      await updateUserProfile({ displayName });
+      setUser((prevUser) => ({
+        ...prevUser,
+        displayName,
+      }));
+
+      //update in mongodb
+      const response = await axios.patch(`/update-profile/${user?.email}`, { displayName });
+
+      if (response.data.modifiedCount) {
+        Swal.fire({
+          title: "Name updated!",
+          icon: "success", 
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setSubmitting(false);
+      setLoading(false);
+      setEditEnable(false);
+    }
+  };
+
+  const profileImg =
+    user?.photoURL || user?.providerData[0]?.photoURL || defaultAvatar;
+  return (
+    <DashboardContainer>
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-10">
         <div>
-            
+          <h1 className="text-2xl md:text-4xl font-bold">Profile</h1>
+          <p className="text-muted text-sm md:text-lg mt-2">
+            Manage your account settings and subscription
+          </p>
         </div>
-    );
+      </div>
+
+      <div className="flex flex-col md:flex-row justify-between gap-10">
+        {/* left side */}
+        <div className="bg-surface p-4 border border-gray-300 flex-1 rounded-xl">
+          <div className="flex flex-col items-center px-2 py-6 border-b border-gray-300">
+            {loading ? (
+              <LoaderSpinner></LoaderSpinner>
+            ) : (
+              <img
+                src={profileImg}
+                className="w-18 h-18 object-cover"
+                referrerPolicy="no-referrer"
+                alt=""
+              />
+            )}
+
+            <div className="text-center mt-4">
+              <h3 className="text-xl font-semibold">{user?.displayName}</h3>
+              <p className="text-muted text-sm">{user?.email}</p>
+
+              {thisUser?.isPremium === "yes" ? (
+                <div className="flex items-center justify-between bg-orange-100 text-orange-400 text-sm rounded-full px-2 mt-2">
+                  <LuCrown />
+                  <span>Premium</span>
+                </div>
+              ) : (
+                <div className=" bg-gray-200 text-black text-sm rounded-full px-2 mt-2">
+                  <span>Free</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="mt-5 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-muted text-sm lg:text-base">
+                Member Since:{" "}
+              </span>
+              <span className="font-semibold text-sm lg:text-base">
+                {new Date(thisUser?.created_at).toDateString()}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-muted text-sm lg:text-base">Role </span>
+              <button className="btn btn-xs rounded-xl">
+                {thisUser?.role?.toUpperCase()}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* right side */}
+        <div className="flex-2 space-y-4">
+          {/* profile info div */}
+          <div className="bg-surface p-4 border border-gray-300 rounded-xl ">
+            <div className="flex items-center justify-between">
+              <div className="flex flex-col">
+                <span className="text-lg font-semibold">
+                  Profile Information
+                </span>
+                <span className="text-muted">Update your personal details</span>
+              </div>
+              {editEnable ? (
+                <button
+                  className={`btn btn-sm bg-primary text-white border-none`}
+                  onClick={() => handleNameSave()}
+                >
+                  <IoSaveOutline className="text-lg" />
+                  {submitting ? <i>Saving...</i> : "Save"}
+                </button>
+              ) : (
+                <button
+                  className={`btn btn-sm border-none`}
+                  onClick={() => setEditEnable(true)}
+                >
+                  <BiSolidEdit className="text-lg" />
+                  Edit
+                </button>
+              )}
+            </div>
+
+            <div className="space-y-4 mt-6">
+              <div className="flex flex-col">
+                <label>Name:</label>
+                <input
+                  type="text"
+                  className={`input outline-none w-full ${editEnable ? "pointer-events-auto text-primary" : "pointer-events-none text-muted"}`}
+                  defaultValue={user?.displayName}
+                  ref={nameRef}
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <label>Email Address:</label>
+                <input
+                  type="text"
+                  className="input outline-none w-full"
+                  value={user?.email}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* subscription info div */}
+          <div className="">
+            {isLoading ? (
+              <LoaderSpinner />
+            ) : thisUser?.isPremium === "yes" ? (
+              <div className="bg-hero p-4 border border-gray-300 rounded-xl">
+                <h1 className="text-2xl">Subscription</h1>
+                <div className="flex gap-2 mt-4">
+                  <LuCrown className="text-2xl text-orange-400" />
+                  <span>Premium Member</span>
+                </div>
+                <p className="text-muted">
+                  You have access to all premium features
+                </p>
+                <div className="flex items-center justify-between mt-4">
+                  <span>Premium member since:</span>
+                  <span className="font-semibold">
+                    {new Date().toDateString()}
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-surface p-4 rounded-xl">
+                <div className="flex items-center gap-2">
+                  <div>
+                    <LuCrown className="text-3xl text-orange-400" />
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-bold ">Premium Benefits</h4>
+                    <p className="">Upgrade for more features</p>
+                  </div>
+                </div>
+                <ul className="pl-2 space-y-2 text-sm mt-4">
+                  <li className="flex items-center gap-1">
+                    <IoMdCheckmark /> Unlimited Issue Subscription
+                  </li>
+                  <li className="flex items-center gap-1">
+                    <IoMdCheckmark /> Priority Support & Faster Response
+                  </li>
+                  <li className="flex items-center gap-1">
+                    <IoMdCheckmark /> Boost Issue Visibility
+                  </li>
+                  <li className="flex items-center gap-1">
+                    <IoMdCheckmark /> Premium Badge On Profile
+                  </li>
+                  <li className="flex items-center gap-1">
+                    <IoMdCheckmark /> Detailed Analytics Access
+                  </li>
+                </ul>
+                <button className="bg-accent w-full btn border-none shadow-none text-white mt-3 hover:bg-orange-500! rounded-lg">
+                  Upgrade to Premium
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </DashboardContainer>
+  );
 };
 
 export default ManageProfile;
