@@ -34,7 +34,7 @@ const MyIssues = () => {
               Manage All Your Reported Issues
             </p>
           </div>
-          <div className="my-5">
+          <div className="my-5 md:my-0">
             <Link to='/report-issuse' className="text-white btn btn-sm md:btn-md bg-primary"><FiPlus className="text-xl" />Report New Issue</Link>
           </div>
         </div>

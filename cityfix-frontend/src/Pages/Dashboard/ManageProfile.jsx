@@ -78,8 +78,12 @@ const ManageProfile = () => {
           icon: "success",
         });
       }
-    } catch (error) {
-      console.log(error);
+    } catch {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Something went wrong!",
+      });
     } finally {
       setSubmitting(false);
       setLoading(false);
@@ -93,49 +97,52 @@ const ManageProfile = () => {
   };
 
   //update profile image
-  const handlePhotoSave = async ()=>{
+  const handlePhotoSave = async () => {
     setSubmitting(true);
 
-    if(!imageRef.current.files[0]){
+    if (!imageRef.current.files[0]) {
       setNoImageError("No photo selected");
       setSubmitting(false);
       return;
     }
 
     const imageFile = imageRef.current.files[0];
-    
-    try{
-      const photoURL = await uploadToCloudinary(imageFile, import.meta.env.VITE_CLOUDINARY_PROFILE_PRESET);
+
+    try {
+      const photoURL = await uploadToCloudinary(
+        imageFile,
+        import.meta.env.VITE_CLOUDINARY_PROFILE_PRESET,
+      );
 
       //update in firebase
-      await updateUserProfile({photoURL});
-      setUser((prevUser)=>({
-        ...prevUser, photoURL
+      await updateUserProfile({ photoURL });
+      setUser((prevUser) => ({
+        ...prevUser,
+        photoURL,
       }));
 
       //upload in mongodb
-      const response = await axios.patch(`/update-profile/${user?.email}`,{photoURL});
-      if(response.data.modifiedCount){
+      const response = await axios.patch(`/update-profile/${user?.email}`, {
+        photoURL,
+      });
+      if (response.data.modifiedCount) {
         Swal.fire({
           title: "Photo updated!",
           icon: "success",
         });
       }
-    }
-    catch(error){
-      console.log(error);
+    } catch {
       Swal.fire({
         icon: "error",
         title: "Oops...",
         text: "Something went wrong!",
       });
-    }
-    finally{
+    } finally {
       setSubmitting(false);
       setLoading(false);
       imageModalRef.current.close();
     }
-  }
+  };
 
   const profileImg =
     user?.photoURL || user?.providerData[0]?.photoURL || defaultAvatar;

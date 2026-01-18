@@ -19,6 +19,7 @@ import AllPayments from "../Pages/Dashboard/AdminDashboard/AllPayments";
 import PaymentHistory from "../Pages/Dashboard/CitizenDashboard/PaymentHistory";
 import AssignedIssues from "../Pages/Dashboard/StaffDashboard.jsx/AssignedIssues";
 import ManageProfile from "../Pages/Dashboard/ManageProfile";
+import AddNewStaff from "../Pages/Dashboard/AdminDashboard/AddNewStaff";
 
 const router = createBrowserRouter([
   {
@@ -86,6 +87,10 @@ const router = createBrowserRouter([
         Component: ManageStaffs,
       },
       {
+        path: "/dashboard/add-new-staff",
+        Component : AddNewStaff
+      },
+      {
         path: "/dashboard/my-issues", //user's reported issues
         Component: MyIssues,
       },
@@ -98,13 +103,13 @@ const router = createBrowserRouter([
         Component: PaymentHistory,
       },
       {
-        path : '/dashboard/assigned-issues',
-        Component : AssignedIssues
+        path: "/dashboard/assigned-issues",
+        Component: AssignedIssues,
       },
       {
-        path : '/dashboard/manage-profile',
-        Component : ManageProfile
-      }
+        path: "/dashboard/manage-profile",
+        Component: ManageProfile,
+      },
     ],
   },
   {

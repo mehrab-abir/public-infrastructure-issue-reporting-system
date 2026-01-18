@@ -42,7 +42,9 @@ const ReportIssue = () => {
         description : data.description,
         location : data.location,
         photoURL : photoURL,
+        reporterName : user?.displayName,
         reporterEmail : user?.email,
+        reporterPhotoURL : user?.photoURL,
         status : "pending",
         priority : "normal",
         created_at : new Date(),
@@ -76,11 +78,7 @@ const ReportIssue = () => {
         setSubmitting(false);
         reset();
     }
-    
-    
     // console.log(newIssue);
-
-
   }
 
 

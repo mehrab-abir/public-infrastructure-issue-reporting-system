@@ -69,6 +69,7 @@ const Register = () => {
       photoURL,
       created_at: new Date(),
       role: "citizen",
+      isPremium : "no"
     };
 
     try {
@@ -142,6 +143,7 @@ const Register = () => {
             <input
               type="file"
               {...register("profileImg")}
+              accept="image/*"
               className="file-input outline-none w-full"
               placeholder="Choose Image"
             />
