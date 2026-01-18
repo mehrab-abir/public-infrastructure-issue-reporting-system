@@ -13,6 +13,7 @@ import { IoSaveOutline } from "react-icons/io5";
 import { useRef } from "react";
 import Swal from "sweetalert2";
 import { Bounce, toast } from "react-toastify";
+import uploadToCloudinary from "../../Utilities/uploadImage";
 
 const ManageProfile = () => {
   const { user, loading, setLoading, updateUserProfile, setUser } = useAuth();
@@ -20,6 +21,10 @@ const ManageProfile = () => {
 
   const [editEnable, setEditEnable] = useState(false);
   const nameRef = useRef(null);
+
+  const imageRef = useRef(null);
+  const imageModalRef = useRef(null);
+  const [noImageError, setNoImageError] = useState("");
 
   const [submitting, setSubmitting] = useState(false);
 
@@ -31,26 +36,27 @@ const ManageProfile = () => {
     },
   });
 
+  //update name
   const handleNameSave = async () => {
     setSubmitting(true);
 
     const displayName = nameRef.current.value;
     // console.log(displayName);
 
-    if(displayName.length < 2){
-        toast.error(`Name must have minimum 2 characters`, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: false,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
-        setSubmitting(false);
-        return;
+    if (displayName.length < 2) {
+      toast.error(`Name must have minimum 2 characters`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      setSubmitting(false);
+      return;
     }
 
     try {
@@ -62,12 +68,14 @@ const ManageProfile = () => {
       }));
 
       //update in mongodb
-      const response = await axios.patch(`/update-profile/${user?.email}`, { displayName });
+      const response = await axios.patch(`/update-profile/${user?.email}`, {
+        displayName,
+      });
 
       if (response.data.modifiedCount) {
         Swal.fire({
           title: "Name updated!",
-          icon: "success", 
+          icon: "success",
         });
       }
     } catch (error) {
@@ -78,6 +86,56 @@ const ManageProfile = () => {
       setEditEnable(false);
     }
   };
+
+  const openImageModal = () => {
+    setNoImageError("");
+    imageModalRef.current.showModal();
+  };
+
+  //update profile image
+  const handlePhotoSave = async ()=>{
+    setSubmitting(true);
+
+    if(!imageRef.current.files[0]){
+      setNoImageError("No photo selected");
+      setSubmitting(false);
+      return;
+    }
+
+    const imageFile = imageRef.current.files[0];
+    
+    try{
+      const photoURL = await uploadToCloudinary(imageFile, import.meta.env.VITE_CLOUDINARY_PROFILE_PRESET);
+
+      //update in firebase
+      await updateUserProfile({photoURL});
+      setUser((prevUser)=>({
+        ...prevUser, photoURL
+      }));
+
+      //upload in mongodb
+      const response = await axios.patch(`/update-profile/${user?.email}`,{photoURL});
+      if(response.data.modifiedCount){
+        Swal.fire({
+          title: "Photo updated!",
+          icon: "success",
+        });
+      }
+    }
+    catch(error){
+      console.log(error);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Something went wrong!",
+      });
+    }
+    finally{
+      setSubmitting(false);
+      setLoading(false);
+      imageModalRef.current.close();
+    }
+  }
 
   const profileImg =
     user?.photoURL || user?.providerData[0]?.photoURL || defaultAvatar;
@@ -99,12 +157,18 @@ const ManageProfile = () => {
             {loading ? (
               <LoaderSpinner></LoaderSpinner>
             ) : (
-              <img
-                src={profileImg}
-                className="w-18 h-18 object-cover"
-                referrerPolicy="no-referrer"
-                alt=""
-              />
+              <div className="relative">
+                <img
+                  src={profileImg}
+                  className="w-20 h-20 object-cover rounded-full"
+                  referrerPolicy="no-referrer"
+                  alt=""
+                />
+                <BiSolidEdit
+                  onClick={() => openImageModal()}
+                  className="text-xl absolute bottom-0 -right-6 text-secondary cursor-pointer"
+                />
+              </div>
             )}
 
             <div className="text-center mt-4">
@@ -122,6 +186,34 @@ const ManageProfile = () => {
                 </div>
               )}
             </div>
+            <dialog
+              ref={imageModalRef}
+              className="modal modal-bottom sm:modal-middle"
+            >
+              <div className="modal-box">
+                <h3 className="font-bold text-lg mb-2">Upload new photo</h3>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="file-input outline-none"
+                  ref={imageRef}
+                />
+                <p className="text-red-500 text-sm">{noImageError}</p>
+                <button
+                  onClick={() => handlePhotoSave()}
+                  className="btn btn-sm bg-primary cursor-pointer text-white mt-4"
+                  disabled={submitting}
+                >
+                  {submitting ? <i>Saving...</i> : "Save"}
+                </button>
+                <div className="modal-action">
+                  <form method="dialog">
+                    {/* if there is a button in form, it will close the modal */}
+                    <button className="btn">Close</button>
+                  </form>
+                </div>
+              </div>
+            </dialog>
           </div>
 
           <div className="mt-5 space-y-3">

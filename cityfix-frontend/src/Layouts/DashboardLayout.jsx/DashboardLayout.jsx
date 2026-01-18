@@ -40,10 +40,10 @@ const DashboardLayout = () => {
       {/* sidebar opener */}
       <div
         onClick={() => setShowSideBar(!showSideBar)}
-        className="bg-surface w-10 h-screen cursor-pointer fixed top-0 left-0"
+        className="bg-surface w-8 sm:w-10 h-screen cursor-pointer fixed top-0 left-0"
       >
-        <IoChevronForwardCircleOutline className="text-3xl ml-1 text-secondary absolute top-2 left-0" />
-        <IoMdSettings className="text-3xl ml-1 text-secondary absolute top-13 left-0" />
+        <IoChevronForwardCircleOutline className="text-2xl sm:text-3xl ml-1 text-secondary absolute top-2 left-0" />
+        <IoMdSettings className="text-2xl sm:text-3xl ml-1 text-secondary absolute top-13 left-0" />
       </div>
 
       {/* sidebar */}
