@@ -75,11 +75,13 @@ const UserDropdown = () => {
             : "opacity-0 pointer-events-none top-24"
         } transition-all duration-300`}
       >
-        <div className="space-y-2.5">
+        <div className="space-y-2.5 flex flex-col">
           <div>
             <p className="text-secondary font-semibold">{user?.displayName}</p>
             <p className="text-sm text-muted">{user?.email}</p>
           </div>
+          <Link to="/dashboard/manage-profile" className="hover:underline hover:text-accent bg-primary-soft px-2 rounded-lg">Profile</Link>
+          <Link to="/dashboard" className="hover:underline hover:text-accent bg-primary-soft px-2 rounded-lg">Dashboard</Link>
 
           <button
             onClick={() => handleSignOut()}

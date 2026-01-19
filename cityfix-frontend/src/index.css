@@ -4,7 +4,7 @@
 .active{
   color: #2563EB;
   background-color: #cae1ff;
-  padding: 5px 9px;
+  /* padding: 5px 9px; */
   border-radius: 10px;
   font-weight: 500;
 }

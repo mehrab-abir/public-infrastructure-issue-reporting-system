@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import Footer from "../../Components/Footer";
-import { NavLink, Outlet } from "react-router";
+import { NavLink, Outlet, useNavigate } from "react-router";
 import logo from "../../assets/logo.png";
 import { useState } from "react";
 import { IoChevronBackCircleOutline } from "react-icons/io5";
@@ -18,9 +18,13 @@ import { IoChevronForwardCircleOutline } from "react-icons/io5";
 import { IoMdSettings } from "react-icons/io";
 import { CiDark, CiLight } from "react-icons/ci";
 import useRole from "../../Hooks/Role/useRole";
+import useAuth from "../../Hooks/Auth/useAuth";
+import { Bounce, toast } from "react-toastify";
 
 const DashboardLayout = () => {
+  const {signOutUser, setLoading} = useAuth();
   const { role } = useRole();
+  const navigate = useNavigate();
 
   const [showSideBar, setShowSideBar] = useState(false);
 
@@ -33,6 +37,24 @@ const DashboardLayout = () => {
     html.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
   }, [theme]);
+
+  const handleSignOut = async () => {
+    navigate("/", { replace: true });
+    await signOutUser();
+    setLoading(false);
+
+    toast.info("Signed Out", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: false,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      transition: Bounce,
+    });
+  };
 
   return (
     <div className="bg-base relative">
@@ -65,14 +87,14 @@ const DashboardLayout = () => {
         <div className="flex flex-col space-y-3.5 mt-10 px-5">
           <NavLink
             to="/"
-            className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
+            className={`font-semibold flex items-center gap-4 text-sm md:text-base py-1 px-2`}
             onClick={() => setShowSideBar(!showSideBar)}
           >
             <AiOutlineHome className="text-xl" /> <span>Home</span>
           </NavLink>
           <NavLink
             to="/all-issues"
-            className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
+            className={`font-semibold flex items-center gap-4 text-sm md:text-base py-1 px-2`}
             onClick={() => setShowSideBar(!showSideBar)}
           >
             <TbReportSearch className="text-xl" />{" "}
@@ -80,7 +102,7 @@ const DashboardLayout = () => {
           </NavLink>
           <NavLink
             to="/dashboard"
-            className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
+            className={`font-semibold flex items-center gap-4 text-sm md:text-base py-1 px-2`}
             onClick={() => setShowSideBar(!showSideBar)}
           >
             <LuLayoutDashboard className="text-xl" /> <span>Dashboard</span>
@@ -90,7 +112,7 @@ const DashboardLayout = () => {
             <>
               <NavLink
                 to="/dashboard/my-issues"
-                className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
+                className={`font-semibold flex items-center gap-4 text-sm md:text-base py-1 px-2`}
                 onClick={() => setShowSideBar(!showSideBar)}
               >
                 <HiOutlineDocumentReport className="text-xl" />{" "}
@@ -99,7 +121,7 @@ const DashboardLayout = () => {
 
               <NavLink
                 to="/dashboard/payment-history"
-                className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
+                className={`font-semibold flex items-center gap-4 text-sm md:text-base py-1 px-2`}
                 onClick={() => setShowSideBar(!showSideBar)}
               >
                 <MdOutlinePayment className="text-xl" />{" "}
@@ -108,7 +130,7 @@ const DashboardLayout = () => {
 
               <NavLink
                 to="/report-issue"
-                className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
+                className={`font-semibold flex items-center gap-4 text-sm md:text-base py-1 px-2`}
                 onClick={() => setShowSideBar(!showSideBar)}
               >
                 <FiPlus className="text-xl" /> <span>Report Issue</span>
@@ -116,7 +138,7 @@ const DashboardLayout = () => {
 
               <NavLink
                 to="/dashboard/manage-profile"
-                className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
+                className={`font-semibold flex items-center gap-4 text-sm md:text-base py-1 px-2`}
                 onClick={() => setShowSideBar(!showSideBar)}
               >
                 <FaRegCircleUser className="text-xl" />
@@ -129,7 +151,7 @@ const DashboardLayout = () => {
             <>
               <NavLink
                 to="/dashboard/manage-staffs"
-                className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
+                className={`font-semibold flex items-center gap-4 text-sm md:text-base py-1 px-2`}
                 onClick={() => setShowSideBar(!showSideBar)}
               >
                 <GrUserWorker className="text-xl" />
@@ -137,7 +159,7 @@ const DashboardLayout = () => {
               </NavLink>
               <NavLink
                 to="/dashboard/manage-issues"
-                className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
+                className={`font-semibold flex items-center gap-4 text-sm md:text-base py-1 px-2`}
                 onClick={() => setShowSideBar(!showSideBar)}
               >
                 <TbReportSearch className="text-xl" />
@@ -145,7 +167,7 @@ const DashboardLayout = () => {
               </NavLink>
               <NavLink
                 to="/dashboard/manage-users"
-                className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
+                className={`font-semibold flex items-center gap-4 text-sm md:text-base py-1 px-2`}
                 onClick={() => setShowSideBar(!showSideBar)}
               >
                 <FaUsersCog className="text-xl" />
@@ -153,7 +175,7 @@ const DashboardLayout = () => {
               </NavLink>
               <NavLink
                 to="/dashboard/all-payments"
-                className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
+                className={`font-semibold flex items-center gap-4 text-sm md:text-base py-1 px-2`}
                 onClick={() => setShowSideBar(!showSideBar)}
               >
                 <MdOutlinePayment className="text-xl" />
@@ -161,7 +183,7 @@ const DashboardLayout = () => {
               </NavLink>
               <NavLink
                 to="/dashboard/manage-profile"
-                className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
+                className={`font-semibold flex items-center gap-4 text-sm md:text-base py-1 px-2`}
                 onClick={() => setShowSideBar(!showSideBar)}
               >
                 <FaRegCircleUser className="text-xl" />
@@ -174,24 +196,15 @@ const DashboardLayout = () => {
             <>
               <NavLink
                 to="/dashboard/assigned-issues"
-                className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
+                className={`font-semibold flex items-center gap-4 text-sm md:text-base py-1 px-2`}
                 onClick={() => setShowSideBar(!showSideBar)}
               >
                 <FaTasks className="text-xl" />
                 <span>Assingned Issues</span>
               </NavLink>
-
-              {/* <NavLink
-                to="/dashboard/staff-profile"
-                className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
-                onClick={() => setShowSideBar(!showSideBar)}
-              >
-                <FaRegCircleUser className="text-xl" />
-                <span>Staff Profile</span>
-              </NavLink> */}
               <NavLink
                 to="/dashboard/manage-profile"
-                className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
+                className={`font-semibold flex items-center gap-4 text-sm md:text-base py-1 px-2`}
                 onClick={() => setShowSideBar(!showSideBar)}
               >
                 <FaRegCircleUser className="text-xl" />
@@ -223,6 +236,12 @@ const DashboardLayout = () => {
                 </span>
               </div>
             )}
+            <button
+              onClick={() => handleSignOut()}
+              className="btn btn-sm w-full bg-red-500 border-none mt-4 cursor-pointer text-white rounded-lg"
+            >
+              Sign Out
+            </button>
           </div>
         </div>
       </div>
