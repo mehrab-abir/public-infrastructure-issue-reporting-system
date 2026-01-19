@@ -20,6 +20,7 @@ import PaymentHistory from "../Pages/Dashboard/CitizenDashboard/PaymentHistory";
 import AssignedIssues from "../Pages/Dashboard/StaffDashboard.jsx/AssignedIssues";
 import ManageProfile from "../Pages/Dashboard/ManageProfile";
 import AddNewStaff from "../Pages/Dashboard/AdminDashboard/AddNewStaff";
+import IssueDetails from "../Pages/IssueDetails";
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
       {
         path: "/all-issues",
         Component: All_Issues,
+      },
+      {
+        path : '/issue-details',
+        Component : IssueDetails
       },
       {
         path: "/about",
