@@ -39,46 +39,49 @@ const NavbarSmallDevice = ({ openMenu, setOpenMenu }) => {
       <nav className="flex flex-col items-center space-y-3 justify-center mt-15">
         <NavLink
           to="/"
-          className="hover:text-accent text-lg"
+          className="hover:text-accent text-lg px-2"
           onClick={() => setOpenMenu(!openMenu)}
         >
           Home
         </NavLink>
         <NavLink
           to="/all-issues"
-          className="hover:text-accent text-lg"
+          className="hover:text-accent text-lg px-2"
           onClick={() => setOpenMenu(!openMenu)}
         >
           All Issues
         </NavLink>
         <NavLink
           to="/report-issue"
-          className="hover:text-accent text-lg"
+          className="hover:text-accent text-lg px-2"
           onClick={() => setOpenMenu(!openMenu)}
         >
           Report Issue
         </NavLink>
         <NavLink
           to="/about"
-          className="hover:text-accent text-lg"
+          className="hover:text-accent text-lg px-2"
           onClick={() => setOpenMenu(!openMenu)}
         >
           About Us
         </NavLink>
         <NavLink
           to="/contact"
-          className="hover:text-accent text-lg"
+          className="hover:text-accent text-lg px-2"
           onClick={() => setOpenMenu(!openMenu)}
         >
           Contact
         </NavLink>
-        <NavLink
-          to="/dashboard"
-          className="hover:text-accent text-lg"
-          onClick={() => setOpenMenu(!openMenu)}
-        >
-          Dashboard
-        </NavLink>
+        {user && (
+          <NavLink
+            to="/dashboard"
+            className="hover:text-accent text-lg px-2"
+            onClick={() => setOpenMenu(!openMenu)}
+          >
+            Dashboard
+          </NavLink>
+        )}
+
         {user ? (
           <button
             onClick={() => handleSignOut()}

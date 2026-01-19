@@ -132,6 +132,7 @@ const ReportIssue = () => {
                 <option value="Pothole">Pothole</option>
                 <option value="Garbage">Garbage</option>
                 <option value="Water Leakage">Water Leakage</option>
+                <option value="Traffic Light">Traffic Light</option>
                 <option value="Footpath">Footpath</option>
                 <option value="Drainage">Drainage</option>
                 <option value="Other">Other</option>

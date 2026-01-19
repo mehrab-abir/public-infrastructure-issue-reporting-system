@@ -171,7 +171,9 @@ const ManageProfile = () => {
         <div className="bg-surface p-4 border border-gray-300 flex-1 rounded-xl">
           <div className="flex flex-col items-center px-2 py-6 border-b border-gray-300">
             {loading ? (
-              <LoaderSpinner></LoaderSpinner>
+              <div className="flex items-center justify-center mt-10">
+                <LoaderSpinner></LoaderSpinner>
+              </div>           
             ) : (
               <div className="relative">
                 <img

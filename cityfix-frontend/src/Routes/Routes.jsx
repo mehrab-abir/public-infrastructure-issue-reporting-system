@@ -21,6 +21,10 @@ import AssignedIssues from "../Pages/Dashboard/StaffDashboard.jsx/AssignedIssues
 import ManageProfile from "../Pages/Dashboard/ManageProfile";
 import AddNewStaff from "../Pages/Dashboard/AdminDashboard/AddNewStaff";
 import IssueDetails from "../Pages/IssueDetails";
+import StaffRoute from "./StaffRoute";
+import CitizenRoute from "./CitizenRoute";
+import AdminRoute from "./AdminRoute";
+import PrivateRoute from "./PrivateRoute";
 
 const router = createBrowserRouter([
   {
@@ -37,7 +41,9 @@ const router = createBrowserRouter([
       },
       {
         path : '/issue-details',
-        Component : IssueDetails
+        element : <PrivateRoute>
+          <IssueDetails></IssueDetails>
+        </PrivateRoute>
       },
       {
         path: "/about",
@@ -49,7 +55,9 @@ const router = createBrowserRouter([
       },
       {
         path: "/report-issue",
-        Component: ReportIssue,
+        element : <PrivateRoute>
+          <ReportIssue></ReportIssue>
+        </PrivateRoute>
       },
     ],
   },
@@ -73,7 +81,9 @@ const router = createBrowserRouter([
   },
   {
     path: "/dashboard",
-    Component: DashboardLayout,
+    element : <PrivateRoute>
+      <DashboardLayout></DashboardLayout>
+    </PrivateRoute>,
     children: [
       {
         index: true,
@@ -81,35 +91,51 @@ const router = createBrowserRouter([
       },
       {
         path: "/dashboard/manage-issues",
-        Component: ManageIssues,
+        element : <AdminRoute>
+          <ManageIssues></ManageIssues>
+        </AdminRoute>
       },
       {
         path: "/dashboard/manage-users",
-        Component: ManageUsers,
+        element : <AdminRoute>
+          <ManageUsers></ManageUsers>
+        </AdminRoute>
       },
       {
         path: "/dashboard/manage-staffs",
-        Component: ManageStaffs,
+        element: <AdminRoute>
+          <ManageStaffs></ManageStaffs>
+        </AdminRoute>
       },
       {
         path: "/dashboard/add-new-staff",
-        Component : AddNewStaff
+        element : <AdminRoute>
+          <AddNewStaff></AddNewStaff>
+        </AdminRoute>
       },
       {
         path: "/dashboard/my-issues", //user's reported issues
-        Component: MyIssues,
+        element : <CitizenRoute>
+          <MyIssues></MyIssues>
+        </CitizenRoute>
       },
       {
         path: "/dashboard/all-payments",
-        Component: AllPayments,
+        element : <AdminRoute>
+          <AllPayments></AllPayments>
+        </AdminRoute>
       },
       {
         path: "/dashboard/payment-history",
-        Component: PaymentHistory,
+        element: <CitizenRoute>
+          <PaymentHistory></PaymentHistory>
+        </CitizenRoute>
       },
       {
         path: "/dashboard/assigned-issues",
-        Component: AssignedIssues,
+        element : <StaffRoute>
+          <AssignedIssues></AssignedIssues>
+        </StaffRoute>
       },
       {
         path: "/dashboard/manage-profile",

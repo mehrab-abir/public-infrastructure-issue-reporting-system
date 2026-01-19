@@ -3,7 +3,7 @@ import useRole from "../Hooks/Role/useRole";
 import LoaderSpinner from "../Components/LoaderSpinner";
 import ForbiddenRoute from "../Pages/ForbiddenRoute";
 
-const AdminRoute = ({ children }) => {
+const StaffRoute = ({ children }) => {
   const { role, roleLoading } = useRole();
 
   if (roleLoading) {
@@ -16,4 +16,4 @@ const AdminRoute = ({ children }) => {
   return children;
 };
 
-export default AdminRoute;
+export default StaffRoute;
