@@ -11,6 +11,7 @@ const ManageUsers = () => {
     queryKey: ["all-users"],
     queryFn: async () => {
       const response = await axios.get("/users");
+      console.log(response.data);
       return response.data;
     },
   });
@@ -35,6 +36,7 @@ const ManageUsers = () => {
                 <th>Name</th>
                 <th>Email</th>
                 <th>Premium</th>
+                <th>Role</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -52,7 +54,8 @@ const ManageUsers = () => {
                     <tr key={user._id}>
                       <td>{user.displayName}</td>
                       <td>{user.email}</td>
-                      <td>{user.isPremium ? 'Yes' : 'No'}</td>
+                      <td>{user.isPremium === "yes" ? 'Yes' : 'No'}</td>
+                      <td>{user.role.toUpperCase()}</td>
                       <td>
                         <button className="btn btn-sm">Delete</button>
                       </td>

@@ -95,6 +95,12 @@ async function run() {
             res.send(users);
         })
 
+        //get all staffs
+        app.get("/all-staffs",async (req,res)=>{
+            const staffs = await staffCollection.find().toArray();
+            res.send(staffs);
+        })
+
         //get all issues
         app.get("/all-issues", verifyToken, verifyAdmin, async (req, res) => {
             const issues = await issueCollection.find().toArray();
