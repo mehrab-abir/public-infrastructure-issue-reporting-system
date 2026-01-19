@@ -4,17 +4,14 @@ import staffImg from "../../../assets/staffsImg.png";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import useAuth from "../../../Hooks/Auth/useAuth";
 import { useNavigate } from "react-router";
 import Swal from "sweetalert2";
-import useRole from "../../../Hooks/Role/useRole";
-import LoaderSpinner from "../../../Components/LoaderSpinner";
+import uploadToCloudinary from "../../../Utilities/uploadImage";
+import useAxiosSecured from "../../../Hooks/Axios/useAxiosSecured";
 
 const AddNewStaff = () => {
-    const {user} = useAuth();
-    const {role, isLoading} = useRole();
-
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const axios = useAxiosSecured();
 
   const {
     register,
@@ -26,40 +23,48 @@ const AddNewStaff = () => {
   const [submitting, setSubmitting] = useState(false);
 
   const addNewStaff = async (data) => {
+    setSubmitting(true);
+
+    const imageFile = data.staffPhoto[0];
+
+    const photoURL = await uploadToCloudinary(
+      imageFile,
+      import.meta.env.VITE_CLOUDINARY_STAFF_PRESET,
+    );
 
     const newStaff = {
-        displayName : data.staffName,
-        email : data.staffEmail,
-        phone : data.staffPhone,
-        photoURL : data.staffPhoto,
-        role : 'staff',
-        created_at : new Date()
-    }
+      email: data.staffEmail,
+      password: data.staffPassword,
+      displayName: data.staffName,
+      phone: data.staffPhone,
+      photoURL: photoURL,
+      //role and created_at given in server-side
+    };
 
-    try{
-        //register the staff in firebase -- account creation
-        
-    }
-    catch(error){
-        console.log(error);
+    try {
+      //register the staff in firebase -- account creation in backend
+      const response = await axios.post("/admin/register-staff", newStaff);
+
+      if (response.data.acknowledge) {
         Swal.fire({
-            icon : "error",
-            text : "Ooops...",
-            title : "Something went worng!"
-        })
+          title: "Staff Account Created!",
+          icon: "success",
+        });
+        navigate("/dashboard/manage-staff");
+      }
+    } catch (error) {
+      console.log(error);
+      Swal.fire({
+        icon: "error",
+        text: "Ooops...",
+        title: "Something went worng!",
+      });
+    } finally {
+      setSubmitting(false);
     }
-    finally{
-        // setLoading(false);
-        setSubmitting(false);
-    }
-
   };
 
-  if(isLoading){
-    return <LoaderSpinner></LoaderSpinner>
-  }
-
-  console.log("This user's role: ", role);
+  //   console.log("Role in add new staff page ->>: ", role);
 
   return (
     <DashboardContainer>

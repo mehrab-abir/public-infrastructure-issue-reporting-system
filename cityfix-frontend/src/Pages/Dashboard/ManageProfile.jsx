@@ -14,9 +14,12 @@ import { useRef } from "react";
 import Swal from "sweetalert2";
 import { Bounce, toast } from "react-toastify";
 import uploadToCloudinary from "../../Utilities/uploadImage";
+import useRole from "../../Hooks/Role/useRole";
 
 const ManageProfile = () => {
   const { user, loading, setLoading, updateUserProfile, setUser } = useAuth();
+  const {role, roleLoading} = useRole();
+
   const axios = useAxiosSecured();
 
   const [editEnable, setEditEnable] = useState(false);
@@ -29,9 +32,10 @@ const ManageProfile = () => {
   const [submitting, setSubmitting] = useState(false);
 
   const { data: thisUser, isLoading } = useQuery({
-    queryKey: ["user-info", user?.email],
+    queryKey: ["user-info", user?.uid],
     queryFn: async () => {
-      const response = await axios.get(`/users/${user?.email}`);
+      const response = await axios.get(`/users/${user?.uid}`);
+      // console.log(response);
       return response.data;
     },
   });
@@ -68,11 +72,11 @@ const ManageProfile = () => {
       }));
 
       //update in mongodb
-      const response = await axios.patch(`/update-profile/${user?.email}`, {
+      const response = await axios.patch(`/update-profile/${user?.email}?role=${role}`, {
         displayName,
       });
 
-      if (response.data.modifiedCount) {
+      if (response.data.acknowledge) {
         Swal.fire({
           title: "Name updated!",
           icon: "success",
@@ -122,10 +126,10 @@ const ManageProfile = () => {
       }));
 
       //upload in mongodb
-      const response = await axios.patch(`/update-profile/${user?.email}`, {
+      const response = await axios.patch(`/update-profile/${user?.email}?role=${role}`, {
         photoURL,
       });
-      if (response.data.modifiedCount) {
+      if (response.data.acknowledge) {
         Swal.fire({
           title: "Photo updated!",
           icon: "success",
@@ -143,6 +147,11 @@ const ManageProfile = () => {
       imageModalRef.current.close();
     }
   };
+
+  
+  if(roleLoading){
+    return <LoaderSpinner></LoaderSpinner>
+  }
 
   const profileImg =
     user?.photoURL || user?.providerData[0]?.photoURL || defaultAvatar;
@@ -286,8 +295,9 @@ const ManageProfile = () => {
                 <label>Email Address:</label>
                 <input
                   type="text"
-                  className="input outline-none w-full"
+                  className="input outline-none w-full pointer-events-none"
                   value={user?.email}
+                  readOnly
                 />
               </div>
             </div>

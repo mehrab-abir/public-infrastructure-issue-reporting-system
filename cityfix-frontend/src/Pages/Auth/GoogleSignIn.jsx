@@ -23,11 +23,13 @@ const GoogleSignIn = () => {
       setUser(user);
 
       const newUser = {
+        uid: user.uid,
         displayName: user.displayName,
         email: user.email,
         photoURL: user.photoURL,
         role: "citizen",
         created_at: new Date(),
+        isPremium: "no",
       };
 
       const response = await axios.post("/users", newUser);

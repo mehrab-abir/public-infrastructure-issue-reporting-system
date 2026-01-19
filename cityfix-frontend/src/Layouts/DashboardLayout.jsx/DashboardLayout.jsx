@@ -17,8 +17,11 @@ import { FaTasks } from "react-icons/fa";
 import { IoChevronForwardCircleOutline } from "react-icons/io5";
 import { IoMdSettings } from "react-icons/io";
 import { CiDark, CiLight } from "react-icons/ci";
+import useRole from "../../Hooks/Role/useRole";
 
 const DashboardLayout = () => {
+  const { role } = useRole();
+
   const [showSideBar, setShowSideBar] = useState(false);
 
   const [theme, setTheme] = useState(
@@ -82,77 +85,120 @@ const DashboardLayout = () => {
           >
             <LuLayoutDashboard className="text-xl" /> <span>Dashboard</span>
           </NavLink>
-          <NavLink
-            to="/dashboard/my-issues"
-            className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
-            onClick={() => setShowSideBar(!showSideBar)}
-          >
-            <HiOutlineDocumentReport className="text-xl" />{" "}
-            <span>My Issues</span>
-          </NavLink>
-          <NavLink
-            to="/dashboard/payment-history"
-            className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
-            onClick={() => setShowSideBar(!showSideBar)}
-          >
-            <MdOutlinePayment className="text-xl" />{" "}
-            <span>Payment History</span>
-          </NavLink>
-          <NavLink
-            to="/report-issue"
-            className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
-            onClick={() => setShowSideBar(!showSideBar)}
-          >
-            <FiPlus className="text-xl" /> <span>Report Issue</span>
-          </NavLink>
-          <NavLink
-            to="/dashboard/assigned-issues"
-            className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
-            onClick={() => setShowSideBar(!showSideBar)}
-          >
-            <FaTasks className="text-xl" />
-            <span>Assingned Issues</span>
-          </NavLink>
-          <NavLink
-            to="/dashboard/manage-staffs"
-            className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
-            onClick={() => setShowSideBar(!showSideBar)}
-          >
-            <GrUserWorker className="text-xl" />
-            <span>Manage Staffs</span>
-          </NavLink>
-          <NavLink
-            to="/dashboard/manage-issues"
-            className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
-            onClick={() => setShowSideBar(!showSideBar)}
-          >
-            <TbReportSearch className="text-xl" />
-            <span>Manage Issues</span>
-          </NavLink>
-          <NavLink
-            to="/dashboard/manage-users"
-            className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
-            onClick={() => setShowSideBar(!showSideBar)}
-          >
-            <FaUsersCog className="text-xl" />
-            <span>Manage Users</span>
-          </NavLink>
-          <NavLink
-            to="/dashboard/all-payments"
-            className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
-            onClick={() => setShowSideBar(!showSideBar)}
-          >
-            <MdOutlinePayment className="text-xl" />
-            <span>All Payments</span>
-          </NavLink>
-          <NavLink
-            to="/dashboard/manage-profile"
-            className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
-            onClick={() => setShowSideBar(!showSideBar)}
-          >
-            <FaRegCircleUser className="text-xl" />
-            <span>Profile</span>
-          </NavLink>
+
+          {role === "citizen" && (
+            <>
+              <NavLink
+                to="/dashboard/my-issues"
+                className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
+                onClick={() => setShowSideBar(!showSideBar)}
+              >
+                <HiOutlineDocumentReport className="text-xl" />{" "}
+                <span>My Issues</span>
+              </NavLink>
+
+              <NavLink
+                to="/dashboard/payment-history"
+                className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
+                onClick={() => setShowSideBar(!showSideBar)}
+              >
+                <MdOutlinePayment className="text-xl" />{" "}
+                <span>Payment History</span>
+              </NavLink>
+
+              <NavLink
+                to="/report-issue"
+                className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
+                onClick={() => setShowSideBar(!showSideBar)}
+              >
+                <FiPlus className="text-xl" /> <span>Report Issue</span>
+              </NavLink>
+
+              <NavLink
+                to="/dashboard/manage-profile"
+                className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
+                onClick={() => setShowSideBar(!showSideBar)}
+              >
+                <FaRegCircleUser className="text-xl" />
+                <span>Profile</span>
+              </NavLink>
+            </>
+          )}
+
+          {role === "admin" && (
+            <>
+              <NavLink
+                to="/dashboard/manage-staffs"
+                className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
+                onClick={() => setShowSideBar(!showSideBar)}
+              >
+                <GrUserWorker className="text-xl" />
+                <span>Manage Staffs</span>
+              </NavLink>
+              <NavLink
+                to="/dashboard/manage-issues"
+                className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
+                onClick={() => setShowSideBar(!showSideBar)}
+              >
+                <TbReportSearch className="text-xl" />
+                <span>Manage Issues</span>
+              </NavLink>
+              <NavLink
+                to="/dashboard/manage-users"
+                className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
+                onClick={() => setShowSideBar(!showSideBar)}
+              >
+                <FaUsersCog className="text-xl" />
+                <span>Manage Users</span>
+              </NavLink>
+              <NavLink
+                to="/dashboard/all-payments"
+                className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
+                onClick={() => setShowSideBar(!showSideBar)}
+              >
+                <MdOutlinePayment className="text-xl" />
+                <span>All Payments</span>
+              </NavLink>
+              <NavLink
+                to="/dashboard/manage-profile"
+                className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
+                onClick={() => setShowSideBar(!showSideBar)}
+              >
+                <FaRegCircleUser className="text-xl" />
+                <span>Profile</span>
+              </NavLink>
+            </>
+          )}
+
+          {role === "staff" && (
+            <>
+              <NavLink
+                to="/dashboard/assigned-issues"
+                className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
+                onClick={() => setShowSideBar(!showSideBar)}
+              >
+                <FaTasks className="text-xl" />
+                <span>Assingned Issues</span>
+              </NavLink>
+
+              {/* <NavLink
+                to="/dashboard/staff-profile"
+                className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
+                onClick={() => setShowSideBar(!showSideBar)}
+              >
+                <FaRegCircleUser className="text-xl" />
+                <span>Staff Profile</span>
+              </NavLink> */}
+              <NavLink
+                to="/dashboard/manage-profile"
+                className={`font-semibold flex items-center gap-4 text-sm md:text-base`}
+                onClick={() => setShowSideBar(!showSideBar)}
+              >
+                <FaRegCircleUser className="text-xl" />
+                <span>Profile</span>
+              </NavLink>
+            </>
+          )}
 
           {/* theme change */}
           <div>

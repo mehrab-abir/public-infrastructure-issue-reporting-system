@@ -64,6 +64,7 @@ const Register = () => {
 
     //post user to db
     const newUser = {
+      uid : user.uid,
       displayName,
       email,
       photoURL,

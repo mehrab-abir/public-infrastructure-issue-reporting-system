@@ -42,9 +42,12 @@ const ReportIssue = () => {
         description : data.description,
         location : data.location,
         photoURL : photoURL,
-        reporterName : user?.displayName,
-        reporterEmail : user?.email,
-        reporterPhotoURL : user?.photoURL,
+        reporter : {
+          name : user?.displayName,
+          email : user?.email,
+          photoURL : user?.photoURL,
+          uid : user?.uid
+        },
         status : "pending",
         priority : "normal",
         created_at : new Date(),
