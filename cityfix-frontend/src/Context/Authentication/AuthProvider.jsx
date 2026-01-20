@@ -41,7 +41,7 @@ const AuthProvider = ({children}) => {
     }
 
     //update password
-    const resetPassword = (newPassword)=>{
+    const changePassword = (newPassword)=>{
         setLoading(true);
         return updatePassword(user, newPassword);
     }
@@ -71,7 +71,7 @@ const AuthProvider = ({children}) => {
         signOutUser,
         updateUserProfile,
         forgetPassword,
-        resetPassword,
+        changePassword,
         verifyEmail,
         loading,
         setLoading

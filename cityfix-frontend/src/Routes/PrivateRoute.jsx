@@ -10,7 +10,7 @@ const PrivateRoute = ({ children }) => {
   if (loading) {
     return (
         <div className="flex items-center justify-center mt-10">
-            <LoaderSpinner></LoaderSpinner>;
+            <LoaderSpinner></LoaderSpinner>
         </div>
     )
     

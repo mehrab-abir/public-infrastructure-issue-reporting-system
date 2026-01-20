@@ -42,16 +42,11 @@ const ReportIssue = () => {
         description : data.description,
         location : data.location,
         photoURL : photoURL,
-        reporter : {
-          name : user?.displayName,
-          email : user?.email,
-          photoURL : user?.photoURL,
-          uid : user?.uid
-        },
+        reporterEmail : user?.email,
         status : "pending",
-        priority : "normal",
+        priority : "normal priority",
         created_at : new Date(),
-        assignedStaff : {},
+        staffEmail : '',
         upvote : 0
     }
 

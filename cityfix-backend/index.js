@@ -107,6 +107,24 @@ async function run() {
             res.send(issues);
         })
 
+        //get reporter and staff info of an issue
+        app.get('/issue-reporter',async(req,res)=>{
+            const { reporterEmail, staffEmail } = req.query;
+
+            const reporter = await usersCollection.findOne({email : reporterEmail});
+
+            let staff = {};
+
+            if(staffEmail){
+                staff = await staffCollection.findOne({email : staffEmail});
+            }
+            
+            res.send({
+                reporter : reporter,
+                staff : staff || {}
+            });
+        })
+
         //create an account for staff and post to db
         app.post("/admin/register-staff", verifyToken, verifyAdmin, async (req, res) => {
             const newStaff = req.body;
@@ -177,6 +195,10 @@ async function run() {
             const { email } = req.params;
             const { role } = req.query;
 
+            const reportedIssue = await issueCollection.findOne({
+                "reporter.email": email
+            });
+
             if (displayName) {
                 if (role === "citizen" || role === "admin") {
                     const updateName = await usersCollection.updateOne({ email: email }, {
@@ -184,6 +206,18 @@ async function run() {
                             displayName: displayName
                         }
                     });
+
+                    //update the name in issue collection if this user has reported issues
+                    if(reportedIssue){
+                        await issueCollection.updateMany({
+                            "reporter.email" : email
+                        },{
+                            $set : {
+                                "reporter.name" : displayName
+                            }
+                        })
+                    }
+
                     if(updateName.modifiedCount){
                         res.send({
                             acknowledge : true,
@@ -224,6 +258,17 @@ async function run() {
                             photoURL: photoURL
                         }
                     });
+
+                    //update the photoURL in issue collection if this user has reported issues
+                    if (reportedIssue) {
+                        await issueCollection.updateMany({
+                            "reporter.email": email
+                        }, {
+                            $set: {
+                                "reporter.photoURL": photoURL
+                            }
+                        })
+                    }
                     
                     if(updatePhoto.modifiedCount){
                         res.send({
@@ -247,6 +292,7 @@ async function run() {
                             photoURL: photoURL
                         }
                     });
+
                     if (updateStaffPhoto.modifiedCount && updateUserPhoto.modifiedCount) {
                         res.send({
                             acknowledge: true,
