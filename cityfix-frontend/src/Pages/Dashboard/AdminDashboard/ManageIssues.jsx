@@ -114,8 +114,6 @@ const ManageIssues = () => {
 
   //delete an issue
   const deleteIssue = (issueId) => {
-    setDeleting(true);
-
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -127,6 +125,7 @@ const ManageIssues = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
+          setDeleting(true);
           const response = await axios.delete(`/admin/delete-issue/${issueId}`);
           if (response.data.deletedCount) {
             Swal.fire({

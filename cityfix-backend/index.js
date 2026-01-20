@@ -83,8 +83,15 @@ async function run() {
         //get all my issues - issues reported by a citizen
         app.get("/issues/:email", async (req, res) => {
             const { email } = req.params;
-            const issues = await issueCollection.find({ "reporter.email": email }).toArray();
+            const issues = await issueCollection.find({ reporterEmail: email }).toArray();
             res.send(issues);
+        })
+
+        //delete an issue - as citizen
+        app.delete('/citizen/delete-issue/:issueId',async(req,res)=>{
+            const {issueId} = req.params;
+            const deletedIssue = await issueCollection.deleteOne({_id : new ObjectId(issueId)});
+            res.send(deletedIssue);
         })
 
         //get all assigned issue --for staff
@@ -146,9 +153,6 @@ async function run() {
         })
 
 
-
-
-
         //apis for admin
         //get all users
         app.get("/users", async (req, res) => {
@@ -193,16 +197,18 @@ async function run() {
         app.get('/issue-reporter',async(req,res)=>{
             const { reporterEmail, staffEmail } = req.query;
 
-            const reporter = await usersCollection.findOne({email : reporterEmail});
+            let reporter = {};
+            if(reporterEmail){
+                reporter = await usersCollection.findOne({email : reporterEmail});
+            }
 
             let staff = {};
-
             if(staffEmail){
                 staff = await staffCollection.findOne({email : staffEmail});
             }
             
             res.send({
-                reporter : reporter,
+                reporter : reporter || {},
                 staff : staff || {}
             });
         })

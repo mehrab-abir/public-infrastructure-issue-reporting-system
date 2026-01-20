@@ -10,7 +10,7 @@ import { useRef } from "react";
 import { IoMdCheckmark } from "react-icons/io";
 import { LiaTimesSolid } from "react-icons/lia";
 import { useEffect } from "react";
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2";
 import IssueDetailsModal from "../../../Components/IssueDetailsModal";
 
 const AssignedIssues = () => {
@@ -24,10 +24,14 @@ const AssignedIssues = () => {
   const detailsModalRef = useRef(null);
 
   const [updating, setUpdating] = useState(false);
-  const [currentStatus, setCurrentStatus] = useState('');
+  const [currentStatus, setCurrentStatus] = useState("");
 
   //all assigned issues
-  const { data: assignedIssues = [], isLoading, refetch : refetchAssignedIssues } = useQuery({
+  const {
+    data: assignedIssues = [],
+    isLoading,
+    refetch: refetchAssignedIssues,
+  } = useQuery({
     queryKey: ["assigned-issues", user?.email],
     queryFn: async () => {
       const response = await axios.get(`/staff/assigned-issues/${user?.email}`);
@@ -36,61 +40,59 @@ const AssignedIssues = () => {
   });
 
   useEffect(() => {
-      const loadPeople = async () => {
-        if (!selectedIssue.reporterEmail) {
-          return;
-        }
-  
-        setLoadingPeople(true);
-  
-        try {
-          const response = await axios.get(
-            `/issue-reporter?reporterEmail=${selectedIssue?.reporterEmail}&staffEmail=${selectedIssue?.staffEmail}`,
-          );
-  
-          setRoporterInfo(response.data.reporter);
-          setStaffInfo(response.data.staff);
-        } finally {
-          setLoadingPeople(false);
-        }
-      };
-  
-      loadPeople();
-    }, [selectedIssue?.reporterEmail, selectedIssue?.staffEmail, axios]);
-  
-    const viewIssueDetails = async (issue) => {
-      setSelectedIssue(issue);
-      detailsModalRef.current.showModal();
+    const loadPeople = async () => {
+      if (!selectedIssue.reporterEmail) {
+        return;
+      }
+
+      setLoadingPeople(true);
+
+      try {
+        const response = await axios.get(
+          `/issue-reporter?reporterEmail=${selectedIssue?.reporterEmail}&staffEmail=${selectedIssue?.staffEmail}`,
+        );
+        setRoporterInfo(response.data.reporter);
+        setStaffInfo(response.data.staff);
+
+      } finally {
+        setLoadingPeople(false);
+      }
     };
 
+    loadPeople();
+  }, [selectedIssue?.staffEmail, selectedIssue?.reporterEmail, axios]);
 
-    const updateIssueStatus = async (issueId, staffResponse) =>{
-      setUpdating(true);
+  const viewIssueDetails = async (issue) => {
+    setSelectedIssue(issue);
+    detailsModalRef.current.showModal();
+  };
 
-      try{
-        const response = await axios.patch(`/staff/update-issue-status?issueId=${issueId}&staffResponse=${staffResponse}`);
+  const updateIssueStatus = async (issueId, staffResponse) => {
+    setUpdating(true);
 
-        if(response.data.modifiedCount){
-          Swal.fire({
-            icon : "success",
-            title : "Issue Status Updated"
-          })
-        }
-        refetchAssignedIssues();
-      }
-      catch(error){
-        console.log(error);
+    try {
+      const response = await axios.patch(
+        `/staff/update-issue-status?issueId=${issueId}&staffResponse=${staffResponse}`,
+      );
+
+      if (response.data.modifiedCount) {
         Swal.fire({
-          icon: "error",
-          title: "Ooops...",
-          text : "Something Went Wrong!"
+          icon: "success",
+          title: "Issue Status Updated",
         });
       }
-      finally{
-        setUpdating(false);
-      }
+      refetchAssignedIssues();
+    } catch (error) {
+      console.log(error);
+      Swal.fire({
+        icon: "error",
+        title: "Ooops...",
+        text: "Something Went Wrong!",
+      });
+    } finally {
+      setUpdating(false);
     }
-
+  };
 
   return (
     <DashboardContainer>
@@ -234,9 +236,12 @@ const AssignedIssues = () => {
             ref={detailsModalRef}
             className="modal modal-bottom sm:modal-middle"
           >
-            <IssueDetailsModal selectedIssue={selectedIssue} staffInfo={staffInfo} reporterInfo={reporterInfo} loadingPeople={loadingPeople}></IssueDetailsModal>
-
-
+            <IssueDetailsModal
+              selectedIssue={selectedIssue}
+              staffInfo={staffInfo}
+              reporterInfo={reporterInfo}
+              loadingPeople={loadingPeople}
+            ></IssueDetailsModal>
           </dialog>
         </div>
       </div>
