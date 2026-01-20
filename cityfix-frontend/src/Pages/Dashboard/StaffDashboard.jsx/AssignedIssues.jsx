@@ -24,6 +24,7 @@ const AssignedIssues = () => {
   const detailsModalRef = useRef(null);
 
   const [updating, setUpdating] = useState(false);
+  const [currentStatus, setCurrentStatus] = useState('');
 
   //all assigned issues
   const { data: assignedIssues = [], isLoading, refetch : refetchAssignedIssues } = useQuery({
@@ -90,6 +91,7 @@ const AssignedIssues = () => {
       }
     }
 
+
   return (
     <DashboardContainer>
       <div className="flex flex-col space-y-3">
@@ -104,7 +106,7 @@ const AssignedIssues = () => {
       </div>
 
       <div>
-        <div className="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
+        <div className={`overflow-x-auto rounded-box border border-base-content/5 bg-base-100 ${assignedIssues.length < 4 && 'h-[50vh]'}`}>
           <table className="table">
             {/* head */}
             <thead>
@@ -161,7 +163,7 @@ const AssignedIssues = () => {
                       </td>
                       <td>{new Date(issue.created_at).toDateString()}</td>
                       <td>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
                           <button
                             onClick={() => viewIssueDetails(issue)}
                             className="cursor-pointer tooltip"
@@ -169,7 +171,10 @@ const AssignedIssues = () => {
                           >
                             <IoEye className="text-xl" />
                           </button>
-                          <div className="flex items-center gap-3">
+
+                          <div
+                            className={`flex items-center gap-3 ${issue.status !== "Staff Assigned" && "hidden"} mx-1`}
+                          >
                             <button
                               className="cursor-pointer tooltip"
                               data-tip="accept"
@@ -191,6 +196,24 @@ const AssignedIssues = () => {
                               <LiaTimesSolid className="text-xl" />
                             </button>
                           </div>
+
+                          <select
+                            defaultValue="Update Status"
+                            className={`select ${issue.status === "Staff Assigned" && "hidden"} select-sm outline-none cursor-pointer`}
+                            onChange={(e)=>setCurrentStatus(e.target.value)}
+                          >
+                            <option disabled={true}>Update Status</option>
+                            <option>Working</option>
+                            <option>Resolved</option>
+                            <option>Closed</option>
+                          </select>
+                          <button
+                            className={`btn btn-sm bg-primary text-white cursor-pointer ${issue.status === "Staff Assigned" && "hidden"}`}
+                            disabled={updating}
+                            onClick={()=>updateIssueStatus(issue._id, currentStatus)}
+                          >
+                            Save
+                          </button>
                         </div>
                       </td>
                     </tr>
