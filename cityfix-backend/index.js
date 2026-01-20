@@ -90,9 +90,63 @@ async function run() {
         //get all assigned issue --for staff
         app.get("/staff/assigned-issues/:email",async (req,res)=>{
             const {email} = req.params;
+
             const myAssignedIssues = await issueCollection.find({staffEmail : email}).sort({created_at: -1}).toArray();
+
             res.send(myAssignedIssues);
         })
+        
+        //update issue status by staff - accept/reject, in-progress, working, resolved, closed etc.
+        app.patch("/staff/update-issue-status",async (req,res)=>{
+            const {staffResponse, issueId} = req.query;
+
+            let thisIssue = {};
+
+            if(staffResponse === "accept"){
+                thisIssue = await issueCollection.updateOne({ _id: new ObjectId(issueId)},{
+                    $set : {
+                        status : "In Progress"
+                    }
+                });
+                return res.send(thisIssue);
+            }
+            else if(staffResponse === "Working"){
+                thisIssue = await issueCollection.updateOne({ _id: new ObjectId(issueId) }, {
+                    $set: {
+                        status: "Working"
+                    }
+                });
+                return res.send(thisIssue);
+            }
+            else if(staffResponse === "Resolved"){
+                thisIssue = await issueCollection.updateOne({ _id: new ObjectId(issueId) }, {
+                    $set: {
+                        status: "Resolved"
+                    }
+                });
+                return res.send(thisIssue);
+            }
+            else if (staffResponse === "Closed") {
+                thisIssue = await issueCollection.updateOne({ _id: new ObjectId(issueId) }, {
+                    $set: {
+                        status: "Closed"
+                    }
+                });
+                return res.send(thisIssue);
+            }
+            else{
+                thisIssue = await issueCollection.updateOne({ _id: new ObjectId(issueId) }, {
+                    $set: {
+                        staffEmail : '',
+                        status: "Pending"
+                    }
+                });
+                return res.send(thisIssue);
+            }
+        })
+
+
+
 
 
         //apis for admin

@@ -11,6 +11,7 @@ import { IoMdCheckmark } from "react-icons/io";
 import { LiaTimesSolid } from "react-icons/lia";
 import { useEffect } from "react";
 import defaultAvatar from "../../../assets/defaultAvatar.png";
+import Swal from 'sweetalert2'
 
 const AssignedIssues = () => {
   const { user } = useAuth();
@@ -22,7 +23,10 @@ const AssignedIssues = () => {
   const [loadingPeople, setLoadingPeople] = useState(false);
   const detailsModalRef = useRef(null);
 
-  const { data: assignedIssues = [], isLoading } = useQuery({
+  const [updating, setUpdating] = useState(false);
+
+  //all assigned issues
+  const { data: assignedIssues = [], isLoading, refetch : refetchAssignedIssues } = useQuery({
     queryKey: ["assigned-issues", user?.email],
     queryFn: async () => {
       const response = await axios.get(`/staff/assigned-issues/${user?.email}`);
@@ -57,6 +61,34 @@ const AssignedIssues = () => {
       setSelectedIssue(issue);
       detailsModalRef.current.showModal();
     };
+
+
+    const updateIssueStatus = async (issueId, staffResponse) =>{
+      setUpdating(true);
+
+      try{
+        const response = await axios.patch(`/staff/update-issue-status?issueId=${issueId}&staffResponse=${staffResponse}`);
+
+        if(response.data.modifiedCount){
+          Swal.fire({
+            icon : "success",
+            title : "Issue Status Updated"
+          })
+        }
+        refetchAssignedIssues();
+      }
+      catch(error){
+        console.log(error);
+        Swal.fire({
+          icon: "error",
+          title: "Ooops...",
+          text : "Something Went Wrong!"
+        });
+      }
+      finally{
+        setUpdating(false);
+      }
+    }
 
   return (
     <DashboardContainer>
@@ -141,12 +173,20 @@ const AssignedIssues = () => {
                             <button
                               className="cursor-pointer tooltip"
                               data-tip="accept"
+                              onClick={() =>
+                                updateIssueStatus(issue._id, "accept")
+                              }
+                              disabled={updating}
                             >
                               <IoMdCheckmark className="text-xl" />
                             </button>
                             <button
                               className="cursor-pointer tooltip"
                               data-tip="Reject"
+                              onClick={() =>
+                                updateIssueStatus(issue._id, "reject")
+                              }
+                              disabled={updating}
                             >
                               <LiaTimesSolid className="text-xl" />
                             </button>
