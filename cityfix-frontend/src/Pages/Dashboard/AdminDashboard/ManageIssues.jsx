@@ -10,19 +10,34 @@ import { useState } from "react";
 import { useRef } from "react";
 import defaultAvatar from "../../../assets/defaultAvatar.png";
 import { useEffect } from "react";
+import Swal from "sweetalert2";
 
 const ManageIssues = () => {
   const axios = useAxiosSecured();
+
   const [selectedIssue, setSelectedIssue] = useState(null);
   const [reporterInfo, setRoporterInfo] = useState(null);
   const [staffInfo, setStaffInfo] = useState(null);
   const [loadingPeople, setLoadingPeople] = useState(false);
-  const detailsModalRef = useRef();
+  const detailsModalRef = useRef(null);
 
-  const { data: all_issues = [], isLoading } = useQuery({
+  const staffModalRef = useRef(null);
+  const [assigning, setAssigning] = useState(false);
+
+  // fetching all issues
+  const { data: all_issues = [], isLoading, refetch : refetchIssues } = useQuery({
     queryKey: ["all-issues"],
     queryFn: async () => {
       const response = await axios.get("/all-issues");
+      return response.data;
+    },
+  });
+
+  // fetching all staffs to assign task/issue
+  const { data: staffs = [], isLoading: staffLoading } = useQuery({
+    queryKey: ["staffs"],
+    queryFn: async () => {
+      const response = await axios.get("/all-staffs");
       return response.data;
     },
   });
@@ -42,20 +57,53 @@ const ManageIssues = () => {
 
         setRoporterInfo(response.data.reporter);
         setStaffInfo(response.data.staff);
-
       } finally {
         setLoadingPeople(false);
       }
     };
 
     loadPeople();
-  }, [selectedIssue?.reporterEmail, selectedIssue?.staffEmail,axios]);
+  }, [selectedIssue?.reporterEmail, selectedIssue?.staffEmail, axios]);
 
   const viewIssueDetails = async (issue) => {
-    
     setSelectedIssue(issue);
-
     detailsModalRef.current.showModal();
+  };
+
+  const openStaffModal = (issue) => {
+    setSelectedIssue(issue);
+    staffModalRef.current.showModal();
+  };
+
+  //assign staff fn
+  const assignStaff = async (staff) => {
+    setAssigning(true);
+
+    const assignStaffInfo = {
+      issueId: selectedIssue._id,
+      staffEmail: staff.email,
+      staffName : staff.displayName
+    };
+
+    try {
+      const response = await axios.patch("/assign-staff", assignStaffInfo);
+
+      if (response.data.modifiedCount) {
+        staffModalRef.current.close();
+        Swal.fire({ title: "Staff Assigned" });
+      }
+      refetchIssues();
+    } catch (error) {
+      console.log(error);
+      Swal.fire({
+        icon: "error",
+        tilte: "Ooops...",
+        text: "Something went wrong!",
+      });
+    } finally {
+      setAssigning(false);
+      staffModalRef.current.close();
+    }
   };
 
   return (
@@ -112,13 +160,14 @@ const ManageIssues = () => {
                         </span>
                       </td>
                       <td
-                        className={`font-semibold ${issue?.priority?.startsWith("normal") ? "text-gray-500" : "text-red-500"}`}
+                        className={`font-semibold ${issue?.priority?.startsWith("normal") ? "text-secondary" : "text-red-500"}`}
                       >
-                        {issue.priority.split(' ')[0].toUpperCase()}
+                        {issue.priority.split(" ")[0].toUpperCase()}
                       </td>
                       <td>{new Date(issue.created_at).toDateString()}</td>
                       <td>
-                        {issue.staffEmail ? issue.staffEmail
+                        {issue.staffEmail
+                          ? issue.staffEmail
                           : "Not Assigned Yet"}
                       </td>
 
@@ -132,13 +181,14 @@ const ManageIssues = () => {
                             <IoEye className="text-lg md:text-2xl" />
                           </button>
                           <button
-                            className="tooltip cursor-pointer"
+                            onClick={() => openStaffModal(issue)}
+                            className="tooltip cursor-pointer text-accent"
                             data-tip="Assign Worker"
                           >
                             <GrUserWorker className="text-lg md:text-2xl" />
                           </button>
                           <button
-                            className="tooltip cursor-pointer"
+                            className="tooltip cursor-pointer hover:text-red-500"
                             data-tip="Delete"
                           >
                             <RiDeleteBin6Line className="text-lg md:text-2xl" />
@@ -179,7 +229,9 @@ const ManageIssues = () => {
                       ? selectedIssue?.status?.toUpperCase()
                       : "-"}
                   </span>
-                  <span className={`px-2 rounded-xl text-sm text-white ${selectedIssue?.priority?.startsWith('normal') ? 'bg-gray-500' : 'bg-red-500'}`}>
+                  <span
+                    className={`px-2 rounded-xl text-sm text-white ${selectedIssue?.priority?.startsWith("normal") ? "bg-gray-500" : "bg-red-500"}`}
+                  >
                     {selectedIssue?.priority
                       ? selectedIssue?.priority?.toUpperCase()
                       : "-"}
@@ -207,9 +259,7 @@ const ManageIssues = () => {
                   ) : (
                     <div className="flex items-center gap-4">
                       <img
-                        src={
-                          reporterInfo?.photoURL || defaultAvatar
-                        }
+                        src={reporterInfo?.photoURL || defaultAvatar}
                         className="w-14 h-14 object-cover rounded-full"
                         referrerPolicy="no-referrer"
                         alt=""
@@ -240,14 +290,85 @@ const ManageIssues = () => {
                         alt=""
                       />
                       <div>
-                        <p className="font-bold">{staffInfo?.displayName || '---'}</p>
-                        <p className="text-muted">{staffInfo?.email || '---'}</p>
+                        <p className="font-bold">
+                          {staffInfo?.displayName || "---"}
+                        </p>
+                        <p className="text-muted">
+                          {staffInfo?.email || "---"}
+                        </p>
                       </div>
-                      <p>Phone : {staffInfo?.phone || '---'}</p>
+                      <p>Phone : {staffInfo?.phone || "---"}</p>
                     </div>
                   )}
                 </div>
               </div>
+              <div className="modal-action">
+                <form method="dialog">
+                  {/* if there is a button in form, it will close the modal */}
+                  <button className="btn">Close</button>
+                </form>
+              </div>
+            </div>
+          </dialog>
+
+          {/* staff modal ro assign staff to an issue */}
+          <dialog
+            ref={staffModalRef}
+            className="modal modal-bottom sm:modal-middle"
+          >
+            <div className="modal-box">
+              <h3 className="font-semibold text-lg">
+                Showing staffs ({staffs.length})
+              </h3>
+              <div className="overflow-x-auto">
+                <table className="table">
+                  {/* head */}
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Photo</th>
+                      <th>Email</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {staffLoading ? (
+                      <tr>
+                        <td>
+                          <LoaderSpinner />{" "}
+                        </td>
+                      </tr>
+                    ) : (
+                      staffs.map((staff) => {
+                        return (
+                          <tr key={staff._id}>
+                            <td>{staff.displayName}</td>
+                            <td>
+                              <img
+                                src={staff.photoURL}
+                                className="w-12 h-12 rounded-xl object-cover"
+                                referrerPolicy="no-referrer"
+                                alt=""
+                              />
+                            </td>
+                            <td>{staff.email}</td>
+                            <td>
+                              <button
+                                onClick={() => assignStaff(staff)}
+                                className={`btn btn-sm bg-primary text-white cursor-pointer ${assigning && 'cursor-not-allowed'}`}
+                                disabled={assigning}
+                              >
+                               Assign
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
               <div className="modal-action">
                 <form method="dialog">
                   {/* if there is a button in form, it will close the modal */}

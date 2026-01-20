@@ -240,13 +240,19 @@ const ManageProfile = () => {
                 Member Since:{" "}
               </span>
               <span className="font-semibold text-sm lg:text-base">
-                {new Date(thisUser?.created_at).toDateString()}
+                {
+                  isLoading ? <LoaderSpinner /> :
+                  new Date(thisUser?.created_at).toDateString()
+                }
               </span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-muted text-sm lg:text-base">Role </span>
               <button className="btn btn-xs rounded-xl">
-                {thisUser?.role?.toUpperCase()}
+                {
+                  isLoading ? <LoaderSpinner /> :
+                  thisUser?.role?.toUpperCase()
+                }
               </button>
             </div>
           </div>

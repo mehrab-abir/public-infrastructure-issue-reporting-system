@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const cors = require('cors');
 const port = process.env.PORT || 3000;
 const uri = `${process.env.URI}`;
@@ -101,6 +101,20 @@ async function run() {
             res.send(staffs);
         })
 
+        //assign a staff to an issue
+        app.patch("/assign-staff",async (req,res)=>{
+            const {issueId, staffEmail, staffName} = req.body;
+
+            const issueAssigned = await issueCollection.updateOne({_id : new ObjectId(issueId)},{
+                $set : {
+                    staffEmail : staffEmail,
+                    status : `Staff Assigned`
+                }
+            })
+
+            res.send(issueAssigned);
+        })
+
         //get all issues
         app.get("/all-issues", verifyToken, verifyAdmin, async (req, res) => {
             const issues = await issueCollection.find().toArray();
@@ -195,10 +209,6 @@ async function run() {
             const { email } = req.params;
             const { role } = req.query;
 
-            const reportedIssue = await issueCollection.findOne({
-                "reporter.email": email
-            });
-
             if (displayName) {
                 if (role === "citizen" || role === "admin") {
                     const updateName = await usersCollection.updateOne({ email: email }, {
@@ -206,17 +216,6 @@ async function run() {
                             displayName: displayName
                         }
                     });
-
-                    //update the name in issue collection if this user has reported issues
-                    if(reportedIssue){
-                        await issueCollection.updateMany({
-                            "reporter.email" : email
-                        },{
-                            $set : {
-                                "reporter.name" : displayName
-                            }
-                        })
-                    }
 
                     if(updateName.modifiedCount){
                         res.send({
@@ -258,17 +257,6 @@ async function run() {
                             photoURL: photoURL
                         }
                     });
-
-                    //update the photoURL in issue collection if this user has reported issues
-                    if (reportedIssue) {
-                        await issueCollection.updateMany({
-                            "reporter.email": email
-                        }, {
-                            $set: {
-                                "reporter.photoURL": photoURL
-                            }
-                        })
-                    }
                     
                     if(updatePhoto.modifiedCount){
                         res.send({

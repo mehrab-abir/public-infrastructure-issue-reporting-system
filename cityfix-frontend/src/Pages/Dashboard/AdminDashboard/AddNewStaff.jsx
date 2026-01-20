@@ -50,7 +50,7 @@ const AddNewStaff = () => {
           title: "Staff Account Created!",
           icon: "success",
         });
-        navigate("/dashboard/manage-staff");
+        navigate("/dashboard/manage-staffs");
       }
     } catch (error) {
       console.log(error);
