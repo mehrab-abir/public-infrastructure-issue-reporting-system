@@ -24,8 +24,14 @@ const ManageIssues = () => {
   const staffModalRef = useRef(null);
   const [assigning, setAssigning] = useState(false);
 
+  const [deleting, setDeleting] = useState(false);
+
   // fetching all issues
-  const { data: all_issues = [], isLoading, refetch : refetchIssues } = useQuery({
+  const {
+    data: all_issues = [],
+    isLoading,
+    refetch: refetchIssues,
+  } = useQuery({
     queryKey: ["all-issues"],
     queryFn: async () => {
       const response = await axios.get("/all-issues");
@@ -82,7 +88,7 @@ const ManageIssues = () => {
     const assignStaffInfo = {
       issueId: selectedIssue._id,
       staffEmail: staff.email,
-      staffName : staff.displayName
+      staffName: staff.displayName,
     };
 
     try {
@@ -104,6 +110,46 @@ const ManageIssues = () => {
       setAssigning(false);
       staffModalRef.current.close();
     }
+  };
+
+  //delete an issue
+  const deleteIssue = (issueId) => {
+    setDeleting(true);
+
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#2563EB",
+      cancelButtonColor: "#ff2020",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await axios.delete(`/admin/delete-issue/${issueId}`);
+          if (response.data.deletedCount) {
+            Swal.fire({
+              title: "Deleted!",
+              text: "Issue has been deleted.",
+              icon: "success",
+            });
+          }
+
+          refetchIssues();
+
+        } catch (err) {
+          console.log(err);
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: `${err.message}`,
+          });
+        } finally {
+          setDeleting(false);
+        }
+      }
+    });
   };
 
   return (
@@ -155,8 +201,22 @@ const ManageIssues = () => {
                       </td>
                       <td>{issue.category}</td>
                       <td>
-                        <span className="bg-status-pending px-1 text-white rounded-xl text-xs">
-                          {issue.status.toUpperCase()}
+                        <span
+                          className={`px-1 text-white rounded-xl text-xs ${
+                            issue.status.toLowerCase() === "pending"
+                              ? "bg-yellow-500"
+                              : issue.status.toLowerCase() === "staff assigned"
+                                ? "bg-purple-500"
+                                : issue.status.toLowerCase() === "in progress"
+                                  ? "bg-blue-500"
+                                  : issue.status.toLowerCase() === "resolved"
+                                    ? "bg-emerald-500"
+                                    : issue.status.toLowerCase() === "closed"
+                                      ? "bg-slate-500"
+                                      : "bg-red-500"
+                          }`}
+                        >
+                          {issue.status}
                         </span>
                       </td>
                       <td
@@ -182,14 +242,17 @@ const ManageIssues = () => {
                           </button>
                           <button
                             onClick={() => openStaffModal(issue)}
-                            className="tooltip cursor-pointer text-accent"
-                            data-tip="Assign Worker"
+                            className={` ${issue.status.toLowerCase() !== "pending" ? "cursor-not-allowed text-gray-300" : "tooltip cursor-pointer text-accent"}`}
+                            data-tip="Assign worker"
+                            disabled={issue.status.toLowerCase() !== "pending"}
                           >
                             <GrUserWorker className="text-lg md:text-2xl" />
                           </button>
                           <button
                             className="tooltip cursor-pointer hover:text-red-500"
                             data-tip="Delete"
+                            onClick={() => deleteIssue(issue._id)}
+                            disabled={deleting}
                           >
                             <RiDeleteBin6Line className="text-lg md:text-2xl" />
                           </button>
@@ -355,10 +418,10 @@ const ManageIssues = () => {
                             <td>
                               <button
                                 onClick={() => assignStaff(staff)}
-                                className={`btn btn-sm bg-primary text-white cursor-pointer ${assigning && 'cursor-not-allowed'}`}
+                                className={`btn btn-sm bg-primary text-white cursor-pointer ${assigning && "cursor-not-allowed"}`}
                                 disabled={assigning}
                               >
-                               Assign
+                                Assign
                               </button>
                             </td>
                           </tr>

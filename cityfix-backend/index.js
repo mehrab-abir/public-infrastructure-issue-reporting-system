@@ -87,6 +87,13 @@ async function run() {
             res.send(issues);
         })
 
+        //get all assigned issue --for staff
+        app.get("/staff/assigned-issues/:email",async (req,res)=>{
+            const {email} = req.params;
+            const myAssignedIssues = await issueCollection.find({staffEmail : email}).sort({created_at: -1}).toArray();
+            res.send(myAssignedIssues);
+        })
+
 
         //apis for admin
         //get all users
@@ -95,13 +102,13 @@ async function run() {
             res.send(users);
         })
 
-        //get all staffs
+        //get all staffs --for admin
         app.get("/all-staffs",async (req,res)=>{
             const staffs = await staffCollection.find().toArray();
             res.send(staffs);
         })
 
-        //assign a staff to an issue
+        //assign a staff to an issue --for admin
         app.patch("/assign-staff",async (req,res)=>{
             const {issueId, staffEmail, staffName} = req.body;
 
@@ -115,10 +122,17 @@ async function run() {
             res.send(issueAssigned);
         })
 
-        //get all issues
+        //get all issues --for admin
         app.get("/all-issues", verifyToken, verifyAdmin, async (req, res) => {
             const issues = await issueCollection.find().toArray();
             res.send(issues);
+        })
+
+        //delete an issue - as admin
+        app.delete("/admin/delete-issue/:issueId",async (req,res)=>{
+            const {issueId} = req.params;
+            const deletedIssue = await issueCollection.deleteOne({_id : new ObjectId(issueId)});
+            res.send(deletedIssue);
         })
 
         //get reporter and staff info of an issue
