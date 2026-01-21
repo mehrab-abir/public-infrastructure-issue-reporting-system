@@ -10,6 +10,8 @@ const All_Issues = () => {
   const axios = useAxiosSecured();
 
   const [category, setCategory] = useState("");
+
+  //for filtering
   const [status, setStatus] = useState("");
   const [priority, setPriority] = useState("");
   const [searchText, setSearchText] = useState('');

@@ -26,15 +26,22 @@ const ManageIssues = () => {
 
   const [deleting, setDeleting] = useState(false);
 
+  const [searchText, setSearchText] = useState("");
+
+  //for filtering
+  const [category, setCategory] = useState("");
+  const [status, setStatus] = useState("");
+  const [priority, setPriority] = useState("");
+
   // fetching all issues
   const {
     data: all_issues = [],
     isLoading,
     refetch: refetchIssues,
   } = useQuery({
-    queryKey: ["all-issues"],
+    queryKey: ["all-issues", searchText, category, status, priority],
     queryFn: async () => {
-      const response = await axios.get("/all-issues");
+      const response = await axios.get(`/all-issues?searchText=${searchText}&category=${category}&status=${status}&priority=${priority}`);
       return response.data;
     },
   });
@@ -87,7 +94,7 @@ const ManageIssues = () => {
 
     const assignStaffInfo = {
       issueId: selectedIssue._id,
-      trackingId : selectedIssue.trackingId,
+      trackingId: selectedIssue.trackingId,
       staffEmail: staff.email,
       staffName: staff.displayName,
     };
@@ -137,7 +144,6 @@ const ManageIssues = () => {
           }
 
           refetchIssues();
-
         } catch (err) {
           console.log(err);
           Swal.fire({
@@ -161,7 +167,56 @@ const ManageIssues = () => {
             Manage All Reported Issues
           </p>
         </div>
-        <p>Showing issues: {all_issues.length}</p>
+        <p className="mt-3 md:mt-0">Showing issues: {all_issues.length}</p>
+      </div>
+
+      {/* search by title or assigned staff email */}
+      <input
+        type="text"
+        className="input outline-none w-full mt-6"
+        placeholder="Search by title or assigned staff email"
+        onChange={(e) => setSearchText(e.target.value)}
+      />
+
+      {/* filter issues */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center mt-4">
+        <select
+          className="select focus:outline-2 focus:outline-blue-600 cursor-pointer w-full mt-2 md:mt-0 rounded-lg"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+        >
+          <option value="">All Categories</option>
+          <option value="Street Light">Street Light</option>
+          <option value="Traffic Light">Traffic Light</option>
+          <option value="Pothole">Pothole</option>
+          <option value="Garbage">Garbage</option>
+          <option value="Water Leakage">Water Leakage</option>
+          <option value="Sidewalk">Sidewalk</option>
+          <option value="Drainage">Drainage</option>
+          <option value="Road Block">Road Block</option>
+          <option value="Other">Other</option>
+        </select>
+        <select
+          className="select focus:outline-2 focus:outline-blue-600 cursor-pointer w-full mt-2 md:mt-0 rounded-lg"
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+        >
+          <option value="">All Statuses</option>
+          <option value="Pending">Pending</option>
+          <option value="Staff Assigned">Staff Assigned</option>
+          <option value="Working">Working</option>
+          <option value="Resolved">Resolved</option>
+          <option value="Closed">Closed</option>
+        </select>
+        <select
+          className="select focus:outline-2 focus:outline-blue-600 cursor-pointer w-full mt-2 md:mt-0 rounded-lg"
+          value={priority}
+          onChange={(e) => setPriority(e.target.value)}
+        >
+          <option value="">All Priorities</option>
+          <option value="High">High Priority</option>
+          <option value="Normal">Normal Priority</option>
+        </select>
       </div>
 
       <div className="mt-5">

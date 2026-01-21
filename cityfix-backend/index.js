@@ -232,7 +232,8 @@ async function run() {
                 query.$or = [
                     {issueTitle : {$regex : searchText, $options : 'i'}},
                     {category : {$regex : searchText, $options : 'i'}},
-                    {location : {$regex : searchText, $options : 'i'}}
+                    {location : {$regex : searchText, $options : 'i'}},
+                    {staffEmail : {$regex : searchText, $options : 'i'}}
                 ]
             }
 
