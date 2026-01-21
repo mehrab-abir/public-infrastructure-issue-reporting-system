@@ -16,7 +16,7 @@ const ManageIssues = () => {
   const axios = useAxiosSecured();
 
   const [selectedIssue, setSelectedIssue] = useState(null);
-  const [reporterInfo, setRoporterInfo] = useState(null);
+  const [reporterInfo, setReporterInfo] = useState(null);
   const [staffInfo, setStaffInfo] = useState(null);
   const [loadingPeople, setLoadingPeople] = useState(false);
   const detailsModalRef = useRef(null);
@@ -61,7 +61,7 @@ const ManageIssues = () => {
           `/issue-reporter?reporterEmail=${selectedIssue?.reporterEmail}&staffEmail=${selectedIssue?.staffEmail}`,
         );
 
-        setRoporterInfo(response.data.reporter);
+        setReporterInfo(response.data.reporter);
         setStaffInfo(response.data.staff);
       } finally {
         setLoadingPeople(false);
@@ -87,6 +87,7 @@ const ManageIssues = () => {
 
     const assignStaffInfo = {
       issueId: selectedIssue._id,
+      trackingId : selectedIssue.trackingId,
       staffEmail: staff.email,
       staffName: staff.displayName,
     };
@@ -201,7 +202,7 @@ const ManageIssues = () => {
                       <td>{issue.category}</td>
                       <td>
                         <span
-                          className={`px-1 w-fit text-white rounded-xl text-xs ${
+                          className={`px-2 w-fit text-white rounded-xl text-xs ${
                             issue.status.toLowerCase() === "pending"
                               ? "bg-yellow-500"
                               : issue.status.toLowerCase() === "staff assigned"

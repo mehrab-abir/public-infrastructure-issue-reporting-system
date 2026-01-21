@@ -1,12 +1,25 @@
 import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import Container from "../Components/Container";
 import { IoIosSearch, IoMdEye } from "react-icons/io";
 import IssueCard from "../Components/IssueCard";
+import useAxiosSecured from "../Hooks/Axios/useAxiosSecured";
+import LoaderSpinner from "../Components/LoaderSpinner";
 
 const All_Issues = () => {
+  const axios = useAxiosSecured();
+
   const [categories, setCategories] = useState("");
   const [status, setStatus] = useState("");
   const [priority, setPriority] = useState("");
+
+  const {data : all_issues = [], isLoading} = useQuery({
+    queryKey : ["all-issues"],
+    queryFn : async ()=>{
+      const response = await axios.get("/all-issues");
+      return response.data;
+    }
+  })
 
   return (
     <div className="bg-base pt-36 pb-24">
@@ -31,7 +44,7 @@ const All_Issues = () => {
           <IoIosSearch className="absolute top-3 left-3 text-muted text-lg" />
         </div>
 
-        <p className="text-sm text-muted my-4">Showing 10 of 10 Issues</p>
+        <p className="text-sm text-muted my-4">Showing {all_issues.length} Issues</p>
 
         {/* filter issues */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
@@ -74,7 +87,12 @@ const All_Issues = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-6 mt-10">
-          {[...Array(10)].map((issue,index) => {
+          {
+            isLoading ? <LoaderSpinner />
+            :
+            
+          
+          all_issues.map((issue,index) => {
             return <IssueCard key={index} issue={issue}></IssueCard>;
           })}
         </div>

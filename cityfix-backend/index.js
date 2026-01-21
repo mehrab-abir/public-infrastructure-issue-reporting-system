@@ -40,6 +40,15 @@ const verifyToken = async (req, res, next) => {
     }
 }
 
+//generate tracking id
+function generateTrackingId() {
+    const prefix = "TRK-CTFX";
+    const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+    const timestamp = Date.now().toString().slice(-6);
+
+    return `${prefix}-${random}-${timestamp}`;
+}
+
 const client = new MongoClient(uri, {
     serverApi: {
         version: ServerApiVersion.v1,
@@ -60,6 +69,7 @@ async function run() {
         const usersCollection = db.collection("users");
         const issueCollection = db.collection("issues");
         const staffCollection = db.collection("staffs");
+        const trackingCollection = db.collection("trackingLogs");
 
         //middleware to verify role - admin
         const verifyAdmin = async (req, res, next) => {
@@ -72,11 +82,35 @@ async function run() {
             next();
         }
 
+        //log tracking
+        const logTracking = async (trackingId,issueId,issueStatus,updatedBy)=>{
+            const log = {
+                trackingId,
+                issueStatus,
+                issueId,
+                updatedBy,
+                updated_at : new Date()
+            }
+
+            const result = await trackingCollection.insertOne(log);
+            return result;
+        }
+
         // apis for users/citizens 
         //post an issue
         app.post("/issues", async (req, res) => {
             const newIssue = req.body;
+            
+            const trackingId = generateTrackingId();
+
+            newIssue.trackingId = trackingId;
             const afterPost = await issueCollection.insertOne(newIssue);
+
+            const issueId = afterPost.insertedId;
+            const reporter = newIssue.reporterEmail.split('@')[0];
+
+            logTracking(trackingId,issueId,"Issue Reported", reporter); //1st tracking log
+
             res.send(afterPost);
         })
 
@@ -103,53 +137,45 @@ async function run() {
             res.send(myAssignedIssues);
         })
         
-        //update issue status by staff - accept/reject, in-progress, working, resolved, closed etc.
+        //update issue status by staff - accept/reject, in-progress, working, resolved, closed etc. -- 3rd, 4th, 5th... tracking log here
         app.patch("/staff/update-issue-status",async (req,res)=>{
-            const {staffResponse, issueId} = req.query;
+            const {staffResponse,staffEmail, issueId, trackingId} = req.body;
 
-            let thisIssue = {};
+            let issueStatus = '';
 
             if(staffResponse === "accept"){
-                thisIssue = await issueCollection.updateOne({ _id: new ObjectId(issueId)},{
-                    $set : {
-                        status : "In Progress"
-                    }
-                });
-                return res.send(thisIssue);
+                issueStatus = "In Progress";
             }
-            else if(staffResponse === "Working"){
-                thisIssue = await issueCollection.updateOne({ _id: new ObjectId(issueId) }, {
-                    $set: {
-                        status: "Working"
-                    }
-                });
-                return res.send(thisIssue);
+            else if (staffResponse === "Working"){
+                issueStatus = "Working";
             }
             else if(staffResponse === "Resolved"){
-                thisIssue = await issueCollection.updateOne({ _id: new ObjectId(issueId) }, {
-                    $set: {
-                        status: "Resolved"
-                    }
-                });
-                return res.send(thisIssue);
+                issueStatus = "Resolved";
             }
-            else if (staffResponse === "Closed") {
-                thisIssue = await issueCollection.updateOne({ _id: new ObjectId(issueId) }, {
-                    $set: {
-                        status: "Closed"
-                    }
-                });
-                return res.send(thisIssue);
+            else if(staffResponse === "Closed"){
+                issueStatus = "Closed";
             }
             else{
-                thisIssue = await issueCollection.updateOne({ _id: new ObjectId(issueId) }, {
-                    $set: {
-                        staffEmail : '',
-                        status: "Pending"
-                    }
-                });
-                return res.send(thisIssue);
+                issueStatus = "Pending";
+                staffEmail = '';
             }
+
+            const thisIssue = await issueCollection.updateOne({ _id: new ObjectId(issueId) }, {
+                $set: {
+                    status: issueStatus,
+                    staffEmail : staffEmail
+                }
+            });
+
+            //logging the tracking info if only the issueStatus updates to next stage, such as "In Progress", "Working", or "Resolved" etc.
+
+            /* if the staff rejects the issue, issue status will go back to "Pending", but it will not be logged into tracking*/
+            if(issueStatus !== "Pending"){
+                logTracking(trackingId, issueId, issueStatus, "Staff");
+                //3rd, 4th, 5th...tracking log
+            }
+
+            res.send(thisIssue);
         })
 
 
@@ -168,22 +194,33 @@ async function run() {
 
         //assign a staff to an issue --for admin
         app.patch("/assign-staff",async (req,res)=>{
-            const {issueId, staffEmail, staffName} = req.body;
+            const {issueId, trackingId, staffEmail, staffName} = req.body;
+
+            const issueStatus = `Staff Assigned`;
 
             const issueAssigned = await issueCollection.updateOne({_id : new ObjectId(issueId)},{
                 $set : {
                     staffEmail : staffEmail,
-                    status : `Staff Assigned`
+                    status: issueStatus
                 }
             })
+
+            logTracking(trackingId, issueId, `${issueStatus} - ${staffName}`, "Admin"); //2nd tracking log
 
             res.send(issueAssigned);
         })
 
-        //get all issues --for admin
-        app.get("/all-issues", verifyToken, verifyAdmin, async (req, res) => {
+        //get all issues
+        app.get("/all-issues", verifyToken, async (req, res) => {
             const issues = await issueCollection.find().toArray();
             res.send(issues);
+        })
+
+        //get one issue details
+        app.get("/issue/details/:issueId",async (req,res)=>{
+            const {issueId} = req.params;
+            const thisIssue = await issueCollection.findOne({_id : new ObjectId(issueId)});
+            res.send(thisIssue);
         })
 
         //delete an issue - as admin

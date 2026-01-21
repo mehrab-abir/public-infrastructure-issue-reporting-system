@@ -53,7 +53,6 @@ const AssignedIssues = () => {
         );
         setRoporterInfo(response.data.reporter);
         setStaffInfo(response.data.staff);
-
       } finally {
         setLoadingPeople(false);
       }
@@ -67,12 +66,20 @@ const AssignedIssues = () => {
     detailsModalRef.current.showModal();
   };
 
-  const updateIssueStatus = async (issueId, staffResponse) => {
+  const updateIssueStatus = async (issue, staffResponse) => {
     setUpdating(true);
 
     try {
+      const updateInfo = {
+        issueId: issue._id,
+        staffResponse: staffResponse,
+        staffEmail: issue.staffEmail,
+        trackingId : issue.trackingId
+      };
+
       const response = await axios.patch(
-        `/staff/update-issue-status?issueId=${issueId}&staffResponse=${staffResponse}`,
+        `/staff/update-issue-status`,
+        updateInfo,
       );
 
       if (response.data.modifiedCount) {
@@ -184,9 +191,7 @@ const AssignedIssues = () => {
                             <button
                               className="cursor-pointer tooltip"
                               data-tip="accept"
-                              onClick={() =>
-                                updateIssueStatus(issue._id, "accept")
-                              }
+                              onClick={() => updateIssueStatus(issue, "accept")}
                               disabled={updating}
                             >
                               <IoMdCheckmark className="text-xl" />
@@ -194,9 +199,7 @@ const AssignedIssues = () => {
                             <button
                               className="cursor-pointer tooltip"
                               data-tip="Reject"
-                              onClick={() =>
-                                updateIssueStatus(issue._id, "reject")
-                              }
+                              onClick={() => updateIssueStatus(issue, "reject")}
                               disabled={updating}
                             >
                               <LiaTimesSolid className="text-xl" />
@@ -214,10 +217,16 @@ const AssignedIssues = () => {
                             <option>Closed</option>
                           </select>
                           <button
-                            className={`btn btn-sm bg-primary text-white cursor-pointer ${issue.status === "Staff Assigned" && "hidden"}`}
-                            disabled={updating}
+                            className={`btn btn-sm bg-primary text-white ${
+                              issue.status === "Staff Assigned"
+                                ? "hidden"
+                                : issue.status === "Closed"
+                                  ? "cursor-not-allowed"
+                                  : "cursor-pointer"
+                            }`}
+                            disabled={updating || issue.status === "Closed"}
                             onClick={() =>
-                              updateIssueStatus(issue._id, currentStatus)
+                              updateIssueStatus(issue, currentStatus)
                             }
                           >
                             Save

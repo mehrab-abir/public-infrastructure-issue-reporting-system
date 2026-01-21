@@ -44,7 +44,7 @@ const ReportIssue = () => {
         photoURL : photoURL,
         reporterEmail : user?.email,
         status : "Pending",
-        priority : "normal priority",
+        priority : "Normal",
         created_at : new Date(),
         staffEmail : '',
         upvote : 0
@@ -128,8 +128,9 @@ const ReportIssue = () => {
                 <option value="Garbage">Garbage</option>
                 <option value="Water Leakage">Water Leakage</option>
                 <option value="Traffic Light">Traffic Light</option>
-                <option value="Footpath">Footpath</option>
+                <option value="Sidewalk">Sidewalk</option>
                 <option value="Drainage">Drainage</option>
+                <option value="Road Block">Road Block</option>
                 <option value="Other">Other</option>
               </select>
               {errors.category && <i className="text-sm text-red-400">{errors.category.message}</i>}

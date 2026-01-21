@@ -40,7 +40,7 @@ const router = createBrowserRouter([
         Component: All_Issues,
       },
       {
-        path : '/issue-details',
+        path : '/issue-details/:issueId',
         element : <PrivateRoute>
           <IssueDetails></IssueDetails>
         </PrivateRoute>

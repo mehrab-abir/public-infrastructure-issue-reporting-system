@@ -132,7 +132,7 @@ const MyIssues = () => {
           <div className="my-5 md:my-0">
             <Link
               to="/report-issuse"
-              className="text-white btn btn-sm md:btn-md bg-primary"
+              className="text-white btn btn-sm md:btn-md bg-primary rounded-lg"
             >
               <FiPlus className="text-xl" />
               Report New Issue
