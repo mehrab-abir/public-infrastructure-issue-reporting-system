@@ -5,7 +5,9 @@ import { useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecured from "../Hooks/Axios/useAxiosSecured";
 import LoaderSpinner from "../Components/LoaderSpinner";
+import { AiOutlineFieldTime } from "react-icons/ai";
 import { useState, useEffect } from "react";
+import { WiTime4 } from "react-icons/wi";
 
 const IssueDetails = () => {
   const { issueId } = useParams();
@@ -19,6 +21,16 @@ const IssueDetails = () => {
     queryKey: ["issue", issueId],
     queryFn: async () => {
       const response = await axios.get(`/issue/details/${issueId}`);
+      return response.data;
+    },
+  });
+
+  //tracking log of this issue
+  const { data: timeline = [], isLoading: timelineLoading } = useQuery({
+    queryKey: ["timeline", thisIssue?._id],
+    queryFn: async () => {
+      const response = await axios.get(`/timeline/${thisIssue?._id}`);
+      console.log(response.data);
       return response.data;
     },
   });
@@ -194,10 +206,40 @@ const IssueDetails = () => {
         </div>
 
         {/* timeline area */}
-        {isLoading ? (
+        {timelineLoading ? (
           <LoaderSpinner />
         ) : (
-          <div className="mt-6 bg-surface p-4 border border-base rounded-xl"></div>
+          <div className="mt-6 bg-surface p-4 border border-base rounded-xl flex flex-col items-start">
+            <h3 className="text-xl lg:text-2xl flex items-center gap-2 font-semibold">
+              <AiOutlineFieldTime className="text-2xl" />
+              Issue Timeline
+            </h3>
+
+            <ul className="timeline timeline-vertical timeline-compact mt-4 w-full justify-start items-start">
+              {timeline.map((log,index) => (
+                <li key={log._id}>
+                  <div className="timeline-middle flex items-start">
+                    <div className="border-2 border-blue-500 p-1 rounded-full">
+                      <WiTime4 className="text-2xl text-blue-500" />
+                    </div>
+                  </div>
+
+                  <div className="timeline-end timeline-box p-3">
+                    <h3 className="text-lg font-bold">{log.issueStatus}</h3>
+                    <p className="text-base">
+                      <span className="font-semibold">By:</span> {log.updatedBy}
+                    </p>
+                    <p className="text-sm md:text-base text-muted">
+                      <span className="font-semibold">Updated at:</span>{" "}
+                      {new Date(log.updated_at).toLocaleString()}
+                    </p>
+                  </div>
+                  {/* VERTICAL LINE */}
+                  {index !== timeline.length - 1 && <hr />}
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
       </Container>
     </div>

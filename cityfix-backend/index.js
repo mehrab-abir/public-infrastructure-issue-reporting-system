@@ -106,7 +106,7 @@ async function run() {
             newIssue.trackingId = trackingId;
             const afterPost = await issueCollection.insertOne(newIssue);
 
-            const issueId = afterPost.insertedId;
+            const issueId = afterPost.insertedId.toString();
             const reporter = newIssue.reporterEmail.split('@')[0];
 
             logTracking(trackingId,issueId,"Issue Reported", reporter); //1st tracking log
@@ -221,6 +221,13 @@ async function run() {
             const {issueId} = req.params;
             const thisIssue = await issueCollection.findOne({_id : new ObjectId(issueId)});
             res.send(thisIssue);
+        })
+
+        //get timeline of one issue
+        app.get('/timeline/:issueId',async (req,res)=>{
+            const {issueId} = req.params;
+            const timeline = await trackingCollection.find({issueId : issueId}).sort({updated_at : -1}).toArray();
+            res.send(timeline);
         })
 
         //delete an issue - as admin
