@@ -8,6 +8,7 @@ const uri = `${process.env.URI}`;
 const admin = require("firebase-admin");
 
 const serviceAccount = require("./cityfix-firebase-service-key.json");
+const { configDotenv } = require('dotenv');
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
@@ -19,7 +20,7 @@ app.use(cors());
 //middleware, --verify token
 const verifyToken = async (req, res, next) => {
     if (!req.headers.authorization) {
-        return res.status(401).sned({ message: "unauthorized access" });
+        return res.status(401).send({ message: "unauthorized access" });
     }
 
     const token = req.headers.authorization.split(' ')[1];
@@ -104,6 +105,7 @@ async function run() {
             const trackingId = generateTrackingId();
 
             newIssue.trackingId = trackingId;
+ 
             const afterPost = await issueCollection.insertOne(newIssue);
 
             const issueId = afterPost.insertedId.toString();
@@ -211,8 +213,33 @@ async function run() {
         })
 
         //get all issues
-        app.get("/all-issues", verifyToken, async (req, res) => {
-            const issues = await issueCollection.find().toArray();
+        app.get("/all-issues", async (req, res) => {
+            const {category, status, priority, searchText} = req.query;
+            
+            const query = {};
+
+            if(category){
+                query.category = category;
+            }
+            if(status){
+                query.status = status;
+            }
+            if(priority){
+                query.priority = priority;
+            }
+
+            if(searchText){
+                query.$or = [
+                    {issueTitle : {$regex : searchText, $options : 'i'}},
+                    {category : {$regex : searchText, $options : 'i'}},
+                    {location : {$regex : searchText, $options : 'i'}}
+                ]
+            }
+
+            const issues = await issueCollection.find(query).toArray();
+
+            console.log(issues);
+
             res.send(issues);
         })
 

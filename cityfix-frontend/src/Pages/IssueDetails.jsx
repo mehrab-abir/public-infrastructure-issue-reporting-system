@@ -8,6 +8,7 @@ import LoaderSpinner from "../Components/LoaderSpinner";
 import { AiOutlineFieldTime } from "react-icons/ai";
 import { useState, useEffect } from "react";
 import { WiTime4 } from "react-icons/wi";
+import defaultAvatar from '../assets/defaultAvatar.png';
 
 const IssueDetails = () => {
   const { issueId } = useParams();
@@ -30,7 +31,6 @@ const IssueDetails = () => {
     queryKey: ["timeline", thisIssue?._id],
     queryFn: async () => {
       const response = await axios.get(`/timeline/${thisIssue?._id}`);
-      console.log(response.data);
       return response.data;
     },
   });
@@ -69,7 +69,7 @@ const IssueDetails = () => {
               {/* left side  */}
               <div className="col-span-1 md:col-span-2 bg-surface p-4 space-y-6 rounded-xl">
                 <div className="flex items-center gap-4">
-                  <span className="px-2 text-gray-600 bg-surface-alt rounded-xl">
+                  <span className="px-2 text-white bg-gray-500 rounded-xl">
                     {thisIssue.category}
                   </span>
                   <span
@@ -92,7 +92,7 @@ const IssueDetails = () => {
                     {thisIssue.status}
                   </span>
                   <span
-                    className={`text-white rounded-xl px-2 text-sm absolute top-2 right-2 ${thisIssue?.priority?.toLowerCase().startsWith("normal") ? "bg-gray-500" : "bg-red-500"}`}
+                    className={`text-white rounded-xl px-2 text-sm ${thisIssue?.priority?.toLowerCase().startsWith("normal") ? "bg-indigo-500" : "bg-red-500"}`}
                   >
                     {thisIssue.priority} Priority
                   </span>
@@ -163,18 +163,24 @@ const IssueDetails = () => {
                   ) : (
                     <div className="flex flex-col gap-4 mb-2">
                       <img
-                        src={staffInfo?.photoURL}
+                        src={staffInfo?.photoURL || defaultAvatar}
                         className="w-14 h-14 object-cover rounded-full"
                         referrerPolicy="no-referrer"
                         alt=""
                       />
                       <div>
-                        <p className="font-bold">{staffInfo?.displayName}</p>
-                        <p className="text-muted">{staffInfo?.email}</p>
+                        <p className="font-bold">
+                          {staffInfo?.displayName
+                            ? staffInfo?.displayName
+                            : "Not Assigned Yet"}
+                        </p>
+                        <p className="text-muted">
+                          {staffInfo?.email ? staffInfo?.email : "-"}
+                        </p>
                       </div>
                       <p>
                         <span className="font-semibold">Phone:</span>{" "}
-                        {staffInfo?.phone}
+                        {staffInfo?.phone ? staffInfo?.phone : "-"}
                       </p>
                     </div>
                   )}
@@ -191,11 +197,11 @@ const IssueDetails = () => {
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm md:text-base text-red-500">
-                        --Last Updated--:
+                      <span className="text-sm md:text-base">
+                        Last Updated:
                       </span>
                       <span className="text-muted text-sm md:text-base">
-                        {new Date().toDateString()}
+                        {new Date(timeline[0]?.updated_at).toLocaleString()}
                       </span>
                     </div>
                   </div>
@@ -216,7 +222,7 @@ const IssueDetails = () => {
             </h3>
 
             <ul className="timeline timeline-vertical timeline-compact mt-4 w-full justify-start items-start">
-              {timeline.map((log,index) => (
+              {timeline.map((log, index) => (
                 <li key={log._id}>
                   <div className="timeline-middle flex items-start">
                     <div className="border-2 border-blue-500 p-1 rounded-full">
@@ -225,16 +231,40 @@ const IssueDetails = () => {
                   </div>
 
                   <div className="timeline-end timeline-box p-3">
-                    <h3 className="text-lg font-bold">{log.issueStatus}</h3>
-                    <p className="text-base">
-                      <span className="font-semibold">By:</span> {log.updatedBy}
+                    <h3
+                      className={`text-base font-semibold text-white px-2 rounded-lg mb-2 w-fit ${
+                        log.issueStatus.toLowerCase().includes("issue reported")
+                          ? "bg-yellow-500"
+                          : log.issueStatus
+                                .toLowerCase()
+                                .includes("staff assigned")
+                            ? "bg-blue-500"
+                            : log.issueStatus.toLowerCase() === "in progress"
+                              ? "bg-purple-500"
+                              : log.issueStatus.toLowerCase() === "working"
+                                ? "bg-sky-600"
+                                : log.issueStatus.toLowerCase() === "resolved"
+                                  ? "bg-emerald-500"
+                                  : log.issueStatus.toLowerCase() === "closed"
+                                    ? "bg-slate-500"
+                                    : "bg-red-500"
+                      }`}
+                    >
+                      {log.issueStatus}
+                    </h3>
+                    <p className="text-base text-muted">
+                      <span className="font-semibold text-secondary">By:</span>{" "}
+                      <span>{log.updatedBy}</span>
                     </p>
-                    <p className="text-sm md:text-base text-muted">
-                      <span className="font-semibold">Updated at:</span>{" "}
-                      {new Date(log.updated_at).toLocaleString()}
+                    <p className="text-sm md:text-base">
+                      <span className="font-semibold text-secondary">
+                        Updated at:
+                      </span>{" "}
+                      <span className="text-muted">
+                        {new Date(log?.updated_at).toLocaleString()}
+                      </span>
                     </p>
                   </div>
-                  {/* VERTICAL LINE */}
                   {index !== timeline.length - 1 && <hr />}
                 </li>
               ))}

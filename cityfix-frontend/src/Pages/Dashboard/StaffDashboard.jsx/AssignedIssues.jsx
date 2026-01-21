@@ -155,7 +155,7 @@ const AssignedIssues = () => {
                       </td>
                       <td>
                         <span
-                          className={`px-1 w-fit text-white rounded-xl text-xs ${
+                          className={`px-1 text-nowrap text-white rounded-xl text-xs ${
                             issue.status.toLowerCase() === "pending"
                               ? "bg-yellow-500"
                               : issue.status.toLowerCase() === "staff assigned"

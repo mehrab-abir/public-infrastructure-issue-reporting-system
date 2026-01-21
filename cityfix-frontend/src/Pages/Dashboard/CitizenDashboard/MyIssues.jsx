@@ -131,7 +131,7 @@ const MyIssues = () => {
           </div>
           <div className="my-5 md:my-0">
             <Link
-              to="/report-issuse"
+              to="/report-issue"
               className="text-white btn btn-sm md:btn-md bg-primary rounded-lg"
             >
               <FiPlus className="text-xl" />
@@ -180,7 +180,7 @@ const MyIssues = () => {
                         <td>{issue.category}</td>
                         <td>
                           <span
-                            className={`px-1 w-fit text-white rounded-xl text-xs ${
+                            className={`px-1 text-nowrap text-white rounded-xl text-xs ${
                               issue.status.toLowerCase() === "pending"
                                 ? "bg-yellow-500"
                                 : issue.status.toLowerCase() ===

@@ -45,6 +45,7 @@ const ReportIssue = () => {
         reporterEmail : user?.email,
         status : "Pending",
         priority : "Normal",
+        priorityLevel : 2,
         created_at : new Date(),
         staffEmail : '',
         upvote : 0
@@ -61,7 +62,7 @@ const ReportIssue = () => {
             draggable: true
             });
         }
-        navigate('/all-issues');
+        navigate('/dashboard/my-issues');
     }
     catch(error){
         console.log(error);

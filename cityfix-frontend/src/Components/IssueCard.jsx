@@ -27,17 +27,17 @@ const IssueCard = ({issue}) => {
             </span>
             <span
               className={` text-white px-2 rounded-xl text-sm ${
-                issue.status.toLowerCase() === "pending"
+                issue?.status?.toLowerCase() === "pending"
                   ? "bg-yellow-500"
-                  : issue.status.toLowerCase() === "staff assigned"
+                  : issue?.status?.toLowerCase() === "staff assigned"
                     ? "bg-blue-500"
-                    : issue.status.toLowerCase() === "in progress"
+                    : issue?.status?.toLowerCase() === "in progress"
                       ? "bg-purple-500"
-                      : issue.status.toLowerCase() === "working"
+                      : issue?.status?.toLowerCase() === "working"
                         ? "bg-sky-600"
-                        : issue.status.toLowerCase() === "resolved"
+                        : issue?.status?.toLowerCase() === "resolved"
                           ? "bg-emerald-500"
-                          : issue.status.toLowerCase() === "closed"
+                          : issue?.status?.toLowerCase() === "closed"
                             ? "bg-slate-500"
                             : "bg-red-500"
               }`}
@@ -45,7 +45,7 @@ const IssueCard = ({issue}) => {
               {issue.status}
             </span>
           </div>
-          <h2 className="text-xl lg:text-2xl font-semibold">
+          <h2 className="text-xl lg:text-2xl font-semibold h-18">
             {issue.issueTitle}
           </h2>
           <p className="flex items-center gap-1 text-muted text-sm md:text-base">

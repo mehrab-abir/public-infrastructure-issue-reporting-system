@@ -202,7 +202,7 @@ const ManageIssues = () => {
                       <td>{issue.category}</td>
                       <td>
                         <span
-                          className={`px-2 w-fit text-white rounded-xl text-xs ${
+                          className={`px-2 text-nowrap text-white rounded-xl text-xs ${
                             issue.status.toLowerCase() === "pending"
                               ? "bg-yellow-500"
                               : issue.status.toLowerCase() === "staff assigned"
