@@ -130,6 +130,23 @@ const IssueDetails = () => {
     editIssueModalRef.current.showModal();
   };
 
+  //upvote an issue by citizen
+  const handleUpvote = async (issueId)=>{
+    if(!user){
+      navigate('/auth/register');
+      return;
+    }
+
+    try {
+      const response = await axios.patch(`/upvote-issue/${issueId}`);
+      if (response.data.modifiedCount) {
+        refetchThisIssue();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <div className="bg-base pt-28 pb-24">
       <Container>
@@ -226,7 +243,9 @@ const IssueDetails = () => {
                       {thisIssue.upvote} People have upvoted this issue
                     </p>
                   </div>
-                  <button className="bg-primary text-white btn btn-sm md:btn-md cursor-pointer mt-4 rounded-xl sm:mt-0 border-none">
+                  <button className={`bg-primary text-white btn btn-sm md:btn-md mt-4 rounded-xl sm:mt-0 border-none ${user?.email === thisIssue?.reporterEmail ? 'cursor-not-allowed! bg-blue-300!' : 'cursor-pointer'}`}
+                  onClick={()=>handleUpvote(thisIssue._id)}
+                  disabled={user?.email === thisIssue?.reporterEmail}>
                     Upvote
                   </button>
                 </div>

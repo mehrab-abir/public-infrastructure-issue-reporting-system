@@ -149,6 +149,19 @@ async function run() {
             res.send(deletedIssue);
         })
 
+
+        //upvote issue by citizen
+        app.patch('/upvote-issue/:issueId',async (req,res)=>{
+            const {issueId} = req.params;
+            
+            const afterUpvote = await issueCollection.updateOne({_id : new ObjectId(issueId)},{
+                $inc : {
+                    upvote : 1
+                }
+            })
+            res.send(afterUpvote);
+        })
+
         //get all assigned issue --for staff
         app.get("/staff/assigned-issues/:email", async (req, res) => {
             const { email } = req.params;
@@ -199,6 +212,15 @@ async function run() {
             res.send(thisIssue);
         })
 
+        
+        
+        //apis for admin
+        //get all users
+        app.get("/users", async (req, res) => {
+            const users = await usersCollection.find().toArray();
+            res.send(users);
+        })
+        
         //reject issue - by admin
         app.patch('/admin/reject-issue',async(req,res)=>{
             const {issueId, trackingId} = req.query;
@@ -214,13 +236,6 @@ async function run() {
             res.send(rejectedIssue);
         })
 
-
-        //apis for admin
-        //get all users
-        app.get("/users", async (req, res) => {
-            const users = await usersCollection.find().toArray();
-            res.send(users);
-        })
 
         //get all staffs --for admin
         app.get("/all-staffs", async (req, res) => {

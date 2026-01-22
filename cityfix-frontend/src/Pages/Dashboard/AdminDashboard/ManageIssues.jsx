@@ -177,7 +177,6 @@ const ManageIssues = () => {
           const response = await axios.patch(
             `/admin/reject-issue?issueId=${issue._id}&trackingId=${issue.trackingId}`,
           );
-          console.log(response.data);
 
           if (response.data.modifiedCount) {
             Swal.fire({
