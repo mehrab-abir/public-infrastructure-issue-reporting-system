@@ -123,7 +123,7 @@ async function run() {
             res.send(issues);
         })
 
-        //delete an issue - as citizen
+        //delete an issue - as citizen -from issueDetails page and My Issues page
         app.delete('/citizen/delete-issue/:issueId',async(req,res)=>{
             const {issueId} = req.params;
             const deletedIssue = await issueCollection.deleteOne({_id : new ObjectId(issueId)});
@@ -144,6 +144,7 @@ async function run() {
             const {staffResponse,staffEmail, issueId, trackingId} = req.body;
 
             let issueStatus = '';
+            let resolved_at = '';
 
             if(staffResponse === "accept"){
                 issueStatus = "In Progress";
@@ -165,11 +166,11 @@ async function run() {
             const thisIssue = await issueCollection.updateOne({ _id: new ObjectId(issueId) }, {
                 $set: {
                     status: issueStatus,
-                    staffEmail : staffEmail
+                    staffEmail : staffEmail,
                 }
             });
 
-            //logging the tracking info if only the issueStatus updates to next stage, such as "In Progress", "Working", or "Resolved" etc.
+            //logging the tracking info if only the issueStatus updates to next stage, like from 'Pending' to "In Progress", "Working", or "Resolved" etc.
 
             /* if the staff rejects the issue, issue status will go back to "Pending", but it will not be logged into tracking*/
             if(issueStatus !== "Pending"){
@@ -218,6 +219,7 @@ async function run() {
             
             const query = {};
 
+            //for filtering based on category, status, priority
             if(category){
                 query.category = category;
             }
@@ -238,8 +240,6 @@ async function run() {
             }
 
             const issues = await issueCollection.find(query).toArray();
-
-            console.log(issues);
 
             res.send(issues);
         })
@@ -444,7 +444,6 @@ async function run() {
             const { uid } = req.params;
 
             const thisUser = await usersCollection.findOne({ uid: uid });
-            console.log(thisUser);
             res.send(thisUser);
         })
 

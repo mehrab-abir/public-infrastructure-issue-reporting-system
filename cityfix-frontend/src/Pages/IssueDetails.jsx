@@ -1,22 +1,30 @@
 import React from "react";
 import { SlLocationPin } from "react-icons/sl";
 import Container from "../Components/Container";
-import { useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecured from "../Hooks/Axios/useAxiosSecured";
 import LoaderSpinner from "../Components/LoaderSpinner";
 import { AiOutlineFieldTime } from "react-icons/ai";
 import { useState, useEffect } from "react";
+import { BiSolidEdit } from "react-icons/bi";
 import { WiTime4 } from "react-icons/wi";
-import defaultAvatar from '../assets/defaultAvatar.png';
+import defaultAvatar from "../assets/defaultAvatar.png";
+import useAuth from "../Hooks/Auth/useAuth";
+import Swal from "sweetalert2";
 
 const IssueDetails = () => {
+  const { user } = useAuth();
+
   const { issueId } = useParams();
   const axios = useAxiosSecured();
+  const navigate = useNavigate();
 
   const [reporterInfo, setReporterInfo] = useState(null);
   const [staffInfo, setStaffInfo] = useState(null);
   const [loadingPeople, setLoadingPeople] = useState(false);
+
+  const [deleting, setDeleting] = useState(false);
 
   const { data: thisIssue, isLoading } = useQuery({
     queryKey: ["issue", issueId],
@@ -57,6 +65,52 @@ const IssueDetails = () => {
 
     loadPeople();
   }, [thisIssue?.reporterEmail, thisIssue?.staffEmail, axios]);
+
+  //delete this issue - by the reporter
+  const deleteThisIssue = (issueId) => {
+    if (thisIssue?.status !== "Pending") {
+      Swal.fire({
+        text: "Deleting or editing the reported issue is allowed only when the issue status is 'Pending'",
+      });
+      return;
+    }
+
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#2563EB",
+      cancelButtonColor: "#ff2020",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          setDeleting(true);
+          const response = await axios.delete(
+            `/citizen/delete-issue/${issueId}`,
+          );
+          if (response.data.deletedCount) {
+            Swal.fire({
+              title: "Deleted!",
+              text: "Issue has been deleted.",
+              icon: "success",
+            });
+          }
+          navigate("/all-issues");
+        } catch (err) {
+          console.log(err);
+          Swal.fire({
+            title: "Ooops...!",
+            text: "Something went wrong!.",
+            icon: "error",
+          });
+        } finally {
+          setDeleting(false);
+        }
+      }
+    });
+  };
 
   return (
     <div className="bg-base pt-28 pb-24">
@@ -109,6 +163,25 @@ const IssueDetails = () => {
                   alt=""
                 />
 
+                {user?.email === thisIssue?.reporterEmail && (
+                  <div className="flex gap-4">
+                    <Link
+                      to={`/reporter/edit-issue/${thisIssue._id}`}
+                      className="btn btn-sm bg-base border border-blue-500 rounded-lg"
+                    >
+                      <BiSolidEdit className="text-lg" />
+                      Edit
+                    </Link>
+                    <button
+                      onClick={() => deleteThisIssue(thisIssue._id)}
+                      className="btn btn-sm bg-base border border-red-500 cursor-pointer rounded-lg"
+                      disabled={deleting}
+                    >
+                      {deleting ? <i>Deleting...</i> : "Delete"}
+                    </button>
+                  </div>
+                )}
+
                 <div className="">
                   <h3 className="text-xl font-semibold">Description</h3>
                   <p className="text-muted mt-1">{thisIssue.description}</p>
@@ -129,7 +202,7 @@ const IssueDetails = () => {
                       {thisIssue.upvote} People have upvoted this issue
                     </p>
                   </div>
-                  <button className="bg-primary text-white btn btn-sm md:btn-md cursor-pointer mt-4 rounded-xl sm:mt-0">
+                  <button className="bg-primary text-white btn btn-sm md:btn-md cursor-pointer mt-4 rounded-xl sm:mt-0 border-none">
                     Upvote
                   </button>
                 </div>

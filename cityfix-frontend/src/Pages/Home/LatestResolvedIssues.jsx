@@ -2,8 +2,18 @@ import React from "react";
 import Container from "../../Components/Container";
 import { Link } from "react-router";
 import IssueCard from "../../Components/IssueCard";
+import useAxiosSecured from "../../Hooks/Axios/useAxiosSecured";
+import { useQuery } from "@tanstack/react-query";
 
 const LatestResolvedIssues = () => {
+  /* const axios = useAxiosSecured();
+  const {data: latest_six = [], isLoading} = useQuery({
+    queryKey : ["latest-six"],
+    queryFn : async ()=>{
+      const response = await axios.get("/latest-six");
+      return response.data;
+    }
+  }) */
   return (
     <div className="bg-base py-15">
       <Container>
