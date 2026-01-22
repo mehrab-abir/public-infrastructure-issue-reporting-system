@@ -1,7 +1,7 @@
 import React from "react";
 import { SlLocationPin } from "react-icons/sl";
 import Container from "../Components/Container";
-import { Link, useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecured from "../Hooks/Axios/useAxiosSecured";
 import LoaderSpinner from "../Components/LoaderSpinner";
@@ -31,6 +31,8 @@ const IssueDetails = () => {
 
   const [selectedIssue, setSelectedIssue] = useState(null);
   const editIssueModalRef = useRef();
+
+  const [upvoted, setUpvoted] = useState();
 
   const { data: thisIssue, isLoading, refetch : refetchThisIssue } = useQuery({
     queryKey: ["issue", issueId],
@@ -71,6 +73,17 @@ const IssueDetails = () => {
 
     loadPeople();
   }, [thisIssue?.reporterEmail, thisIssue?.staffEmail, axios]);
+
+  //to set initial upvote status - after loading data from database
+  useEffect(()=>{
+    if(!thisIssue || !user){
+      return;
+    }
+
+    const initialUpvoteStatus = thisIssue?.upvoteBy?.includes(user?.email);
+    setUpvoted(initialUpvoteStatus);
+
+  },[thisIssue,user])
 
   //delete this issue - by the reporter
   const deleteThisIssue = (issueId) => {
@@ -131,17 +144,24 @@ const IssueDetails = () => {
   };
 
   //upvote an issue by citizen
-  const handleUpvote = async (issueId)=>{
+  const handleUpvote = async (issue)=>{
     if(!user){
       navigate('/auth/register');
       return;
     }
 
     try {
-      const response = await axios.patch(`/upvote-issue/${issueId}`);
-      if (response.data.modifiedCount) {
-        refetchThisIssue();
+      const upvoteInfo = {
+        issueId : issue._id,
+        upvoteBy : user?.email
       }
+
+      const response = await axios.patch(`/upvote-issue`,upvoteInfo);
+      
+      setUpvoted(response.data.upvoted);
+
+      refetchThisIssue();
+
     } catch (error) {
       console.log(error);
     }
@@ -240,12 +260,17 @@ const IssueDetails = () => {
                   <div>
                     <h4 className="text-xl font-semibold">Community Support</h4>
                     <p className="text-muted">
-                      {thisIssue.upvote} People have upvoted this issue
+                      <span className="text-base md:text-lg font-semibold px-2 border border-blue-500 rounded-lg">
+                        {thisIssue.upvote}
+                      </span>{" "}
+                      People have upvoted this issue
                     </p>
                   </div>
-                  <button className={`bg-primary text-white btn btn-sm md:btn-md mt-4 rounded-xl sm:mt-0 border-none ${user?.email === thisIssue?.reporterEmail ? 'cursor-not-allowed! bg-blue-300!' : 'cursor-pointer'}`}
-                  onClick={()=>handleUpvote(thisIssue._id)}
-                  disabled={user?.email === thisIssue?.reporterEmail}>
+                  <button
+                    className={`btn btn-sm md:btn-md mt-4 rounded-xl sm:mt-0 ${user?.email === thisIssue?.reporterEmail ? "cursor-not-allowed! bg-blue-300! border-none! text-white!" : "cursor-pointer"} ${upvoted ? "bg-primary text-white border-none" : "bg-surface text-accent border-blue-500"}`}
+                    onClick={() => handleUpvote(thisIssue)}
+                    disabled={user?.email === thisIssue?.reporterEmail}
+                  >
                     Upvote
                   </button>
                 </div>
@@ -318,6 +343,12 @@ const IssueDetails = () => {
                       </span>
                       <span className="text-muted text-sm md:text-base">
                         {new Date(timeline[0]?.updated_at).toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm md:text-base">Upvote:</span>
+                      <span className="text-muted text-sm md:text-base">
+                        {thisIssue.upvote}
                       </span>
                     </div>
                   </div>

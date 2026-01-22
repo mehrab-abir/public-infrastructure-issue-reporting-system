@@ -151,15 +151,39 @@ async function run() {
 
 
         //upvote issue by citizen
-        app.patch('/upvote-issue/:issueId',async (req,res)=>{
-            const {issueId} = req.params;
-            
-            const afterUpvote = await issueCollection.updateOne({_id : new ObjectId(issueId)},{
-                $inc : {
-                    upvote : 1
-                }
+        app.patch('/upvote-issue',async (req,res)=>{
+            const {issueId, upvoteBy} = req.body;
+
+            const issue = await issueCollection.findOne({_id : new ObjectId(issueId)},{
+                projection : { upvoteBy : 1}
             })
-            res.send(afterUpvote);
+
+            const alreadyUpvoted = issue.upvoteBy.includes(upvoteBy);
+            
+            let afterUpvote;
+
+            if(alreadyUpvoted){
+                afterUpvote = await issueCollection.updateOne({_id : new ObjectId(issueId)},{
+                    $pull : { upvoteBy : upvoteBy},
+                    $inc : {upvote : -1}
+                })
+            }
+            else{
+                afterUpvote = await issueCollection.updateOne({ _id: new ObjectId(issueId) }, {
+                    $addToSet: { upvoteBy: upvoteBy },
+                    $inc: { upvote: 1 }
+                })
+            }
+
+            const updated = await issueCollection.findOne({_id : new ObjectId(issueId)},{
+                projection : {upvoteBy : 1, upvote : 1}
+            });
+
+            res.send({
+                modifiedCount : afterUpvote.modifiedCount,
+                upvote : updated.upvote,
+                upvoted : updated.upvoteBy.includes(upvoteBy)
+            });
         })
 
         //get all assigned issue --for staff
@@ -211,7 +235,6 @@ async function run() {
 
             res.send(thisIssue);
         })
-
         
         
         //apis for admin
