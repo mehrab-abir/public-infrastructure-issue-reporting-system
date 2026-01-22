@@ -5,26 +5,22 @@ import useAuth from "../../../Hooks/Auth/useAuth";
 import useAxiosSecured from "../../../Hooks/Axios/useAxiosSecured";
 import LoaderSpinner from "../../../Components/LoaderSpinner";
 import { FiPlus } from "react-icons/fi";
+import { BiSolidEdit } from "react-icons/bi";
 import { Link } from "react-router";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { IoEye } from "react-icons/io5";
 import { useState } from "react";
-import { useRef } from "react";
-import { useEffect } from "react";
-import IssueDetailsModal from "../../../Components/IssueDetailsModal";
 import Swal from "sweetalert2";
+import { useRef } from "react";
+import EditIssueModal from "../../../Components/EditIssueModal";
 
 const MyIssues = () => {
   const { user } = useAuth();
   const axios = useAxiosSecured();
 
   const [selectedIssue, setSelectedIssue] = useState(null);
-  const [reporterInfo, setRoporterInfo] = useState(null);
-  const [staffInfo, setStaffInfo] = useState(null);
-  const [loadingPeople, setLoadingPeople] = useState(false);
-  const detailsModalRef = useRef(null);
-
   const [deleting, setDeleting] = useState(false);
+  const editIssueModalRef = useRef();
 
   //get all my reported issues
   const {
@@ -39,48 +35,7 @@ const MyIssues = () => {
     },
   });
 
-  useEffect(() => {
-    const loadPeople = async () => {
-      if (!user.email) {
-        return;
-      }
-
-      setLoadingPeople(true);
-
-      try {
-        const response = await axios.get(
-          `/issue-reporter?staffEmail=${selectedIssue?.staffEmail}`,
-        );
-
-        setStaffInfo(response.data.staff);
-
-        const reporter = {
-          displayName: user?.displayName,
-          email: user?.email,
-          photoURL: user?.photoURL,
-        };
-
-        setRoporterInfo(reporter);
-      } finally {
-        setLoadingPeople(false);
-      }
-    };
-
-    loadPeople();
-  }, [
-    user?.displayName,
-    user?.email,
-    user?.photoURL,
-    selectedIssue?.staffEmail,
-    axios,
-  ]);
-
-  const viewIssueDetails = async (issue) => {
-    setSelectedIssue(issue);
-    detailsModalRef.current.showModal();
-  };
-
-  //delete a reported issue if it is still 'pending'
+  //delete a reported issue if it is still 'Pending'
   const deleteReportedIssue = (issueId) => {
     Swal.fire({
       title: "Are you sure?",
@@ -117,6 +72,11 @@ const MyIssues = () => {
         }
       }
     });
+  };
+
+  const openEditorModal = (issue) => {
+    setSelectedIssue(issue);
+    editIssueModalRef.current.showModal();
   };
 
   return (
@@ -171,11 +131,13 @@ const MyIssues = () => {
                   myIssues.map((issue) => {
                     return (
                       <tr key={issue._id}>
-                        <td
-                          onClick={() => viewIssueDetails(issue)}
-                          className="font-semibold hover:underline cursor-pointer"
-                        >
-                          {issue.issueTitle}
+                        <td>
+                          <Link
+                            to={`/issue-details/${issue._id}`}
+                            className="font-semibold hover:underline cursor-pointer"
+                          >
+                            {issue.issueTitle}
+                          </Link>
                         </td>
                         <td>{issue.category}</td>
                         <td>
@@ -214,13 +176,23 @@ const MyIssues = () => {
                             : "Not Assigned Yet"}
                         </td>
                         <td>
-                          <div className="flex items-center gap-3">
-                            <button
+                          <div className="flex items-center gap-4">
+                            <Link
+                              to={`/issue-details/${issue._id}`}
                               className="cursor-pointer tooltip"
                               data-tip="View Details"
-                              onClick={() => viewIssueDetails(issue)}
                             >
                               <IoEye className="text-xl" />
+                            </Link>
+                            <button
+                              className={`tooltip ${issue.status !== "Pending" ? "cursor-not-allowed" : "cursor-pointer"}`}
+                              data-tip="Edit"
+                              onClick={() => openEditorModal(issue)}
+                              disabled={issue.status !== "Pending"}
+                            >
+                              <BiSolidEdit
+                                className={`text-xl ${issue.status !== "Pending" && "text-gray-400"}`}
+                              />
                             </button>
                             <button
                               className={`tooltip ${issue.status !== "Pending" ? "cursor-not-allowed" : "cursor-pointer"}`}
@@ -241,17 +213,12 @@ const MyIssues = () => {
               </tbody>
             </table>
 
-            {/* issue details modal */}
+            {/* edit issue modal */}
             <dialog
-              ref={detailsModalRef}
+              ref={editIssueModalRef}
               className="modal modal-bottom sm:modal-middle"
             >
-              <IssueDetailsModal
-                selectedIssue={selectedIssue}
-                staffInfo={staffInfo}
-                reporterInfo={reporterInfo}
-                loadingPeople={loadingPeople}
-              ></IssueDetailsModal>
+              <EditIssueModal selectedIssue={selectedIssue} refetchMyIssues={refetchMyIssues} editIssueModalRef={editIssueModalRef}></EditIssueModal>
             </dialog>
           </div>
         </div>

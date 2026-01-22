@@ -10,7 +10,7 @@ import useAxiosBasic from "../Hooks/Axios/useAxiosBasic";
 import useAuth from "../Hooks/Auth/useAuth";
 
 const ReportIssue = () => {
-    const {user} = useAuth();
+  const {user} = useAuth();
   const { register, handleSubmit, reset, formState:{errors} } = useForm();
   const axios = useAxiosBasic();
   const navigate = useNavigate();

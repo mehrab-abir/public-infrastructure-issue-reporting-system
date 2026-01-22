@@ -116,6 +116,23 @@ async function run() {
             res.send(afterPost);
         })
 
+        //edit an issue - by the issue reporter
+        app.patch('/edit-issue/:issueId',async (req,res)=>{
+            const {issueId} = req.params;
+            const { issueTitle, category, description, location, photoURL } = req.body;
+            const updatedIssue = await issueCollection.updateOne({_id : new ObjectId(issueId)},{
+                $set : {
+                    issueTitle: issueTitle,
+                    category: category,
+                    description: description,
+                    location: location,
+                    photoURL: photoURL,
+                }
+            })
+
+            res.send(updatedIssue);
+        })
+
         //get all my issues - issues reported by a citizen
         app.get("/issues/:email", async (req, res) => {
             const { email } = req.params;
