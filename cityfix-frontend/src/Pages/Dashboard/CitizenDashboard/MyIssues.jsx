@@ -22,6 +22,8 @@ const MyIssues = () => {
   const [deleting, setDeleting] = useState(false);
   const editIssueModalRef = useRef();
 
+  const paymentModalRef = useRef();
+
   //get all my reported issues
   const {
     data: myIssues = [],
@@ -78,6 +80,38 @@ const MyIssues = () => {
     setSelectedIssue(issue);
     editIssueModalRef.current.showModal();
   };
+
+  const openPaymentModal = (issue)=>{
+    setSelectedIssue(issue);
+    paymentModalRef.current.showModal();
+  }
+
+  const handleBoostPayment = async (issue)=>{
+    try{
+      const paymentInfo = {
+        issueId : issue._id,
+        issueTitle : issue.issueTitle,
+        boostFee : 100,
+        reporterEmail : issue.reporterEmail,
+        trackingId : issue.trackingId
+      }
+
+      const response = await axios.post('/create-checkout-session',paymentInfo);
+      console.log("Create checkout session response : ", response);
+      window.location.assign(response.data.url);
+    }
+    catch(error){
+      console.log(error);
+      Swal.fire({
+        icon : "error",
+        title : "Ooop...",
+        text : "Something went wrong!"
+      })
+    }
+    finally{
+      paymentModalRef.current.close();
+    }
+  }
 
   return (
     <>
@@ -164,10 +198,21 @@ const MyIssues = () => {
                             {issue.status}
                           </span>
                         </td>
-                        <td
-                          className={`font-semibold ${issue?.priority?.startsWith("normal") ? "text-secondary" : "text-red-500"}`}
-                        >
-                          {issue.priority.split(" ")[0].toUpperCase()}
+                        <td>
+                          <div className="flex flex-col items-center justify-center">
+                            <span
+                              className={`font-semibold ${issue?.priority === "Normal" ? "text-secondary" : "text-red-500"}`}
+                            >
+                              {issue.priority.split(" ")[0].toUpperCase()}
+                            </span>
+                            <button
+                              className={`cursor-pointer bg-orange-500 text-white mt-1 btn btn-xs border-none tooltip ${issue?.priority === "High" && "hidden"}`}
+                              data-tip="Boost issue to get High Priority"
+                              onClick={() => openPaymentModal(issue)}
+                            >
+                              Boost
+                            </button>
+                          </div>
                         </td>
                         <td>{new Date(issue.created_at).toDateString()}</td>
                         <td>
@@ -218,7 +263,31 @@ const MyIssues = () => {
               ref={editIssueModalRef}
               className="modal modal-bottom sm:modal-middle"
             >
-              <EditIssueModal selectedIssue={selectedIssue} refetchMyIssues={refetchMyIssues} editIssueModalRef={editIssueModalRef}></EditIssueModal>
+              <EditIssueModal
+                selectedIssue={selectedIssue}
+                refetchMyIssues={refetchMyIssues}
+                editIssueModalRef={editIssueModalRef}
+              ></EditIssueModal>
+            </dialog>
+
+            {/* boost issue payment confirmation modal */}
+            <dialog
+              ref={paymentModalRef}
+              className="modal modal-bottom sm:modal-middle"
+            >
+              <div className="modal-box">
+                <h3 className="font-bold text-lg">Boost Issue</h3>
+                <p className="py-4">
+                  Boosted issues get <span className="text-orange-500 font-semibold">high priority</span>, stays top of all other issues.
+                </p>
+                <p className="text-lg font-semibold mt-2">Fees : $100</p>
+                <button className="mt-3 btn btn-sm text-white border-none bg-primary cursor-pointer" onClick={()=>handleBoostPayment(selectedIssue)}>Proceed to Payment</button>
+                <div className="modal-action">
+                  <form method="dialog">
+                    <button className="btn">Close</button>
+                  </form>
+                </div>
+              </div>
             </dialog>
           </div>
         </div>

@@ -242,7 +242,7 @@ const ManageProfile = () => {
               <span className="font-semibold text-sm lg:text-base">
                 {
                   isLoading ? <LoaderSpinner /> :
-                  new Date(thisUser?.created_at).toDateString()
+                  new Date(thisUser?.created_at).toDateString() || "-Reload Page-"
                 }
               </span>
             </div>
@@ -251,7 +251,7 @@ const ManageProfile = () => {
               <button className="btn btn-xs rounded-xl">
                 {
                   isLoading ? <LoaderSpinner /> :
-                  thisUser?.role?.toUpperCase()
+                  thisUser?.role?.toUpperCase() || "-Reload Page-"
                 }
               </button>
             </div>

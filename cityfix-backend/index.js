@@ -5,10 +5,11 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const cors = require('cors');
 const port = process.env.PORT || 3000;
 const uri = `${process.env.URI}`;
+const stripe = require('stripe')(process.env.STRIPE_SECRET);
 const admin = require("firebase-admin");
 
-const serviceAccount = require("./cityfix-firebase-service-key.json");
 const { configDotenv } = require('dotenv');
+const serviceAccount = require("./cityfix-firebase-service-key.json");
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
@@ -71,6 +72,7 @@ async function run() {
         const issueCollection = db.collection("issues");
         const staffCollection = db.collection("staffs");
         const trackingCollection = db.collection("trackingLogs");
+        const paymentCollection = db.collection("boost-payments");
 
         //middleware to verify role - admin
         const verifyAdmin = async (req, res, next) => {
@@ -84,13 +86,13 @@ async function run() {
         }
 
         //log tracking
-        const logTracking = async (trackingId,issueId,issueStatus,updatedBy)=>{
+        const logTracking = async (trackingId, issueId, issueStatus, updatedBy) => {
             const log = {
                 trackingId,
                 issueStatus,
                 issueId,
                 updatedBy,
-                updated_at : new Date()
+                updated_at: new Date()
             }
 
             const result = await trackingCollection.insertOne(log);
@@ -101,27 +103,27 @@ async function run() {
         //post an issue
         app.post("/issues", async (req, res) => {
             const newIssue = req.body;
-            
+
             const trackingId = generateTrackingId();
 
             newIssue.trackingId = trackingId;
- 
+
             const afterPost = await issueCollection.insertOne(newIssue);
 
             const issueId = afterPost.insertedId.toString();
             const reporter = newIssue.reporterEmail.split('@')[0];
 
-            logTracking(trackingId,issueId,"Issue Reported", reporter); //1st tracking log
+            logTracking(trackingId, issueId, "Issue Reported", reporter); //1st tracking log
 
             res.send(afterPost);
         })
 
         //edit an issue - by the issue reporter
-        app.patch('/edit-issue/:issueId',async (req,res)=>{
-            const {issueId} = req.params;
+        app.patch('/edit-issue/:issueId', async (req, res) => {
+            const { issueId } = req.params;
             const { issueTitle, category, description, location, photoURL } = req.body;
-            const updatedIssue = await issueCollection.updateOne({_id : new ObjectId(issueId)},{
-                $set : {
+            const updatedIssue = await issueCollection.updateOne({ _id: new ObjectId(issueId) }, {
+                $set: {
                     issueTitle: issueTitle,
                     category: category,
                     description: description,
@@ -141,41 +143,41 @@ async function run() {
         })
 
         //delete an issue - as citizen -from issueDetails page and My Issues page
-        app.delete('/citizen/delete-issue/:issueId',async(req,res)=>{
-            const {issueId} = req.params;
-            const deletedIssue = await issueCollection.deleteOne({_id : new ObjectId(issueId)});
+        app.delete('/citizen/delete-issue/:issueId', async (req, res) => {
+            const { issueId } = req.params;
+            const deletedIssue = await issueCollection.deleteOne({ _id: new ObjectId(issueId) });
             res.send(deletedIssue);
         })
 
         //get all assigned issue --for staff
-        app.get("/staff/assigned-issues/:email",async (req,res)=>{
-            const {email} = req.params;
+        app.get("/staff/assigned-issues/:email", async (req, res) => {
+            const { email } = req.params;
 
-            const myAssignedIssues = await issueCollection.find({staffEmail : email}).sort({created_at: -1}).toArray();
+            const myAssignedIssues = await issueCollection.find({ staffEmail: email }).sort({ created_at: -1 }).toArray();
 
             res.send(myAssignedIssues);
         })
-        
+
         //update issue status by staff - accept/reject, in-progress, working, resolved, closed etc. -- 3rd, 4th, 5th... tracking log here
-        app.patch("/staff/update-issue-status",async (req,res)=>{
-            const {staffResponse,staffEmail, issueId, trackingId} = req.body;
+        app.patch("/staff/update-issue-status", async (req, res) => {
+            const { staffResponse, staffEmail, issueId, trackingId } = req.body;
 
             let issueStatus = '';
             let resolved_at = '';
 
-            if(staffResponse === "accept"){
+            if (staffResponse === "accept") {
                 issueStatus = "In Progress";
             }
-            else if (staffResponse === "Working"){
+            else if (staffResponse === "Working") {
                 issueStatus = "Working";
             }
-            else if(staffResponse === "Resolved"){
+            else if (staffResponse === "Resolved") {
                 issueStatus = "Resolved";
             }
-            else if(staffResponse === "Closed"){
+            else if (staffResponse === "Closed") {
                 issueStatus = "Closed";
             }
-            else{
+            else {
                 issueStatus = "Pending";
                 staffEmail = '';
             }
@@ -183,14 +185,14 @@ async function run() {
             const thisIssue = await issueCollection.updateOne({ _id: new ObjectId(issueId) }, {
                 $set: {
                     status: issueStatus,
-                    staffEmail : staffEmail,
+                    staffEmail: staffEmail,
                 }
             });
 
             //logging the tracking info if only the issueStatus updates to next stage, like from 'Pending' to "In Progress", "Working", or "Resolved" etc.
 
             /* if the staff rejects the issue, issue status will go back to "Pending", but it will not be logged into tracking*/
-            if(issueStatus !== "Pending"){
+            if (issueStatus !== "Pending") {
                 logTracking(trackingId, issueId, issueStatus, "Staff");
                 //3rd, 4th, 5th...tracking log
             }
@@ -207,20 +209,20 @@ async function run() {
         })
 
         //get all staffs --for admin
-        app.get("/all-staffs",async (req,res)=>{
+        app.get("/all-staffs", async (req, res) => {
             const staffs = await staffCollection.find().toArray();
             res.send(staffs);
         })
 
         //assign a staff to an issue --for admin
-        app.patch("/assign-staff",async (req,res)=>{
-            const {issueId, trackingId, staffEmail, staffName} = req.body;
+        app.patch("/assign-staff", async (req, res) => {
+            const { issueId, trackingId, staffEmail, staffName } = req.body;
 
             const issueStatus = `Staff Assigned`;
 
-            const issueAssigned = await issueCollection.updateOne({_id : new ObjectId(issueId)},{
-                $set : {
-                    staffEmail : staffEmail,
+            const issueAssigned = await issueCollection.updateOne({ _id: new ObjectId(issueId) }, {
+                $set: {
+                    staffEmail: staffEmail,
                     status: issueStatus
                 }
             })
@@ -232,27 +234,27 @@ async function run() {
 
         //get all issues
         app.get("/all-issues", async (req, res) => {
-            const {category, status, priority, searchText} = req.query;
-            
+            const { category, status, priority, searchText } = req.query;
+
             const query = {};
 
             //for filtering based on category, status, priority
-            if(category){
+            if (category) {
                 query.category = category;
             }
-            if(status){
+            if (status) {
                 query.status = status;
             }
-            if(priority){
+            if (priority) {
                 query.priority = priority;
             }
 
-            if(searchText){
+            if (searchText) {
                 query.$or = [
-                    {issueTitle : {$regex : searchText, $options : 'i'}},
-                    {category : {$regex : searchText, $options : 'i'}},
-                    {location : {$regex : searchText, $options : 'i'}},
-                    {staffEmail : {$regex : searchText, $options : 'i'}}
+                    { issueTitle: { $regex: searchText, $options: 'i' } },
+                    { category: { $regex: searchText, $options: 'i' } },
+                    { location: { $regex: searchText, $options: 'i' } },
+                    { staffEmail: { $regex: searchText, $options: 'i' } }
                 ]
             }
 
@@ -262,43 +264,43 @@ async function run() {
         })
 
         //get one issue details
-        app.get("/issue/details/:issueId",async (req,res)=>{
-            const {issueId} = req.params;
-            const thisIssue = await issueCollection.findOne({_id : new ObjectId(issueId)});
+        app.get("/issue/details/:issueId", async (req, res) => {
+            const { issueId } = req.params;
+            const thisIssue = await issueCollection.findOne({ _id: new ObjectId(issueId) });
             res.send(thisIssue);
         })
 
         //get timeline of one issue
-        app.get('/timeline/:issueId',async (req,res)=>{
-            const {issueId} = req.params;
-            const timeline = await trackingCollection.find({issueId : issueId}).sort({updated_at : -1}).toArray();
+        app.get('/timeline/:issueId', async (req, res) => {
+            const { issueId } = req.params;
+            const timeline = await trackingCollection.find({ issueId: issueId }).sort({ updated_at: -1 }).toArray();
             res.send(timeline);
         })
 
         //delete an issue - as admin
-        app.delete("/admin/delete-issue/:issueId",async (req,res)=>{
-            const {issueId} = req.params;
-            const deletedIssue = await issueCollection.deleteOne({_id : new ObjectId(issueId)});
+        app.delete("/admin/delete-issue/:issueId", async (req, res) => {
+            const { issueId } = req.params;
+            const deletedIssue = await issueCollection.deleteOne({ _id: new ObjectId(issueId) });
             res.send(deletedIssue);
         })
 
         //get reporter and staff info of an issue
-        app.get('/issue-reporter',async(req,res)=>{
+        app.get('/issue-reporter', async (req, res) => {
             const { reporterEmail, staffEmail } = req.query;
 
             let reporter = {};
-            if(reporterEmail){
-                reporter = await usersCollection.findOne({email : reporterEmail});
+            if (reporterEmail) {
+                reporter = await usersCollection.findOne({ email: reporterEmail });
             }
 
             let staff = {};
-            if(staffEmail){
-                staff = await staffCollection.findOne({email : staffEmail});
+            if (staffEmail) {
+                staff = await staffCollection.findOne({ email: staffEmail });
             }
-            
+
             res.send({
-                reporter : reporter || {},
-                staff : staff || {}
+                reporter: reporter || {},
+                staff: staff || {}
             });
         })
 
@@ -329,7 +331,7 @@ async function run() {
                 await usersCollection.insertOne(staffDoc);
 
                 res.send({
-                    acknowledge : true,
+                    acknowledge: true,
                     message: "staff account created",
                     staffEmail: staff.email,
                     uid: staff.uid
@@ -380,11 +382,11 @@ async function run() {
                         }
                     });
 
-                    if(updateName.modifiedCount){
+                    if (updateName.modifiedCount) {
                         res.send({
-                            acknowledge : true,
-                            message : "name updated",
-                            statusText : "OK"
+                            acknowledge: true,
+                            message: "name updated",
+                            statusText: "OK"
                         })
                     }
                     return;
@@ -402,12 +404,12 @@ async function run() {
                         }
                     });
 
-                    if(updateStaffName.modifiedCount && updateUserName.modifiedCount){
+                    if (updateStaffName.modifiedCount && updateUserName.modifiedCount) {
                         res.send({
-                            acknowledge : true, 
-                            message : "staff and user document updated",
+                            acknowledge: true,
+                            message: "staff and user document updated",
                             statusText: "OK"
-                         });
+                        });
                     }
                     return;
                 }
@@ -420,8 +422,8 @@ async function run() {
                             photoURL: photoURL
                         }
                     });
-                    
-                    if(updatePhoto.modifiedCount){
+
+                    if (updatePhoto.modifiedCount) {
                         res.send({
                             acknowledge: true,
                             message: "photo updated",
@@ -431,7 +433,7 @@ async function run() {
                     return;
                 }
 
-                if(role === "staff"){
+                if (role === "staff") {
                     const updateStaffPhoto = await staffCollection.updateOne({ email: email }, {
                         $set: {
                             photoURL: photoURL
@@ -463,6 +465,135 @@ async function run() {
             const thisUser = await usersCollection.findOne({ uid: uid });
             res.send(thisUser);
         })
+
+        //payment apis -- boost issue payment
+        app.post('/create-checkout-session', async (req, res) => {
+            try {
+                const paymentInfo = req.body;
+                const amount = Number(paymentInfo.boostFee) * 100;
+
+                const session = await stripe.checkout.sessions.create({
+                    line_items: [
+                        {
+                            price_data: {
+                                currency : 'USD',
+                                unit_amount : amount,
+                                product_data : {
+                                    name : paymentInfo.issueTitle
+                                },
+                            },
+                            quantity : 1
+                        }
+                    ],
+                    customer_email : paymentInfo.reporterEmail,
+                    mode : 'payment',
+                    metadata : {
+                        issueId : paymentInfo.issueId,
+                        issueTitle : paymentInfo.issueTitle,
+                        trackingId : paymentInfo.trackingId,
+                        reporterEmail : paymentInfo.reporterEmail
+                    },
+                    success_url: `${process.env.SITE_DOMAIN}/dashboard/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+                    cancel_url: `${process.env.SITE_DOMAIN}/dashboard/payment-cancelled`,
+                })
+
+                res.send({
+                    url : session.url
+                })
+            }
+            catch (err) {
+                return res.send({ error: err.message });
+            }
+        })
+
+        let i= 0;
+
+        //after payment success, update priority level of the issue and post payment info into db
+        app.patch('/payment-success',async (req,res)=>{
+            try{
+                const sessionId = req.query.session_id;
+                const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+                console.log("Payment session:", session);
+
+                const transactionId = session.payment_intent;
+
+                const paymentExist = await paymentCollection.findOne({transactionId});
+
+                if(paymentExist){
+                    return res.send({
+                        message : "Payment already exists",
+                        transactionId,
+                        issueTitle : paymentExist.issueTitle
+                    });
+                }
+
+                if(session.payment_status === 'paid'){
+                    const issueId = session.metadata.issueId;
+                    const paymentDate = new Date();
+                    const trackingId = session.metadata.trackingId;
+                    const reporter = session.metadata.reporterEmail.split('@')[0];
+
+                    
+                    logTracking(trackingId, issueId, "Issue Boosted for High Priority",reporter); //another tracking log - after boost payment
+                    i++;
+                    console.log("iiiiiiii",i);
+
+                    const updatedPriority = await issueCollection.updateOne(
+                        {_id : new ObjectId(issueId)},
+                        {
+                            $set : {
+                                priority : "High",
+                                priorityLevel : 1,
+                                boosted_at : paymentDate
+                            }
+                        }
+                    );
+
+
+                    //payment info to store to db
+                    const payment = {
+                        issueTitle: session.metadata.issueTitle,
+                        issueId : session.metadata.issueId,
+                        transactionId,
+                        paid_at : paymentDate,
+                        paymentPurpose : "Boost Issue",
+                        reporterEmail : session.metadata.reporterEmail,
+                        amount : session.amount_total / 100,
+                        currency : session.currency
+                    }
+
+                    let postPayment;
+
+                    try{
+                        postPayment = await paymentCollection.insertOne(payment);
+                    }
+                    catch(err){
+                        console.log("Payment info post error: ",err);
+                        return res.send({message : "Payment info post error",
+                            error : err.message
+                        });
+                    }
+
+                    return res.send({
+                        success: true,
+                        updatedPriority : updatedPriority,
+                        postPayment : postPayment,
+                        transactionId : transactionId,
+                        issueTitle: session.metadata.issueTitle
+                    })
+
+                }
+                else{
+                    return res.send({message : "Payment not completed"});
+                }
+            }
+            catch(error){
+                console.log("payment-success error: ",error);
+                return res.status(500).send({message : "Internal Server Error"});
+            }
+        })
+
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });

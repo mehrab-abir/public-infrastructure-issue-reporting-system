@@ -8,10 +8,13 @@ import LoaderSpinner from "../Components/LoaderSpinner";
 import { AiOutlineFieldTime } from "react-icons/ai";
 import { useState, useEffect } from "react";
 import { BiSolidEdit } from "react-icons/bi";
+import { AiOutlineFire } from "react-icons/ai";
 import { WiTime4 } from "react-icons/wi";
 import defaultAvatar from "../assets/defaultAvatar.png";
 import useAuth from "../Hooks/Auth/useAuth";
 import Swal from "sweetalert2";
+import { useRef } from "react";
+import EditIssueModal from "../Components/EditIssueModal";
 
 const IssueDetails = () => {
   const { user } = useAuth();
@@ -26,7 +29,10 @@ const IssueDetails = () => {
 
   const [deleting, setDeleting] = useState(false);
 
-  const { data: thisIssue, isLoading } = useQuery({
+  const [selectedIssue, setSelectedIssue] = useState(null);
+  const editIssueModalRef = useRef();
+
+  const { data: thisIssue, isLoading, refetch : refetchThisIssue } = useQuery({
     queryKey: ["issue", issueId],
     queryFn: async () => {
       const response = await axios.get(`/issue/details/${issueId}`);
@@ -70,7 +76,7 @@ const IssueDetails = () => {
   const deleteThisIssue = (issueId) => {
     if (thisIssue?.status !== "Pending") {
       Swal.fire({
-        text: "Deleting or editing the reported issue is allowed only when the issue status is 'Pending'",
+        text: "Deleting the reported issue is allowed only when the issue status is 'Pending'",
       });
       return;
     }
@@ -110,6 +116,18 @@ const IssueDetails = () => {
         }
       }
     });
+  };
+
+  const openEditorModal = (issue) => {
+    if (thisIssue?.status !== "Pending") {
+      Swal.fire({
+        text: "Editing the reported issue is allowed only when the issue status is 'Pending'",
+      });
+      return;
+    }
+
+    setSelectedIssue(issue);
+    editIssueModalRef.current.showModal();
   };
 
   return (
@@ -165,19 +183,25 @@ const IssueDetails = () => {
 
                 {user?.email === thisIssue?.reporterEmail && (
                   <div className="flex gap-4">
-                    <Link
-                      to={`/reporter/edit-issue/${thisIssue._id}`}
+                    <button
                       className="btn btn-sm bg-base border border-blue-500 rounded-lg"
+                      onClick={() => openEditorModal(thisIssue)}
                     >
                       <BiSolidEdit className="text-lg" />
                       Edit
-                    </Link>
+                    </button>
                     <button
                       onClick={() => deleteThisIssue(thisIssue._id)}
                       className="btn btn-sm bg-base border border-red-500 cursor-pointer rounded-lg"
                       disabled={deleting}
                     >
                       {deleting ? <i>Deleting...</i> : "Delete"}
+                    </button>
+                    <button
+                      className={`tooltip bg-orange-500 text-white btn btn-sm rounded-lg border-none ${thisIssue.priority === "High" && "hidden"}`}
+                      data-tip="Boost the issue to get High Priority"
+                    >
+                      Boost <AiOutlineFire className="text-xl" />
                     </button>
                   </div>
                 )}
@@ -344,6 +368,18 @@ const IssueDetails = () => {
             </ul>
           </div>
         )}
+
+        {/* edit issue modal */}
+        <dialog
+          ref={editIssueModalRef}
+          className="modal modal-bottom sm:modal-middle"
+        >
+          <EditIssueModal
+            selectedIssue={selectedIssue}
+            refetchMyIssues={refetchThisIssue}
+            editIssueModalRef={editIssueModalRef}
+          ></EditIssueModal>
+        </dialog>
       </Container>
     </div>
   );

@@ -5,6 +5,7 @@ import LoaderSpinner from "../../../Components/LoaderSpinner";
 import DashboardContainer from "../DashboardContainer";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { IoEye } from "react-icons/io5";
+import { LiaTimesSolid } from "react-icons/lia";
 import { GrUserWorker } from "react-icons/gr";
 import { useState } from "react";
 import { useRef } from "react";
@@ -277,7 +278,7 @@ const ManageIssues = () => {
                         </span>
                       </td>
                       <td
-                        className={`font-semibold ${issue?.priority?.startsWith("normal") ? "text-secondary" : "text-red-500"}`}
+                        className={`font-semibold ${issue?.priority === ("Normal") ? "text-secondary" : "text-red-500"}`}
                       >
                         {issue.priority.split(" ")[0].toUpperCase()}
                       </td>
@@ -296,6 +297,12 @@ const ManageIssues = () => {
                             onClick={() => viewIssueDetails(issue)}
                           >
                             <IoEye className="text-lg md:text-2xl" />
+                          </button>
+                          <button
+                            className="tooltip cursor-pointer"
+                            data-tip="Reject Issue"
+                          >
+                            <LiaTimesSolid className="text-lg md:text-xl" />
                           </button>
                           <button
                             onClick={() => openStaffModal(issue)}

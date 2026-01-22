@@ -25,6 +25,8 @@ import StaffRoute from "./StaffRoute";
 import CitizenRoute from "./CitizenRoute";
 import AdminRoute from "./AdminRoute";
 import PrivateRoute from "./PrivateRoute";
+import PaymentSuccess from "../Pages/Dashboard/CitizenDashboard/PaymentSuccess";
+import PaymentCancelled from "../Pages/Dashboard/CitizenDashboard/PaymentCancelled";
 
 const router = createBrowserRouter([
   {
@@ -141,6 +143,14 @@ const router = createBrowserRouter([
         path: "/dashboard/manage-profile",
         Component: ManageProfile,
       },
+      {
+        path : '/dashboard/payment-success',
+        Component : PaymentSuccess
+      },
+      {
+        path : '/dashboard/payment-cancelled',
+        Component : PaymentCancelled
+      }
     ],
   },
   {
