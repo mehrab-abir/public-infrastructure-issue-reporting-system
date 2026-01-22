@@ -42,7 +42,9 @@ const ManageIssues = () => {
   } = useQuery({
     queryKey: ["all-issues", searchText, category, status, priority],
     queryFn: async () => {
-      const response = await axios.get(`/all-issues?searchText=${searchText}&category=${category}&status=${status}&priority=${priority}`);
+      const response = await axios.get(
+        `/all-issues?searchText=${searchText}&category=${category}&status=${status}&priority=${priority}`,
+      );
       return response.data;
     },
   });
@@ -159,6 +161,43 @@ const ManageIssues = () => {
     });
   };
 
+  //reject an issue
+  const rejectIssue = (issue) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#2563EB",
+      cancelButtonColor: "#ff2020",
+      confirmButtonText: "Yes, Reject It!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await axios.patch(
+            `/admin/reject-issue?issueId=${issue._id}&trackingId=${issue.trackingId}`,
+          );
+          console.log(response.data);
+
+          if (response.data.modifiedCount) {
+            Swal.fire({
+              title: "Rejected!",
+              icon: "success",
+            });
+            refetchIssues();
+          }
+        } catch (error) {
+          console.log(error);
+          Swal.fire({
+            icon: "error",
+            title: "Ooops...",
+            text: "Something went wrong!",
+          });
+        }
+      }
+    });
+  };
+
   return (
     <DashboardContainer>
       <div className="flex flex-col md:flex-row md:items-center justify-between">
@@ -208,6 +247,7 @@ const ManageIssues = () => {
           <option value="Working">Working</option>
           <option value="Resolved">Resolved</option>
           <option value="Closed">Closed</option>
+          <option value="Rejected">Rejected</option>
         </select>
         <select
           className="select focus:outline-2 focus:outline-blue-600 cursor-pointer w-full mt-2 md:mt-0 rounded-lg"
@@ -278,7 +318,7 @@ const ManageIssues = () => {
                         </span>
                       </td>
                       <td
-                        className={`font-semibold ${issue?.priority === ("Normal") ? "text-secondary" : "text-red-500"}`}
+                        className={`font-semibold ${issue?.priority === "Normal" ? "text-secondary" : "text-red-500"}`}
                       >
                         {issue.priority.split(" ")[0].toUpperCase()}
                       </td>
@@ -299,10 +339,14 @@ const ManageIssues = () => {
                             <IoEye className="text-lg md:text-2xl" />
                           </button>
                           <button
-                            className="tooltip cursor-pointer"
+                            className={`tooltip ${issue.status === "Rejected" ? "cursor-not-allowed" : "cursor-pointer"}`}
                             data-tip="Reject Issue"
+                            onClick={() => rejectIssue(issue)}
+                            disabled={issue.status === "Rejected"}
                           >
-                            <LiaTimesSolid className="text-lg md:text-xl" />
+                            <LiaTimesSolid
+                              className={`text-lg md:text-xl ${issue.status === "Rejected" && 'text-gray-300'}`}
+                            />
                           </button>
                           <button
                             onClick={() => openStaffModal(issue)}

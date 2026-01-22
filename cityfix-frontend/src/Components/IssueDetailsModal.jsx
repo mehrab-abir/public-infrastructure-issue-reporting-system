@@ -41,7 +41,7 @@ const IssueDetailsModal = ({selectedIssue,staffInfo,reporterInfo,loadingPeople})
                 : "-"}
             </span>
             <span
-              className={`px-2 rounded-xl text-sm text-white ${selectedIssue?.priority?.startsWith("normal") ? "bg-gray-500" : "bg-red-500"}`}
+              className={`px-2 rounded-xl text-sm text-white ${selectedIssue?.priority === "Normal" ? "bg-gray-500" : "bg-red-500"}`}
             >
               {selectedIssue?.priority
                 ? selectedIssue?.priority?.toUpperCase()

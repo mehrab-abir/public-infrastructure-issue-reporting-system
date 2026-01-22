@@ -163,7 +163,6 @@ async function run() {
             const { staffResponse, staffEmail, issueId, trackingId } = req.body;
 
             let issueStatus = '';
-            let resolved_at = '';
 
             if (staffResponse === "accept") {
                 issueStatus = "In Progress";
@@ -198,6 +197,21 @@ async function run() {
             }
 
             res.send(thisIssue);
+        })
+
+        //reject issue - by admin
+        app.patch('/admin/reject-issue',async(req,res)=>{
+            const {issueId, trackingId} = req.query;
+
+            const rejectedIssue = await issueCollection.updateOne({_id : new ObjectId(issueId)},{
+                $set : {
+                    status : "Rejected"
+                }
+            })
+
+            logTracking(trackingId,issueId,"Rejected","Admin");
+
+            res.send(rejectedIssue);
         })
 
 
@@ -506,8 +520,6 @@ async function run() {
             }
         })
 
-        let i= 0;
-
         //after payment success, update priority level of the issue and post payment info into db
         app.patch('/payment-success',async (req,res)=>{
             try{
@@ -534,10 +546,7 @@ async function run() {
                     const trackingId = session.metadata.trackingId;
                     const reporter = session.metadata.reporterEmail.split('@')[0];
 
-                    
                     logTracking(trackingId, issueId, "Issue Boosted for High Priority",reporter); //another tracking log - after boost payment
-                    i++;
-                    console.log("iiiiiiii",i);
 
                     const updatedPriority = await issueCollection.updateOne(
                         {_id : new ObjectId(issueId)},
