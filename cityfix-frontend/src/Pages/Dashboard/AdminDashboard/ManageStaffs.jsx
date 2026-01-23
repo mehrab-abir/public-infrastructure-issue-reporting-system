@@ -227,7 +227,7 @@ const ManageStaffs = () => {
             className="modal modal-bottom sm:modal-middle"
           >
             <div className="modal-box">
-              <h3 className="font-bold text-lg">Hello!</h3>
+              <h3 className="font-bold text-lg">Update Staff Information</h3>
               <form
                 onSubmit={handleSubmit(updateStaffInfo)}
                 className="mt-5 space-y-3"

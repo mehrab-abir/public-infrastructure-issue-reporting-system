@@ -3,18 +3,55 @@ import React from "react";
 import useAxiosSecured from "../../../Hooks/Axios/useAxiosSecured";
 import DashboardContainer from "../DashboardContainer";
 import LoaderSpinner from "../../../Components/LoaderSpinner";
+import Swal from "sweetalert2";
+import { useState } from "react";
 
 const ManageUsers = () => {
   const axios = useAxiosSecured();
+  const [role, setRole] = useState('');
+  const [searchText, setSearchText] = useState('');
 
-  const { data: users = [], isLoading } = useQuery({
-    queryKey: ["all-users"],
+  const { data: users = [], isLoading, refetch : refetchUsers } = useQuery({
+    queryKey: ["all-users", role, searchText],
     queryFn: async () => {
-      const response = await axios.get("/users");
+      const response = await axios.get(`/users?role=${role}&searchText=${searchText}`);
       console.log(response.data);
       return response.data;
     },
   });
+
+  const blockUnblock = (user) => {
+    Swal.fire({
+      title: `Are you sure you want to ${user.block === true ? "unblock" : "block"} this user?`,
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: `Yes, ${user.block === true ? "Unblock" : "Block"}`,
+      denyButtonText: `Don't ${user.block === true ? "Unblock" : "Block"}`,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await axios.patch(
+            `/admin/toggle-block-user/${user?.email}`,
+          );
+          if (response.data.modifiedCount) {
+            Swal.fire("Saved!", "", "success");
+            refetchUsers();
+          }
+        } catch (err) {
+          console.log(err);
+          Swal.fire({
+            icon: "error",
+            title: "Ooops...",
+            text: "Something went worng!",
+          });
+        }
+      } else if (result.isDenied) {
+        Swal.fire("Nothing changed", "", "info");
+      }
+    });
+  };
+
+  
   return (
     <DashboardContainer>
       <div className="flex flex-col md:flex-row md:items-center justify-between">
@@ -54,10 +91,15 @@ const ManageUsers = () => {
                     <tr key={user._id}>
                       <td>{user.displayName}</td>
                       <td>{user.email}</td>
-                      <td>{user.isPremium === "yes" ? 'Yes' : 'No'}</td>
+                      <td>{user.isPremium === "yes" ? "Yes" : "No"}</td>
                       <td>{user.role.toUpperCase()}</td>
                       <td>
-                        <button className="btn btn-sm">Delete</button>
+                        <button
+                          onClick={() => blockUnblock(user)}
+                          className={`btn btn-sm border ${user.block ? 'border-blue-500' : 'border-red-500'}`}
+                        >
+                          {user.block ? 'Unblock' : 'Block'}
+                        </button>
                       </td>
                     </tr>
                   );

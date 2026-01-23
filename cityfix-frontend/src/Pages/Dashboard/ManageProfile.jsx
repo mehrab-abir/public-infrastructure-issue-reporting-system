@@ -193,16 +193,13 @@ const ManageProfile = () => {
               <h3 className="text-xl font-semibold">{user?.displayName}</h3>
               <p className="text-muted text-sm">{user?.email}</p>
 
-              {thisUser?.isPremium === "yes" ? (
+              {thisUser?.isPremium === "yes" && (
                 <div className="flex items-center justify-between bg-orange-100 text-orange-400 text-sm rounded-full px-2 mt-2">
                   <LuCrown />
                   <span>Premium</span>
                 </div>
-              ) : (
-                <div className=" bg-gray-200 text-black text-sm rounded-full px-2 mt-2">
-                  <span>Free</span>
-                </div>
               )}
+
             </div>
             <dialog
               ref={imageModalRef}
@@ -333,6 +330,7 @@ const ManageProfile = () => {
                 </div>
               </div>
             ) : (
+              thisUser?.role?.toLowerCase() === "citizen" ?
               <div className="bg-surface p-4 rounded-xl">
                 <div className="flex items-center gap-2">
                   <div>
@@ -364,6 +362,8 @@ const ManageProfile = () => {
                   Upgrade to Premium
                 </button>
               </div>
+              :
+              ''
             )}
           </div>
         </div>

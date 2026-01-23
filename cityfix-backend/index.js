@@ -605,6 +605,32 @@ async function run() {
             res.send(thisUser);
         })
 
+        //block/unblock a user
+        app.patch('/admin/toggle-block-user/:email',async (req,res)=>{
+            const {email} = req.params;
+
+            const thisUser = await usersCollection.findOne({email});
+
+            let result;
+
+            if(thisUser.block){
+                result = await usersCollection.updateOne({email:email},{
+                    $set : {
+                        block : false
+                    }
+                })
+            }
+            else{
+                result = await usersCollection.updateOne({ email: email }, {
+                    $set: {
+                        block: true
+                    }
+                })
+            }
+
+            res.send(result);
+        })
+
         //payment apis -- boost issue payment
         app.post('/create-checkout-session', async (req, res) => {
             try {
