@@ -262,7 +262,17 @@ async function run() {
 
         //get all staffs --for admin
         app.get("/all-staffs", async (req, res) => {
-            const staffs = await staffCollection.find().toArray();
+            const {searchText} = req.query;
+
+            let query = {};
+
+            if(searchText){
+                query.$or = [
+                    {displayName : {$regex : searchText , $options : 'i'}}
+                ]
+            }
+
+            const staffs = await staffCollection.find(query).toArray();
             res.send(staffs);
         })
 
@@ -393,6 +403,60 @@ async function run() {
                 res.status(400).send({ message: err.message });
             }
         });
+
+        //update staff info - by admin
+        app.patch('/admin/update-staff/:uid',verifyToken, verifyAdmin,async (req,res)=>{
+            const {uid} = req.params;
+            const {displayName, phone, photoURL} = req.body;
+
+            try{
+                const authInfo = {
+                    displayName,
+                    photoURL
+                }
+
+                //update in firebase auth system
+                await admin.auth().updateUser(uid, authInfo);
+
+                //update in staffCollection in db
+                const updatedStaff = await staffCollection.updateOne({ uid }, {
+                    $set: {
+                        displayName: displayName,
+                        phone: phone,
+                        photoURL: photoURL
+                    }
+                })
+
+                //update in userCollection in db
+                const updatedUser = await usersCollection.updateOne({ uid }, {
+                    $set: {
+                        displayName: displayName,
+                        phone: phone,
+                        photoURL: photoURL
+                    }
+                })
+
+                if (updatedStaff.matchedCount && updatedUser.matchedCount) {
+                    res.send({
+                        message: "updated",
+                        updated: true,
+                        staffMatched: updatedStaff.matchedCount,
+                        userMatched: updatedUser.matchedCount,
+                    })
+                }
+                else {
+                    return res.status(500).send({
+                        message: "Error: update in db failed",
+                    })
+                }
+            }
+            catch(err){
+                return res.status(500).send({
+                    message : "Staff/user info has not updated",
+                    errorMessage : `${err.message}`
+                });
+            }
+        })
 
         //delete a staff - by admin
         app.delete('/admin/delete-staff/:uid',verifyToken, verifyAdmin,async (req,res)=>{
