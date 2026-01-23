@@ -1,7 +1,6 @@
 import React from 'react';
 import { SlLocationPin } from "react-icons/sl";
 import { IoArrowUp } from "react-icons/io5";
-import { IoMdEye } from 'react-icons/io';
 import { Link } from 'react-router';
 
 const IssueCard = ({issue}) => {
@@ -26,7 +25,7 @@ const IssueCard = ({issue}) => {
               {issue.category}
             </span>
             <span
-              className={` text-white px-2 rounded-xl text-sm ${
+              className={`text-nowrap text-white px-2 rounded-xl text-sm ${
                 issue?.status?.toLowerCase() === "pending"
                   ? "bg-yellow-500"
                   : issue?.status?.toLowerCase() === "staff assigned"
@@ -54,7 +53,7 @@ const IssueCard = ({issue}) => {
           </p>
           <div className="flex items-center justify-between">
             <button
-              className="btn btn-sm flex items-center gap-1 bg-surface-alt text-accent border border-blue-500 rounded-lg cursor-pointer tooltip"
+              className="btn btn-xs lg:btn-sm flex items-center gap-1 bg-surface-alt text-accent border border-blue-500 rounded-lg cursor-pointer tooltip"
               data-tip="upvote"
             >
               <IoArrowUp className="text-lg" />
@@ -62,9 +61,8 @@ const IssueCard = ({issue}) => {
             </button>
             <Link
               to={`/issue-details/${issue._id}`}
-              className="btn btn-sm hover:bg-primary-hover hover:text-white! text-sm md:text-base border-base"
+              className="btn btn-xs lg:btn-sm hover:bg-primary-hover hover:text-white! text-sm lg:text-base border-base"
             >
-              <IoMdEye className="text-xl" />
               View Details
             </Link>
           </div>

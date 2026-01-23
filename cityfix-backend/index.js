@@ -65,7 +65,7 @@ app.get('/', (req, res) => {
 
 async function run() {
     try {
-        await client.connect();
+        // await client.connect();
 
         const db = client.db("cityfix-db");
         const usersCollection = db.collection("users");
@@ -394,6 +394,29 @@ async function run() {
             }
         });
 
+        //delete a staff - by admin
+        app.delete('/admin/delete-staff/:uid',verifyToken, verifyAdmin,async (req,res)=>{
+            const {uid} = req.params;
+
+            try{
+                await admin.auth().deleteUser(uid);
+
+                const deletedFromStaff = await staffCollection.deleteOne({uid : uid});
+                const deletedUser = await usersCollection.deleteOne({uid : uid});
+
+                if(deletedFromStaff.deletedCount && deletedUser.deletedCount){
+                    return res.send({
+                        deleted : true,
+                        message : "user deleted"
+                    })
+                }
+            }
+            catch(err){
+                console.log("Delet user error : ",err);
+                return res.status(500).send({message : "failed to delete user"});
+            }
+        })
+
         //get one user's role --for useRole
         app.get("/user/:email/role", async (req, res) => {
             const { email } = req.params;
@@ -643,8 +666,8 @@ async function run() {
 
 
         // Send a ping to confirm a successful connection
-        await client.db("admin").command({ ping: 1 });
-        console.log("Pinged your deployment. You successfully connected to MongoDB!");
+        /* await client.db("admin").command({ ping: 1 });
+        console.log("Pinged your deployment. You successfully connected to MongoDB!"); */
     } finally {
 
     }
