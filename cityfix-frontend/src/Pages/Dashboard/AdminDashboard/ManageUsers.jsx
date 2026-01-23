@@ -63,6 +63,8 @@ const ManageUsers = () => {
         <p>Showing users: {users.length}</p>
       </div>
 
+
+      {/* search and filter users  */}
       <div className="flex flex-col md:flex-row gap-2 md:gap-4 relative mt-4">
         <input
           type="text"

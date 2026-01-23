@@ -769,6 +769,12 @@ async function run() {
             }
         })
 
+        //get all payments - by admin
+        app.get("/admin/all-payments",async (req,res)=>{
+            const allPayments = await paymentCollection.find().toArray();
+            res.send(allPayments)
+        })
+
 
         // Send a ping to confirm a successful connection
         /* await client.db("admin").command({ ping: 1 });
