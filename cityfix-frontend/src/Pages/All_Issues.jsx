@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Container from "../Components/Container";
-import { IoIosSearch, IoMdEye } from "react-icons/io";
+import { IoIosSearch } from "react-icons/io";
 import IssueCard from "../Components/IssueCard";
 import useAxiosSecured from "../Hooks/Axios/useAxiosSecured";
 import LoaderSpinner from "../Components/LoaderSpinner";

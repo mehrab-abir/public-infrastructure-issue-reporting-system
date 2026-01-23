@@ -4,6 +4,7 @@ import useAxiosSecured from "../../../Hooks/Axios/useAxiosSecured";
 import DashboardContainer from "../DashboardContainer";
 import LoaderSpinner from "../../../Components/LoaderSpinner";
 import Swal from "sweetalert2";
+import { IoIosSearch } from "react-icons/io";
 import { useState } from "react";
 
 const ManageUsers = () => {
@@ -51,7 +52,7 @@ const ManageUsers = () => {
     });
   };
 
-  
+
   return (
     <DashboardContainer>
       <div className="flex flex-col md:flex-row md:items-center justify-between">
@@ -60,6 +61,25 @@ const ManageUsers = () => {
           <p className="text-muted text-sm md:text-lg mt-2">Manage All Users</p>
         </div>
         <p>Showing users: {users.length}</p>
+      </div>
+
+      <div className="flex flex-col md:flex-row gap-2 md:gap-4 relative mt-4">
+        <input
+          type="text"
+          className="input w-full outline-none px-8 rounded-lg"
+          placeholder="Search by name or email"
+          onChange={(e)=>setSearchText(e.target.value)}
+        />
+        <IoIosSearch className="absolute top-3 left-3 text-muted text-lg" />
+        <select
+          className="select focus:outline-2 focus:outline-blue-600 cursor-pointer w-full mt-2 md:mt-0 rounded-lg"
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+        >
+          <option value="">All Roles</option>
+          <option value="staff">Staff</option>
+          <option value="citizen">Citizen</option>
+        </select>
       </div>
 
       <div className="mt-5">
@@ -96,9 +116,9 @@ const ManageUsers = () => {
                       <td>
                         <button
                           onClick={() => blockUnblock(user)}
-                          className={`btn btn-sm border ${user.block ? 'border-blue-500' : 'border-red-500'}`}
+                          className={`btn btn-sm border ${user.block ? "border-blue-500" : "border-red-500"}`}
                         >
-                          {user.block ? 'Unblock' : 'Block'}
+                          {user.block ? "Unblock" : "Block"}
                         </button>
                       </td>
                     </tr>

@@ -240,7 +240,22 @@ async function run() {
         //apis for admin
         //get all users
         app.get("/users", async (req, res) => {
-            const users = await usersCollection.find().toArray();
+            const {role, searchText} = req.query;
+
+            let query = {};
+
+            if(role){
+                query.role = role;
+            }
+
+            if(searchText){
+                query.$or = [
+                    {displayName : {$regex : searchText, $options : 'i'}},
+                    {email : {$regex : searchText, $options: 'i'}}
+                ]
+            }
+
+            const users = await usersCollection.find(query).toArray();
             res.send(users);
         })
         
