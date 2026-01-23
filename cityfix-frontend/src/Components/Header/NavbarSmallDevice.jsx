@@ -3,9 +3,11 @@ import { NavLink, useNavigate } from "react-router";
 import { FaRegTimesCircle } from "react-icons/fa";
 import useAuth from "../../Hooks/Auth/useAuth";
 import { Bounce, toast } from "react-toastify";
+import useRole from "../../Hooks/Role/useRole";
 
 const NavbarSmallDevice = ({ openMenu, setOpenMenu }) => {
   const { user, signOutUser, setLoading } = useAuth();
+  const { role } = useRole();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -51,13 +53,16 @@ const NavbarSmallDevice = ({ openMenu, setOpenMenu }) => {
         >
           All Issues
         </NavLink>
-        <NavLink
-          to="/report-issue"
-          className="hover:text-accent text-lg px-2"
-          onClick={() => setOpenMenu(!openMenu)}
-        >
-          Report Issue
-        </NavLink>
+        {(role === "admin" || role === "ciitzen") && (
+          <NavLink
+            to="/report-issue"
+            className="hover:text-accent text-lg px-2"
+            onClick={() => setOpenMenu(!openMenu)}
+          >
+            Report Issue
+          </NavLink>
+        )}
+
         <NavLink
           to="/about"
           className="hover:text-accent text-lg px-2"

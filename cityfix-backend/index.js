@@ -783,6 +783,14 @@ async function run() {
             res.send(allPayments)
         })
 
+        //get all payments of a citizen - by citizen/user
+        app.get('/citizen/payment-history/:email',async (req,res)=>{
+            const {email} = req.params;
+
+            const myPayments = await paymentCollection.find({reporterEmail: email}).toArray();
+            res.send(myPayments);
+        })
+
 
         //dashboard home page apis --admin
         //count total issue

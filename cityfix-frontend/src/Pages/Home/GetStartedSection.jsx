@@ -4,9 +4,12 @@ import { Link } from "react-router";
 import { LuCrown } from "react-icons/lu";
 import { IoMdCheckmark } from "react-icons/io";
 import useAuth from "../../Hooks/Auth/useAuth";
+import useRole from "../../Hooks/Role/useRole";
+import LoaderSpinner from "../../Components/LoaderSpinner";
 
 const GetStartedSection = () => {
   const { user } = useAuth();
+  const { role, roleLoading } = useRole();
 
   return (
     <div className="bg-linear-to-t from-[#0575e6] to-[#021b79] py-16">
@@ -22,7 +25,9 @@ const GetStartedSection = () => {
               change happen.
             </p>
             <div className="flex items-center gap-4 justify-center md:justify-start mt-8">
-              {user ? (
+              {roleLoading ? (
+                <LoaderSpinner />
+              ) : user && (role === "admin" || role === "citizen") ? (
                 <Link
                   to="report-issue"
                   className="btn bg-surface shadow-none border-none hover:bg-accent! hover:text-white!"
@@ -31,18 +36,30 @@ const GetStartedSection = () => {
                 </Link>
               ) : (
                 <>
-                  <Link
-                    to="/auth/register"
-                    className="btn border-white bg-primary text-white shadow-none"
-                  >
-                    Register
-                  </Link>
-                  <Link
-                    to="report-issue"
-                    className="btn bg-surface shadow-none border-none hover:bg-accent! hover:text-white!"
-                  >
-                    Report an Issue
-                  </Link>
+                  {role !== "staff" && (
+                    <Link
+                      to="/auth/register"
+                      className="btn border-white bg-primary text-white shadow-none"
+                    >
+                      Register
+                    </Link>
+                  )}
+
+                  {role === "staff" ? (
+                    <Link
+                      to="/all-issues"
+                      className="btn bg-surface shadow-none border-none hover:bg-accent! hover:text-white!"
+                    >
+                      All Issues
+                    </Link>
+                  ) : (
+                    <Link
+                      to="/report-issue"
+                      className="btn bg-surface shadow-none border-none hover:bg-accent! hover:text-white!"
+                    >
+                      Report an Issue
+                    </Link>
+                  )}
                 </>
               )}
             </div>

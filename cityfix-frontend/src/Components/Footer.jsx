@@ -60,13 +60,13 @@ const Footer = () => {
               <Link to="/report-issue" className="hover:underline">
                 Report Issue
               </Link>
-              <Link to="/track-status" className="hover:underline">
-                Track Status
+              <Link to="/all-issues" className="hover:underline">
+                All Issues
               </Link>
-              <Link to="/be-premium-citizen" className="hover:underline">
+              <Link to="" className="hover:underline">
                 Premium Plan
               </Link>
-              <Link to="/faq" className="hover:underline">
+              <Link to="" className="hover:underline">
                 FAQ
               </Link>
             </div>

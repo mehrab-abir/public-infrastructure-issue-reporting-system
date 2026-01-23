@@ -341,10 +341,10 @@ const ManageIssues = () => {
                             className={`tooltip ${issue.status === "Rejected" ? "cursor-not-allowed" : "cursor-pointer"}`}
                             data-tip="Reject Issue"
                             onClick={() => rejectIssue(issue)}
-                            disabled={issue.status === "Rejected"}
+                            disabled={issue.status === "Rejected" || issue.status !== "Pending"}
                           >
                             <LiaTimesSolid
-                              className={`text-lg md:text-xl ${issue.status === "Rejected" && 'text-gray-300'}`}
+                              className={`text-lg md:text-xl ${(issue.status === "Rejected" || issue.status !== "Pending") && 'text-gray-300'}`}
                             />
                           </button>
                           <button
