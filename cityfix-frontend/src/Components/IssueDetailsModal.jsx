@@ -85,7 +85,7 @@ const IssueDetailsModal = ({selectedIssue,staffInfo,reporterInfo,loadingPeople})
             {loadingPeople || !staffInfo ? (
               <LoaderSpinner />
             ) : (
-              <div className="flex flex-col gap-4 mb-2">
+              <div className="flex flex-col gap-2 mb-2">
                 <img
                   src={staffInfo?.photoURL || defaultAvatar}
                   className="w-14 h-14 object-cover rounded-full"
@@ -93,8 +93,8 @@ const IssueDetailsModal = ({selectedIssue,staffInfo,reporterInfo,loadingPeople})
                   alt=""
                 />
                 <div>
-                  <p className="font-bold">{staffInfo?.displayName || "---"}</p>
-                  <p className="text-muted">{staffInfo?.email || "---"}</p>
+                  <p className="font-bold">{staffInfo?.displayName || "Not Assigned Yet"}</p>
+                  <p className="text-muted">Email: {staffInfo?.email || "staff not assigned yet"}</p>
                 </div>
                 <p>Phone : {staffInfo?.phone || "---"}</p>
               </div>

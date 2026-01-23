@@ -149,7 +149,7 @@ const AssignedIssues = () => {
                         {issue.issueTitle}
                       </td>
                       <td
-                        className={`font-semibold ${issue?.priority?.startsWith("normal") ? "text-secondary" : "text-red-500"}`}
+                        className={`font-semibold ${issue?.priority === "Normal" ? "text-secondary" : "text-red-500"}`}
                       >
                         {issue.priority.split(" ")[0].toUpperCase()}
                       </td>

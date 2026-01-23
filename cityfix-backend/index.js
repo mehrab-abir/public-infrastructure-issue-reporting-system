@@ -158,7 +158,7 @@ async function run() {
                 projection : { upvoteBy : 1}
             })
 
-            const alreadyUpvoted = issue.upvoteBy.includes(upvoteBy);
+            const alreadyUpvoted = issue?.upvoteBy?.includes(upvoteBy);
             
             let afterUpvote;
 
@@ -182,7 +182,7 @@ async function run() {
             res.send({
                 modifiedCount : afterUpvote.modifiedCount,
                 upvote : updated.upvote,
-                upvoted : updated.upvoteBy.includes(upvoteBy)
+                upvoted : updated?.upvoteBy?.includes(upvoteBy)
             });
         })
 
@@ -311,7 +311,7 @@ async function run() {
 
         //get all issues
         app.get("/all-issues", async (req, res) => {
-            const { category, status, priority, searchText } = req.query;
+            const { category, status, priority, searchText, recent } = req.query;
 
             const query = {};
 
@@ -335,7 +335,15 @@ async function run() {
                 ]
             }
 
-            const issues = await issueCollection.find(query).toArray();
+            const result = issueCollection.find(query).sort({priorityLevel : 1});
+
+            const limit = Number(recent);
+
+            if(limit){
+                result.limit(limit);
+            }
+
+            const issues = await result.toArray();
 
             res.send(issues);
         })
@@ -773,6 +781,55 @@ async function run() {
         app.get("/admin/all-payments",async (req,res)=>{
             const allPayments = await paymentCollection.find().toArray();
             res.send(allPayments)
+        })
+
+
+        //dashboard home page apis --admin
+        //count total issue
+        app.get('/issue-count',async (req,res)=>{
+            const issueCount = await issueCollection.countDocuments();
+            res.send(issueCount);
+        })
+
+        //count registered citizens
+        app.get('/citizen-count',async (req,res)=>{
+            const citizenCount = await usersCollection.countDocuments({role : 'citizen'});
+            res.send(citizenCount);
+        })
+
+        //count staff
+        app.get('/staff-count',async (req,res)=>{
+            const staffCount = await staffCollection.countDocuments();
+            res.send(staffCount);
+        })
+
+        //total revenue
+        app.get('/total-revenue',async (req,res)=>{
+            const result = await paymentCollection.aggregate([
+                {
+                    $group : {
+                        _id : null,
+                        totalRevenue : {$sum : {$toInt : "$amount"}}
+                    }
+                }
+            ]).toArray();
+
+            const revenue = result[0]?.totalRevenue || 0;
+            res.send(revenue);
+        })
+
+        //group issues by status
+        app.get('/group-issues-by-status',async (req,res)=>{
+            const result = await issueCollection.aggregate([
+                {
+                    $group : {
+                        _id : "$status",
+                        count : {$sum : 1}
+                    }
+                }
+            ]).toArray();
+
+            res.send(result);
         })
 
 

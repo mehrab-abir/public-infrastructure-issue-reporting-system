@@ -22,7 +22,7 @@ const useAxiosSecured = () => {
                     return config;
                 }
 
-                const token = await user.getIdToken();
+                const token = await user?.getIdToken();
 
                 config.headers = config.headers ?? {};
                 config.headers.authorization = `Bearer ${token}`;
