@@ -7,8 +7,10 @@ import george from "../../assets/hero-images/img-2.JPG";
 import cn from "../../assets/hero-images/img-3.jpeg";
 import useRole from "../../Hooks/Role/useRole";
 import LoaderSpinner from "../../Components/LoaderSpinner";
+import useAuth from "../../Hooks/Auth/useAuth";
 
 const Banner = () => {
+  const {user} = useAuth();
   const { role, roleLoading } = useRole();
 
   return (
@@ -33,28 +35,55 @@ const Banner = () => {
             <div className="flex items-center md:items-start justify-center md:justify-start gap-4 mt-5">
               {roleLoading ? (
                 <LoaderSpinner />
-              ) : role === "admin" || role === "citizen" ? (
-                <Link
-                  to="report-issue"
-                  className="btn bg-accent border-none shadow-lg text-white"
-                >
-                  Report Issue
-                </Link>
-              ) : (
-                <Link
-                  to="/about"
-                  className="btn bg-accent border-none shadow-lg text-white"
-                >
-                  About Us
-                </Link>
-              )}
+              ) : user && (role === "admin" || role === "citizen") ? (
+                <>
+                  <Link
+                    to="report-issue"
+                    className="btn bg-accent border-none shadow-lg text-white"
+                  >
+                    Report Issue
+                  </Link>
 
-              <Link
-                to="all-issues"
-                className="btn bg-surface-alt border border-gray-500 shadow-lg hover:bg-accent! text-primary"
-              >
-                All Issues
-              </Link>
+                  <Link
+                    to="all-issues"
+                    className="btn bg-surface-alt border border-gray-500 shadow-lg hover:bg-accent! text-primary"
+                  >
+                    All Issues
+                  </Link>
+                </>
+              ) : !user ? (
+                <>
+                  <Link
+                    to="all-issues"
+                    className="btn bg-surface-alt border border-gray-500 shadow-lg hover:bg-accent! text-primary"
+                  >
+                    All Issues
+                  </Link>
+
+                  <Link
+                    to="report-issue"
+                    className="btn bg-accent border-none shadow-lg text-white"
+                  >
+                    Report Issue
+                  </Link>
+                </>
+              ) : user && role === "staff" ? (
+                <>
+                  <Link
+                    to="all-issues"
+                    className="btn bg-surface-alt border border-gray-500 shadow-lg hover:bg-accent! text-primary"
+                  >
+                    All Issues
+                  </Link>
+
+                  <Link
+                    to="/about"
+                    className="btn bg-accent border-none shadow-lg text-white"
+                  >
+                    About Us
+                  </Link>
+                </>
+              ) : null}
             </div>
           </div>
 

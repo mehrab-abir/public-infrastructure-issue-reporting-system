@@ -53,7 +53,7 @@ const NavbarSmallDevice = ({ openMenu, setOpenMenu }) => {
         >
           All Issues
         </NavLink>
-        {(role === "admin" || role === "ciitzen") && (
+        {user && (role === "admin" || role === "ciitzen") ? (
           <NavLink
             to="/report-issue"
             className="hover:text-accent text-lg px-2"
@@ -61,6 +61,16 @@ const NavbarSmallDevice = ({ openMenu, setOpenMenu }) => {
           >
             Report Issue
           </NavLink>
+        ) : (
+          !user && (
+            <NavLink
+              to="/report-issue"
+              className="hover:text-accent text-lg px-2"
+              onClick={() => setOpenMenu(!openMenu)}
+            >
+              Report Issue
+            </NavLink>
+          )
         )}
 
         <NavLink

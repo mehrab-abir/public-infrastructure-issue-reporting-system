@@ -139,7 +139,18 @@ async function run() {
         //get all my issues - issues reported by a citizen
         app.get("/issues/:email", async (req, res) => {
             const { email } = req.params;
-            const issues = await issueCollection.find({ reporterEmail: email }).toArray();
+            const {recent} = req.query;
+
+            const result = issueCollection.find({ reporterEmail: email }).sort({created_at : -1});
+
+            const limit = Number(recent);
+
+            if(limit){
+                result.limit(limit);
+            }
+
+            const issues = await result.toArray();
+
             res.send(issues);
         })
 
@@ -888,22 +899,57 @@ async function run() {
         })
 
         //group issues by month
-        app.get('/group-issue-by-months',async (req,res)=>{
+        app.get('/group-issue-by-months', async (req, res) => {
             const result = await issueCollection.aggregate([
                 {
-                    $addFields : {
-                        created_at : { $toDate : "$created_at"}
+                    $addFields: {
+                        created_at: { $toDate: "$created_at" }
                     }
                 },
                 {
-                    $group : {
-                        _id : {
-                            year : {$year : "$created_at"},
-                            month : {$month : "$created_at"}
+                    $group: {
+                        _id: {
+                            year: { $year: "$created_at" },
+                            month: { $month: "$created_at" }
                         },
-                        count : {$sum : 1}
+                        count: { $sum: 1 }
                     }
                 }
+            ]).toArray();
+
+            res.send(result);
+        })
+
+
+        //dashboard home page apis - Citizens
+        //group issues by status and get total count of reported issues
+        app.get('/citizen/issue-count-by-status/:email', async (req, res) => {
+            const { email } = req.params;
+
+            const result = await issueCollection.aggregate([
+                { $match: { reporterEmail: email } },
+                {
+                    $facet: {
+                        byStatus: [
+                            {
+                                $group: {
+                                    _id: "$status",
+                                    count: { $sum: 1 }
+                                }
+                            }
+
+                        ],
+                        total : [
+                            {
+                                $group : {
+                                    _id : null,
+                                    totalCount : {$sum : 1}
+                                }
+                            }
+                        ]
+                    },
+
+                },
             ]).toArray();
 
             res.send(result);

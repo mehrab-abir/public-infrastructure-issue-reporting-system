@@ -20,10 +20,16 @@ const NavbarLargeDevice = () => {
       <NavLink to="/all-issues" className="hover:text-accent p-1">
         All Issues
       </NavLink>
-      {(role === "admin" || role === "citizen") && (
+      {user && (role === "admin" || role === "citizen") ? (
         <NavLink to="/report-issue" className="hover:text-accent p-1">
           Report Issue
         </NavLink>
+      ) : (
+        !user && (
+          <NavLink to="/report-issue" className="hover:text-accent p-1">
+            Report Issue
+          </NavLink>
+        )
       )}
 
       <NavLink to="/about" className="hover:text-accent p-1">
