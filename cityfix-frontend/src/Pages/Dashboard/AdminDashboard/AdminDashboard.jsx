@@ -5,6 +5,7 @@ import RecentIssues from "./DashComponents/RecentIssues";
 import GroupIssuesStatus from "./DashComponents/GroupIssuesStatus";
 import LatestStaffs from "./DashComponents/LatestStaffs";
 import LatestCitizens from "./DashComponents/LatestCitizens";
+import IssueStatusPieChart from "./DashComponents/IssueStatusPieChart";
 
 const AdminDashboard = () => {
   return (
@@ -12,6 +13,8 @@ const AdminDashboard = () => {
       <Counts></Counts>
 
       <GroupIssuesStatus></GroupIssuesStatus>
+
+      <IssueStatusPieChart></IssueStatusPieChart>
 
       <RecentIssues></RecentIssues>
 

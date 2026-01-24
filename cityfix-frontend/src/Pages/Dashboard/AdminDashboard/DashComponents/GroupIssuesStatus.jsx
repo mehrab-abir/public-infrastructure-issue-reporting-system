@@ -21,11 +21,10 @@ const GroupIssuesStatus = () => {
     },
   });
 
-  console.log(data);
 
   return (
     <div className="mt-6">
-      <h1 className="text-xl md:text-2xl font-bold mb-2">Number of Issues By Status</h1>
+      <h1 className="text-xl md:text-2xl font-bold mb-2">Issue Stats Overview</h1>
       <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-7 gap-3">
         {isLoading ? (
           <LoaderSpinner />
