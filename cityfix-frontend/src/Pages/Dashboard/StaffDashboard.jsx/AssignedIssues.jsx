@@ -74,7 +74,7 @@ const AssignedIssues = () => {
         issueId: issue._id,
         staffResponse: staffResponse,
         staffEmail: issue.staffEmail,
-        trackingId : issue.trackingId
+        trackingId: issue.trackingId,
       };
 
       const response = await axios.patch(
@@ -113,6 +113,12 @@ const AssignedIssues = () => {
         </div>
         <p>Showing issues: {assignedIssues.length}</p>
       </div>
+
+      {
+        assignedIssues.length === 0 && <p className="text-secondary text-center my-4">
+          -You do not have any assigned issue at this moment-
+        </p>
+      }
 
       <div>
         <div

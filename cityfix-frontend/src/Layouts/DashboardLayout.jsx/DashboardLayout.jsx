@@ -11,6 +11,7 @@ import { MdOutlinePayment } from "react-icons/md";
 import { GrUserWorker } from "react-icons/gr";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { FaRegCircleUser } from "react-icons/fa6";
+import { IoCheckmarkDoneCircleOutline } from "react-icons/io5";
 import { AiOutlineHome } from "react-icons/ai";
 import { FaUsersCog } from "react-icons/fa";
 import { FaTasks } from "react-icons/fa";
@@ -59,7 +60,8 @@ const DashboardLayout = () => {
   return (
     <div className="bg-base relative">
       <h1 className="text-2xl font-bold text-cyan-600 text-center lg:text-start lg:ml-78 pt-2">
-         {role === "admin" ? "ADMIN" : role === "staff" ? "STAFF" : "CITIZEN"} DASHBOARD
+        {role === "admin" ? "ADMIN" : role === "staff" ? "STAFF" : "CITIZEN"}{" "}
+        DASHBOARD
       </h1>
 
       {/* sidebar opener */}
@@ -201,6 +203,14 @@ const DashboardLayout = () => {
               >
                 <FaTasks className="text-xl" />
                 <span>Assingned Issues</span>
+              </NavLink>
+              <NavLink
+                to="/dashboard/resolved-issues"
+                className={`font-semibold flex items-center gap-4 text-sm md:text-base py-1 px-2`}
+                onClick={() => setShowSideBar(!showSideBar)}
+              >
+                <IoCheckmarkDoneCircleOutline className="text-xl" />
+                <span>Resolved Issues</span>
               </NavLink>
               <NavLink
                 to="/dashboard/manage-profile"

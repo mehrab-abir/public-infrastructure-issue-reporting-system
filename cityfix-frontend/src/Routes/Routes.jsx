@@ -27,6 +27,7 @@ import AdminRoute from "./AdminRoute";
 import PrivateRoute from "./PrivateRoute";
 import PaymentSuccess from "../Pages/Dashboard/CitizenDashboard/PaymentSuccess";
 import PaymentCancelled from "../Pages/Dashboard/CitizenDashboard/PaymentCancelled";
+import ResolvedIssues from "../Pages/Dashboard/StaffDashboard.jsx/ResolvedIssues";
 
 const router = createBrowserRouter([
   {
@@ -42,10 +43,12 @@ const router = createBrowserRouter([
         Component: All_Issues,
       },
       {
-        path : '/issue-details/:issueId',
-        element : <PrivateRoute>
-          <IssueDetails></IssueDetails>
-        </PrivateRoute>
+        path: "/issue-details/:issueId",
+        element: (
+          <PrivateRoute>
+            <IssueDetails></IssueDetails>
+          </PrivateRoute>
+        ),
       },
       {
         path: "/about",
@@ -57,9 +60,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/report-issue",
-        element : <PrivateRoute>
-          <ReportIssue></ReportIssue>
-        </PrivateRoute>
+        element: (
+          <PrivateRoute>
+            <ReportIssue></ReportIssue>
+          </PrivateRoute>
+        ),
       },
     ],
   },
@@ -83,9 +88,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/dashboard",
-    element : <PrivateRoute>
-      <DashboardLayout></DashboardLayout>
-    </PrivateRoute>,
+    element: (
+      <PrivateRoute>
+        <DashboardLayout></DashboardLayout>
+      </PrivateRoute>
+    ),
     children: [
       {
         index: true,
@@ -93,50 +100,72 @@ const router = createBrowserRouter([
       },
       {
         path: "/dashboard/manage-issues",
-        element : <AdminRoute>
-          <ManageIssues></ManageIssues>
-        </AdminRoute>
+        element: (
+          <AdminRoute>
+            <ManageIssues></ManageIssues>
+          </AdminRoute>
+        ),
       },
       {
         path: "/dashboard/manage-users",
-        element : <AdminRoute>
-          <ManageUsers></ManageUsers>
-        </AdminRoute>
+        element: (
+          <AdminRoute>
+            <ManageUsers></ManageUsers>
+          </AdminRoute>
+        ),
       },
       {
         path: "/dashboard/manage-staffs",
-        element: <AdminRoute>
-          <ManageStaffs></ManageStaffs>
-        </AdminRoute>
+        element: (
+          <AdminRoute>
+            <ManageStaffs></ManageStaffs>
+          </AdminRoute>
+        ),
       },
       {
         path: "/dashboard/add-new-staff",
-        element : <AdminRoute>
-          <AddNewStaff></AddNewStaff>
-        </AdminRoute>
+        element: (
+          <AdminRoute>
+            <AddNewStaff></AddNewStaff>
+          </AdminRoute>
+        ),
       },
       {
         path: "/dashboard/my-issues", //user's reported issues
-        element : <CitizenRoute>
-          <MyIssues></MyIssues>
-        </CitizenRoute>
+        element: (
+          <CitizenRoute>
+            <MyIssues></MyIssues>
+          </CitizenRoute>
+        ),
       },
       {
         path: "/dashboard/all-payments",
-        element : <AdminRoute>
-          <AllPayments></AllPayments>
-        </AdminRoute>
+        element: (
+          <AdminRoute>
+            <AllPayments></AllPayments>
+          </AdminRoute>
+        ),
       },
       {
         path: "/dashboard/payment-history",
-        element: <CitizenRoute>
-          <PaymentHistory></PaymentHistory>
-        </CitizenRoute>
+        element: (
+          <CitizenRoute>
+            <PaymentHistory></PaymentHistory>
+          </CitizenRoute>
+        ),
       },
       {
         path: "/dashboard/assigned-issues",
+        element: (
+          <StaffRoute>
+            <AssignedIssues></AssignedIssues>
+          </StaffRoute>
+        ),
+      },
+      {
+        path: "/dashboard/resolved-issues",
         element : <StaffRoute>
-          <AssignedIssues></AssignedIssues>
+          <ResolvedIssues></ResolvedIssues>
         </StaffRoute>
       },
       {
@@ -144,13 +173,13 @@ const router = createBrowserRouter([
         Component: ManageProfile,
       },
       {
-        path : '/dashboard/payment-success',
-        Component : PaymentSuccess
+        path: "/dashboard/payment-success",
+        Component: PaymentSuccess,
       },
       {
-        path : '/dashboard/payment-cancelled',
-        Component : PaymentCancelled
-      }
+        path: "/dashboard/payment-cancelled",
+        Component: PaymentCancelled,
+      },
     ],
   },
   {

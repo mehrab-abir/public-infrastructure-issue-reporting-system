@@ -256,6 +256,28 @@ async function run() {
             res.send(thisIssue);
         })
 
+        //get all resolved issues of a staff
+        app.get(`/staff/resolved-issues/:email`,async (req,res)=>{
+            const {email} = req.params;
+
+            const result = await resolvedCollection.aggregate([
+                {$match : {staffEmail : email}},
+                {
+                    $lookup : {
+                        from : 'issues',
+                        localField : 'issueId',
+                        foreignField : "_id",
+                        as : "resolved_issue"
+                    }
+                },
+                {$unwind : "$resolved_issue"}
+            ]).toArray();
+
+            console.log(result);
+
+            res.send(result);
+        })
+
 
         //apis for admin
         //get all users
@@ -825,9 +847,19 @@ async function run() {
         //get all payments of a citizen - by citizen/user
         app.get('/citizen/payment-history/:email', async (req, res) => {
             const { email } = req.params;
+            const {recent} = req.query;
 
-            const myPayments = await paymentCollection.find({ reporterEmail: email }).toArray();
-            res.send(myPayments);
+            const myPayments = paymentCollection.find({ reporterEmail: email }).sort({paid_at : -1});
+
+            const limit = Number(recent);
+
+            if(limit){
+                myPayments.limit(limit);
+            }
+
+            const result = await myPayments.toArray();
+
+            res.send(result);
         })
 
         //get all latest resolved issues
