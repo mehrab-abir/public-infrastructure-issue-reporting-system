@@ -6,6 +6,7 @@ import GroupIssuesStatus from "./DashComponents/GroupIssuesStatus";
 import LatestStaffs from "./DashComponents/LatestStaffs";
 import LatestCitizens from "./DashComponents/LatestCitizens";
 import IssueStatusPieChart from "./DashComponents/IssueStatusPieChart";
+import IssuesByMonthsBarChart from "./DashComponents/IssuesByMonthsBarChart";
 
 const AdminDashboard = () => {
   return (
@@ -14,7 +15,11 @@ const AdminDashboard = () => {
 
       <GroupIssuesStatus></GroupIssuesStatus>
 
-      <IssueStatusPieChart></IssueStatusPieChart>
+      <div className="flex flex-col md:flex-row md:items-center justify-between">
+        <IssueStatusPieChart></IssueStatusPieChart>
+
+        <IssuesByMonthsBarChart></IssuesByMonthsBarChart>
+      </div>
 
       <RecentIssues></RecentIssues>
 

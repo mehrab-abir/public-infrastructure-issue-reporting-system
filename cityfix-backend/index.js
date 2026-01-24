@@ -73,6 +73,7 @@ async function run() {
         const staffCollection = db.collection("staffs");
         const trackingCollection = db.collection("trackingLogs");
         const paymentCollection = db.collection("boost-payments");
+        const resolvedCollection = db.collection("resolved-issues");
 
         //middleware to verify role - admin
         const verifyAdmin = async (req, res, next) => {
@@ -151,38 +152,38 @@ async function run() {
 
 
         //upvote issue by citizen
-        app.patch('/upvote-issue',async (req,res)=>{
-            const {issueId, upvoteBy} = req.body;
+        app.patch('/upvote-issue', async (req, res) => {
+            const { issueId, upvoteBy } = req.body;
 
-            const issue = await issueCollection.findOne({_id : new ObjectId(issueId)},{
-                projection : { upvoteBy : 1}
+            const issue = await issueCollection.findOne({ _id: new ObjectId(issueId) }, {
+                projection: { upvoteBy: 1 }
             })
 
             const alreadyUpvoted = issue?.upvoteBy?.includes(upvoteBy);
-            
+
             let afterUpvote;
 
-            if(alreadyUpvoted){
-                afterUpvote = await issueCollection.updateOne({_id : new ObjectId(issueId)},{
-                    $pull : { upvoteBy : upvoteBy},
-                    $inc : {upvote : -1}
+            if (alreadyUpvoted) {
+                afterUpvote = await issueCollection.updateOne({ _id: new ObjectId(issueId) }, {
+                    $pull: { upvoteBy: upvoteBy },
+                    $inc: { upvote: -1 }
                 })
             }
-            else{
+            else {
                 afterUpvote = await issueCollection.updateOne({ _id: new ObjectId(issueId) }, {
                     $addToSet: { upvoteBy: upvoteBy },
                     $inc: { upvote: 1 }
                 })
             }
 
-            const updated = await issueCollection.findOne({_id : new ObjectId(issueId)},{
-                projection : {upvoteBy : 1, upvote : 1}
+            const updated = await issueCollection.findOne({ _id: new ObjectId(issueId) }, {
+                projection: { upvoteBy: 1, upvote: 1 }
             });
 
             res.send({
-                modifiedCount : afterUpvote.modifiedCount,
-                upvote : updated.upvote,
-                upvoted : updated?.upvoteBy?.includes(upvoteBy)
+                modifiedCount: afterUpvote.modifiedCount,
+                upvote: updated.upvote,
+                upvoted: updated?.upvoteBy?.includes(upvoteBy)
             });
         })
 
@@ -209,6 +210,14 @@ async function run() {
             }
             else if (staffResponse === "Resolved") {
                 issueStatus = "Resolved";
+                const resolved_at = new Date();
+
+                await resolvedCollection.insertOne({
+                    issueId: new ObjectId(issueId),
+                    resolved_at,
+                    staffEmail
+                });
+
             }
             else if (staffResponse === "Closed") {
                 issueStatus = "Closed";
@@ -235,31 +244,31 @@ async function run() {
 
             res.send(thisIssue);
         })
-        
-        
+
+
         //apis for admin
         //get all users
         app.get("/users", async (req, res) => {
-            const {role, searchText, recent} = req.query;
+            const { role, searchText, recent } = req.query;
 
             let query = {};
 
-            if(role){
+            if (role) {
                 query.role = role;
             }
 
-            if(searchText){
+            if (searchText) {
                 query.$or = [
-                    {displayName : {$regex : searchText, $options : 'i'}},
-                    {email : {$regex : searchText, $options: 'i'}}
+                    { displayName: { $regex: searchText, $options: 'i' } },
+                    { email: { $regex: searchText, $options: 'i' } }
                 ]
             }
 
-            const result = usersCollection.find(query).sort({created_at : -1});
+            const result = usersCollection.find(query).sort({ created_at: -1 });
 
             const limit = Number(recent);
 
-            if(limit){
+            if (limit) {
                 result.limit(limit);
             }
 
@@ -267,18 +276,18 @@ async function run() {
 
             res.send(users);
         })
-        
-        //reject issue - by admin
-        app.patch('/admin/reject-issue',async(req,res)=>{
-            const {issueId, trackingId} = req.query;
 
-            const rejectedIssue = await issueCollection.updateOne({_id : new ObjectId(issueId)},{
-                $set : {
-                    status : "Rejected"
+        //reject issue - by admin
+        app.patch('/admin/reject-issue', async (req, res) => {
+            const { issueId, trackingId } = req.query;
+
+            const rejectedIssue = await issueCollection.updateOne({ _id: new ObjectId(issueId) }, {
+                $set: {
+                    status: "Rejected"
                 }
             })
 
-            logTracking(trackingId,issueId,"Rejected","Admin");
+            logTracking(trackingId, issueId, "Rejected", "Admin");
 
             res.send(rejectedIssue);
         })
@@ -286,21 +295,21 @@ async function run() {
 
         //get all staffs --for admin
         app.get("/all-staffs", async (req, res) => {
-            const {searchText, recent} = req.query;
+            const { searchText, recent } = req.query;
 
             let query = {};
 
-            if(searchText){
+            if (searchText) {
                 query.$or = [
-                    {displayName : {$regex : searchText , $options : 'i'}}
+                    { displayName: { $regex: searchText, $options: 'i' } }
                 ]
             }
 
-            const result = staffCollection.find(query).sort({created_at : -1});
+            const result = staffCollection.find(query).sort({ created_at: -1 });
 
             const limit = Number(recent);
 
-            if(limit){
+            if (limit) {
                 result.limit(limit);
             }
 
@@ -353,11 +362,11 @@ async function run() {
                 ]
             }
 
-            const result = issueCollection.find(query).sort({priorityLevel : 1, created_at : -1});
+            const result = issueCollection.find(query).sort({ priorityLevel: 1, created_at: -1 });
 
             const limit = Number(recent);
 
-            if(limit){
+            if (limit) {
                 result.limit(limit);
             }
 
@@ -446,11 +455,11 @@ async function run() {
         });
 
         //update staff info - by admin
-        app.patch('/admin/update-staff/:uid',verifyToken, verifyAdmin,async (req,res)=>{
-            const {uid} = req.params;
-            const {displayName, phone, photoURL} = req.body;
+        app.patch('/admin/update-staff/:uid', verifyToken, verifyAdmin, async (req, res) => {
+            const { uid } = req.params;
+            const { displayName, phone, photoURL } = req.body;
 
-            try{
+            try {
                 const authInfo = {
                     displayName,
                     photoURL
@@ -491,34 +500,34 @@ async function run() {
                     })
                 }
             }
-            catch(err){
+            catch (err) {
                 return res.status(500).send({
-                    message : "Staff/user info has not updated",
-                    errorMessage : `${err.message}`
+                    message: "Staff/user info has not updated",
+                    errorMessage: `${err.message}`
                 });
             }
         })
 
         //delete a staff - by admin
-        app.delete('/admin/delete-staff/:uid',verifyToken, verifyAdmin,async (req,res)=>{
-            const {uid} = req.params;
+        app.delete('/admin/delete-staff/:uid', verifyToken, verifyAdmin, async (req, res) => {
+            const { uid } = req.params;
 
-            try{
+            try {
                 await admin.auth().deleteUser(uid);
 
-                const deletedFromStaff = await staffCollection.deleteOne({uid : uid});
-                const deletedUser = await usersCollection.deleteOne({uid : uid});
+                const deletedFromStaff = await staffCollection.deleteOne({ uid: uid });
+                const deletedUser = await usersCollection.deleteOne({ uid: uid });
 
-                if(deletedFromStaff.deletedCount && deletedUser.deletedCount){
+                if (deletedFromStaff.deletedCount && deletedUser.deletedCount) {
                     return res.send({
-                        deleted : true,
-                        message : "user deleted"
+                        deleted: true,
+                        message: "user deleted"
                     })
                 }
             }
-            catch(err){
-                console.log("Delet user error : ",err);
-                return res.status(500).send({message : "failed to delete user"});
+            catch (err) {
+                console.log("Delet user error : ", err);
+                return res.status(500).send({ message: "failed to delete user" });
             }
         })
 
@@ -647,21 +656,21 @@ async function run() {
         })
 
         //block/unblock a user
-        app.patch('/admin/toggle-block-user/:email',async (req,res)=>{
-            const {email} = req.params;
+        app.patch('/admin/toggle-block-user/:email', async (req, res) => {
+            const { email } = req.params;
 
-            const thisUser = await usersCollection.findOne({email});
+            const thisUser = await usersCollection.findOne({ email });
 
             let result;
 
-            if(thisUser.block){
-                result = await usersCollection.updateOne({email:email},{
-                    $set : {
-                        block : false
+            if (thisUser.block) {
+                result = await usersCollection.updateOne({ email: email }, {
+                    $set: {
+                        block: false
                     }
                 })
             }
-            else{
+            else {
                 result = await usersCollection.updateOne({ email: email }, {
                     $set: {
                         block: true
@@ -682,29 +691,29 @@ async function run() {
                     line_items: [
                         {
                             price_data: {
-                                currency : 'USD',
-                                unit_amount : amount,
-                                product_data : {
-                                    name : paymentInfo.issueTitle
+                                currency: 'USD',
+                                unit_amount: amount,
+                                product_data: {
+                                    name: paymentInfo.issueTitle
                                 },
                             },
-                            quantity : 1
+                            quantity: 1
                         }
                     ],
-                    customer_email : paymentInfo.reporterEmail,
-                    mode : 'payment',
-                    metadata : {
-                        issueId : paymentInfo.issueId,
-                        issueTitle : paymentInfo.issueTitle,
-                        trackingId : paymentInfo.trackingId,
-                        reporterEmail : paymentInfo.reporterEmail
+                    customer_email: paymentInfo.reporterEmail,
+                    mode: 'payment',
+                    metadata: {
+                        issueId: paymentInfo.issueId,
+                        issueTitle: paymentInfo.issueTitle,
+                        trackingId: paymentInfo.trackingId,
+                        reporterEmail: paymentInfo.reporterEmail
                     },
                     success_url: `${process.env.SITE_DOMAIN}/dashboard/payment-success?session_id={CHECKOUT_SESSION_ID}`,
                     cancel_url: `${process.env.SITE_DOMAIN}/dashboard/payment-cancelled`,
                 })
 
                 res.send({
-                    url : session.url
+                    url: session.url
                 })
             }
             catch (err) {
@@ -713,8 +722,8 @@ async function run() {
         })
 
         //after payment success, update priority level of the issue and post payment info into db
-        app.patch('/payment-success',async (req,res)=>{
-            try{
+        app.patch('/payment-success', async (req, res) => {
+            try {
                 const sessionId = req.query.session_id;
                 const session = await stripe.checkout.sessions.retrieve(sessionId);
 
@@ -722,31 +731,31 @@ async function run() {
 
                 const transactionId = session.payment_intent;
 
-                const paymentExist = await paymentCollection.findOne({transactionId});
+                const paymentExist = await paymentCollection.findOne({ transactionId });
 
-                if(paymentExist){
+                if (paymentExist) {
                     return res.send({
-                        message : "Payment already exists",
+                        message: "Payment already exists",
                         transactionId,
-                        issueTitle : paymentExist.issueTitle
+                        issueTitle: paymentExist.issueTitle
                     });
                 }
 
-                if(session.payment_status === 'paid'){
+                if (session.payment_status === 'paid') {
                     const issueId = session.metadata.issueId;
                     const paymentDate = new Date();
                     const trackingId = session.metadata.trackingId;
                     const reporter = session.metadata.reporterEmail.split('@')[0];
 
-                    logTracking(trackingId, issueId, "Issue Boosted for High Priority",reporter); //another tracking log - after boost payment
+                    logTracking(trackingId, issueId, "Issue Boosted for High Priority", reporter); //another tracking log - after boost payment
 
                     const updatedPriority = await issueCollection.updateOne(
-                        {_id : new ObjectId(issueId)},
+                        { _id: new ObjectId(issueId) },
                         {
-                            $set : {
-                                priority : "High",
-                                priorityLevel : 1,
-                                boosted_at : paymentDate
+                            $set: {
+                                priority: "High",
+                                priorityLevel: 1,
+                                boosted_at: paymentDate
                             }
                         }
                     );
@@ -755,87 +764,107 @@ async function run() {
                     //payment info to store to db
                     const payment = {
                         issueTitle: session.metadata.issueTitle,
-                        issueId : session.metadata.issueId,
+                        issueId: session.metadata.issueId,
                         transactionId,
-                        paid_at : paymentDate,
-                        paymentPurpose : "Boost Issue",
-                        reporterEmail : session.metadata.reporterEmail,
-                        amount : session.amount_total / 100,
-                        currency : session.currency
+                        paid_at: paymentDate,
+                        paymentPurpose: "Boost Issue",
+                        reporterEmail: session.metadata.reporterEmail,
+                        amount: session.amount_total / 100,
+                        currency: session.currency
                     }
 
                     let postPayment;
 
-                    try{
+                    try {
                         postPayment = await paymentCollection.insertOne(payment);
                     }
-                    catch(err){
-                        console.log("Payment info post error: ",err);
-                        return res.send({message : "Payment info post error",
-                            error : err.message
+                    catch (err) {
+                        console.log("Payment info post error: ", err);
+                        return res.send({
+                            message: "Payment info post error",
+                            error: err.message
                         });
                     }
 
                     return res.send({
                         success: true,
-                        updatedPriority : updatedPriority,
-                        postPayment : postPayment,
-                        transactionId : transactionId,
+                        updatedPriority: updatedPriority,
+                        postPayment: postPayment,
+                        transactionId: transactionId,
                         issueTitle: session.metadata.issueTitle
                     })
 
                 }
-                else{
-                    return res.send({message : "Payment not completed"});
+                else {
+                    return res.send({ message: "Payment not completed" });
                 }
             }
-            catch(error){
-                console.log("payment-success error: ",error);
-                return res.status(500).send({message : "Internal Server Error"});
+            catch (error) {
+                console.log("payment-success error: ", error);
+                return res.status(500).send({ message: "Internal Server Error" });
             }
         })
 
         //get all payments - by admin
-        app.get("/admin/all-payments",async (req,res)=>{
+        app.get("/admin/all-payments", async (req, res) => {
             const allPayments = await paymentCollection.find().toArray();
             res.send(allPayments)
         })
 
         //get all payments of a citizen - by citizen/user
-        app.get('/citizen/payment-history/:email',async (req,res)=>{
-            const {email} = req.params;
+        app.get('/citizen/payment-history/:email', async (req, res) => {
+            const { email } = req.params;
 
-            const myPayments = await paymentCollection.find({reporterEmail: email}).toArray();
+            const myPayments = await paymentCollection.find({ reporterEmail: email }).toArray();
             res.send(myPayments);
+        })
+
+        //get all latest resolved issues
+        app.get('/latest-resolved', async (req, res) => {
+            const latestResolved = await resolvedCollection.aggregate([
+                { $sort: { resolved_at: -1 } },
+                { $limit: 6 },
+                {
+                    $lookup: {
+                        from: 'issues',
+                        localField: 'issueId',
+                        foreignField: "_id",
+                        as: 'resolved_issue'
+                    }
+                },
+                { $unwind: "$resolved_issue" }
+            ]).toArray();
+
+            res.send(latestResolved);
         })
 
 
         //dashboard home page apis --admin
         //count total issue
-        app.get('/issue-count',async (req,res)=>{
+        app.get('/issue-count', async (req, res) => {
             const issueCount = await issueCollection.countDocuments();
             res.send(issueCount);
         })
 
         //count registered citizens
-        app.get('/citizen-count',async (req,res)=>{
-            const citizenCount = await usersCollection.countDocuments({role : 'citizen'});
+        app.get('/citizen-count', async (req, res) => {
+            const citizenCount = await usersCollection.countDocuments({ role: 'citizen' });
             res.send(citizenCount);
         })
 
         //count staff
-        app.get('/staff-count',async (req,res)=>{
+        app.get('/staff-count', async (req, res) => {
             const staffCount = await staffCollection.countDocuments();
             res.send(staffCount);
         })
 
         //total revenue
-        app.get('/total-revenue',async (req,res)=>{
+        app.get('/total-revenue', async (req, res) => {
             const result = await paymentCollection.aggregate([
                 {
-                    $group : {
-                        _id : null,
-                        totalRevenue : {$sum : {$toInt : "$amount"}}
+                    $group: {
+                        _id: null,
+                        totalRevenue: { $sum: { $toInt: "$amount" } }
                     }
                 }
             ]).toArray();
@@ -845,11 +874,33 @@ async function run() {
         })
 
         //group issues by status
-        app.get('/group-issues-by-status',async (req,res)=>{
+        app.get('/group-issues-by-status', async (req, res) => {
             const result = await issueCollection.aggregate([
                 {
+                    $group: {
+                        _id: "$status",
+                        count: { $sum: 1 }
+                    }
+                }
+            ]).toArray();
+
+            res.send(result);
+        })
+
+        //group issues by month
+        app.get('/group-issue-by-months',async (req,res)=>{
+            const result = await issueCollection.aggregate([
+                {
+                    $addFields : {
+                        created_at : { $toDate : "$created_at"}
+                    }
+                },
+                {
                     $group : {
-                        _id : "$status",
+                        _id : {
+                            year : {$year : "$created_at"},
+                            month : {$month : "$created_at"}
+                        },
                         count : {$sum : 1}
                     }
                 }

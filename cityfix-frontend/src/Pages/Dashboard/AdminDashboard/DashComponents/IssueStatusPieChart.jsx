@@ -13,13 +13,13 @@ import LoaderSpinner from "../../../../Components/LoaderSpinner";
 
 const RADIAN = Math.PI / 180;
 const COLORS = [
-  "#0088FE",
-  "#00ff00",
-  "#00C49F",
-  "#FFBB28",
-  "#ff6666",
-  "#9900cc",
-  "#32a8a0",
+  "#0369c2",
+  "#029d33",
+  "#02a083",
+  "#d74c4c",
+  "#9002c0",
+  "#29a59d",
+  "#edab05",
 ];
 
 const renderCustomizedLabel = ({
@@ -59,7 +59,6 @@ const IssueStatusPieChart = ({ isAnimationActive = true }) => {
     queryKey: ["group-issues"],
     queryFn: async () => {
       const response = await axios.get("/group-issues-by-status");
-      console.log(response.data)
       return response.data;
     },
   });

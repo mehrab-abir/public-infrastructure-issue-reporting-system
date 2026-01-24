@@ -4,16 +4,20 @@ import { Link } from "react-router";
 import IssueCard from "../../Components/IssueCard";
 import useAxiosSecured from "../../Hooks/Axios/useAxiosSecured";
 import { useQuery } from "@tanstack/react-query";
+import LoaderSpinner from "../../Components/LoaderSpinner";
 
 const LatestResolvedIssues = () => {
-  /* const axios = useAxiosSecured();
-  const {data: latest_six = [], isLoading} = useQuery({
-    queryKey : ["latest-six"],
-    queryFn : async ()=>{
-      const response = await axios.get("/latest-six");
+  const axios = useAxiosSecured();
+
+  const { data: latest_six = [], isLoading } = useQuery({
+    queryKey: ["latest-six"],
+    queryFn: async () => {
+      const response = await axios.get("/latest-resolved");
+      console.log(response.data);
       return response.data;
-    }
-  }) */
+    },
+  });
+
   return (
     <div className="bg-base py-15">
       <Container>
@@ -29,12 +33,20 @@ const LatestResolvedIssues = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[1, 1, 1, 1, 1, 1].map((issue, index) => {
-            return <IssueCard key={index} issue={issue}></IssueCard>;
-          })}
+          {isLoading ? (
+            <LoaderSpinner />
+          ) : (
+            latest_six.map((issue, index) => {
+              return (
+                <IssueCard key={index} issue={issue.resolved_issue}></IssueCard>
+              );
+            })
+          )}
         </div>
         <div className="flex items-center justify-center mt-10">
-            <Link to='all-issues' className="btn bg-primary text-white">View All Issues</Link>
+          <Link to="all-issues" className="btn bg-primary text-white">
+            View All Issues
+          </Link>
         </div>
       </Container>
     </div>
