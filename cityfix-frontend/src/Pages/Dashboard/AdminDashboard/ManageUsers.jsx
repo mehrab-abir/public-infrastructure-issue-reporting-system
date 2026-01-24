@@ -93,6 +93,7 @@ const ManageUsers = () => {
             <thead>
               <tr>
                 <th>Name</th>
+                <th>Photo</th>
                 <th>Email</th>
                 <th>Premium</th>
                 <th>Role</th>
@@ -112,6 +113,14 @@ const ManageUsers = () => {
                   return (
                     <tr key={user._id}>
                       <td>{user.displayName}</td>
+                      <td>
+                        <img
+                          src={user.photoURL}
+                          className="w-10 md:w-14 h-10 md:h-14 object-cover rounded-xl"
+                          referrerPolicy="no-referrer"
+                          alt=""
+                        />
+                      </td>
                       <td>{user.email}</td>
                       <td>{user.isPremium === "yes" ? "Yes" : "No"}</td>
                       <td>{user.role.toUpperCase()}</td>

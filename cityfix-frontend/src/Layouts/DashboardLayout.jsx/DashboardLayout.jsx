@@ -58,8 +58,8 @@ const DashboardLayout = () => {
 
   return (
     <div className="bg-base relative">
-      <h1 className="text-2xl font-bold text-accent text-center lg:text-start lg:ml-78 pt-2">
-        Dashboard - {role === "admin" ? "ADMIN" : role === "staff" ? "STAFF" : "CITIZEN"}
+      <h1 className="text-2xl font-bold text-cyan-600 text-center lg:text-start lg:ml-78 pt-2">
+         {role === "admin" ? "ADMIN" : role === "staff" ? "STAFF" : "CITIZEN"} DASHBOARD
       </h1>
 
       {/* sidebar opener */}

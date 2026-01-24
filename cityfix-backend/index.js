@@ -240,7 +240,7 @@ async function run() {
         //apis for admin
         //get all users
         app.get("/users", async (req, res) => {
-            const {role, searchText} = req.query;
+            const {role, searchText, recent} = req.query;
 
             let query = {};
 
@@ -255,7 +255,16 @@ async function run() {
                 ]
             }
 
-            const users = await usersCollection.find(query).toArray();
+            const result = usersCollection.find(query).sort({created_at : -1});
+
+            const limit = Number(recent);
+
+            if(limit){
+                result.limit(limit);
+            }
+
+            const users = await result.toArray();
+
             res.send(users);
         })
         
@@ -277,7 +286,7 @@ async function run() {
 
         //get all staffs --for admin
         app.get("/all-staffs", async (req, res) => {
-            const {searchText} = req.query;
+            const {searchText, recent} = req.query;
 
             let query = {};
 
@@ -287,7 +296,16 @@ async function run() {
                 ]
             }
 
-            const staffs = await staffCollection.find(query).toArray();
+            const result = staffCollection.find(query).sort({created_at : -1});
+
+            const limit = Number(recent);
+
+            if(limit){
+                result.limit(limit);
+            }
+
+            const staffs = await result.toArray();
+
             res.send(staffs);
         })
 
@@ -335,7 +353,7 @@ async function run() {
                 ]
             }
 
-            const result = issueCollection.find(query).sort({priorityLevel : 1});
+            const result = issueCollection.find(query).sort({priorityLevel : 1, created_at : -1});
 
             const limit = Number(recent);
 

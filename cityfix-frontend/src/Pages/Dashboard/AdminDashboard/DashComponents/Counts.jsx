@@ -48,7 +48,7 @@ const Counts = () => {
 
   return (
     <div className="flex flex-col md:flex-row items-center gap-10">
-      <div className="pl-4 py-6 bg-surface shadow-md flex flex-col space-y-3 rounded-lg items-center md:items-start w-full">
+      <div className="pl-4 py-6 bg-surface shadow-md flex flex-col space-y-3 rounded-xl items-center md:items-start w-full">
         <span className="bg-primary-soft p-2 w-fit rounded-lg">
           <HiOutlineDocumentReport className="text-2xl text-accent" />
         </span>
@@ -64,7 +64,7 @@ const Counts = () => {
           </h3>
         )}
       </div>
-      <div className="pl-4 py-6 bg-surface shadow-md flex flex-col space-y-3 rounded-lg items-center md:items-start w-full">
+      <div className="pl-4 py-6 bg-surface shadow-md flex flex-col space-y-3 rounded-xl items-center md:items-start w-full">
         <span className="bg-primary-soft p-2 w-fit rounded-lg">
           <FaPeopleGroup className="text-2xl text-accent" />
         </span>
@@ -80,7 +80,7 @@ const Counts = () => {
           </h3>
         )}
       </div>
-      <div className="pl-4 py-6 bg-surface shadow-md flex flex-col space-y-3 rounded-lg items-center md:items-start w-full">
+      <div className="pl-4 py-6 bg-surface shadow-md flex flex-col space-y-3 rounded-xl items-center md:items-start w-full">
         <span className="bg-primary-soft p-2 w-fit rounded-lg">
           <GrUserWorker className="text-2xl text-accent" />
         </span>
@@ -97,7 +97,7 @@ const Counts = () => {
         )}
       </div>
 
-      <div className="pl-4 py-6 bg-surface shadow-md flex flex-col space-y-3 rounded-lg items-center md:items-start w-full">
+      <div className="pl-4 py-6 bg-surface shadow-md flex flex-col space-y-3 rounded-xl items-center md:items-start w-full">
         <span className="bg-primary-soft p-2 w-fit rounded-lg">
           <FaRegMoneyBill1 className="text-2xl text-accent" />
         </span>
