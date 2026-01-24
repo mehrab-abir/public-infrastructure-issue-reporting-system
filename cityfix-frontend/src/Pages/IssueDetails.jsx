@@ -34,6 +34,8 @@ const IssueDetails = () => {
 
   const [upvoted, setUpvoted] = useState();
 
+    const paymentModalRef = useRef();
+
   const { data: thisIssue, isLoading, refetch : refetchThisIssue } = useQuery({
     queryKey: ["issue", issueId],
     queryFn: async () => {
@@ -167,6 +169,38 @@ const IssueDetails = () => {
     }
   }
 
+   const openPaymentModal = (issue) => {
+     setSelectedIssue(issue);
+     paymentModalRef.current.showModal();
+   };
+
+   const handleBoostPayment = async (issue)=>{
+       try{
+         const paymentInfo = {
+           issueId : issue._id,
+           issueTitle : issue.issueTitle,
+           boostFee : 100,
+           reporterEmail : issue.reporterEmail,
+           trackingId : issue.trackingId
+         }
+   
+         const response = await axios.post('/create-checkout-session',paymentInfo);
+         console.log("Create checkout session response : ", response);
+         window.location.assign(response.data.url);
+       }
+       catch(error){
+         console.log(error);
+         Swal.fire({
+           icon : "error",
+           title : "Ooop...",
+           text : "Something went wrong!"
+         })
+       }
+       finally{
+         paymentModalRef.current.close();
+       }
+     }
+
   return (
     <div className="bg-base pt-28 pb-24">
       <Container>
@@ -236,6 +270,7 @@ const IssueDetails = () => {
                     </button>
                     <button
                       className={`tooltip bg-orange-500 text-white btn btn-sm rounded-lg border-none ${thisIssue.priority === "High" && "hidden"}`}
+                      onClick={() => openPaymentModal(thisIssue)}
                       data-tip="Boost the issue to get High Priority"
                     >
                       Boost <AiOutlineFire className="text-xl" />
@@ -429,6 +464,35 @@ const IssueDetails = () => {
             refetchMyIssues={refetchThisIssue}
             editIssueModalRef={editIssueModalRef}
           ></EditIssueModal>
+        </dialog>
+
+        {/* boost issue payment confirmation modal */}
+        <dialog
+          ref={paymentModalRef}
+          className="modal modal-bottom sm:modal-middle"
+        >
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">Boost Issue</h3>
+            <p className="py-4">
+              Boosted issues get{" "}
+              <span className="text-orange-500 font-semibold">
+                high priority
+              </span>
+              , stays top of all other issues.
+            </p>
+            <p className="text-lg font-semibold mt-2">Fees : $100</p>
+            <button
+              className="mt-3 btn btn-sm text-white border-none bg-primary cursor-pointer"
+              onClick={() => handleBoostPayment(selectedIssue)}
+            >
+              Proceed to Payment
+            </button>
+            <div className="modal-action">
+              <form method="dialog">
+                <button className="btn">Close</button>
+              </form>
+            </div>
+          </div>
         </dialog>
       </Container>
     </div>
