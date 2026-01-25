@@ -74,7 +74,7 @@ const ReportIssue = () => {
 
     try {
       const response = await axios.post("/issues", newIssue);
-      console.log(response);
+      // console.log(response);
 
       if (response.data.insertedId) {
         Swal.fire({
@@ -84,8 +84,8 @@ const ReportIssue = () => {
         });
       }
       navigate("/dashboard/my-issues");
-    } catch (error) {
-      console.log(error);
+    } catch {
+      // console.log(error);
       Swal.fire({
         icon: "error",
         title: "Oops...",
@@ -118,8 +118,8 @@ const ReportIssue = () => {
         paymentInfo,
       );
       window.location.assign(response.data.url);
-    } catch (error) {
-      console.log(error);
+    } catch {
+      // console.log(error);
       Swal.fire({
         icon: "error",
         title: "Ooop...",

@@ -13,7 +13,7 @@ const LatestResolvedIssues = () => {
     queryKey: ["latest-six"],
     queryFn: async () => {
       const response = await axios.get("/latest-resolved");
-      console.log(response.data);
+      // console.log(response.data);
       return response.data;
     },
   });

@@ -165,8 +165,8 @@ const ManageProfile = () => {
           paymentInfo,
         );
         window.location.assign(response.data.url);
-      } catch (error) {
-        console.log(error);
+      } catch {
+        // console.log(error);
         Swal.fire({
           icon: "error",
           title: "Ooop...",

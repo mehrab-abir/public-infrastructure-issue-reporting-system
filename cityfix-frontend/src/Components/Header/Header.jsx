@@ -13,25 +13,22 @@ import useAxiosSecured from "../../Hooks/Axios/useAxiosSecured";
 import LoaderSpinner from "../LoaderSpinner";
 
 const Header = () => {
-  const {user,loading} = useAuth();
+  const { user, loading } = useAuth();
   const axios = useAxiosSecured();
 
   const [openMenu, setOpenMenu] = useState(false);
 
   const [theme, setTheme] = useState(
-    () => localStorage.getItem("theme") || "light"
+    () => localStorage.getItem("theme") || "light",
   );
 
-   const {
-      data: thisUser,
-      isLoading:thisUserLoading,
-    } = useQuery({
-      queryKey: ["this-user", user?.uid],
-      queryFn: async () => {
-        const response = await axios.get(`/users/${user?.uid}`);
-        return response.data;
-      },
-    });
+  const { data: thisUser, isLoading: thisUserLoading } = useQuery({
+    queryKey: ["this-user", user?.uid],
+    queryFn: async () => {
+      const response = await axios.get(`/users/${user?.uid}`);
+      return response.data;
+    },
+  });
 
   useEffect(() => {
     const html = document.documentElement;
@@ -39,7 +36,7 @@ const Header = () => {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  if(loading){
+  if (loading) {
     return <span className="loading loading-spinner text-info"></span>;
   }
 
@@ -69,8 +66,8 @@ const Header = () => {
           ></NavbarLargeDevice>
 
           <div className="flex items-center gap-4">
-            {thisUserLoading ? (
-              <LoaderSpinner />
+            {user && thisUserLoading ? (
+              ''
             ) : thisUser?.block ? (
               <i className="bg-red-600 text-white px-1 rounded-xl">Blocked</i>
             ) : (

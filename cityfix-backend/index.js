@@ -848,7 +848,7 @@ async function run() {
                         postPayment = await paymentCollection.insertOne(payment);
                     }
                     catch (err) {
-                        console.log("Payment info post error: ", err);
+                        // console.log("Payment info post error: ", err);
                         return res.send({
                             message: "Payment info post error",
                             error: err.message
@@ -868,8 +868,8 @@ async function run() {
                     return res.send({ message: "Payment not completed" });
                 }
             }
-            catch (error) {
-                console.log("payment-success error: ", error);
+            catch{
+                // console.log("payment-success error: ", error);
                 return res.status(500).send({ message: "Internal Server Error" });
             }
         })
@@ -962,7 +962,7 @@ async function run() {
                         postPayment = await subscriptionPayments.insertOne(payment);
                     }
                     catch (err) {
-                        console.log("Payment info post error: ", err);
+                        // console.log("Payment info post error: ", err);
                         return res.send({
                             message: "Payment info post error",
                             error: err.message
@@ -981,7 +981,7 @@ async function run() {
                 }
             }
             catch (error) {
-                console.log("payment-success error: ", error);
+                // console.log("payment-success error: ", error);
                 return res.status(500).send({ message: "Internal Server Error" });
             }
         })

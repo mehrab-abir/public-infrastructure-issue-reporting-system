@@ -10,7 +10,7 @@ const IssuesByMonthsBarChart = () => {
     queryKey: ["issues-by-month"],
     queryFn: async () => {
       const response = await axios.get("/group-issue-by-months");
-      console.log(response.data);
+      // console.log(response.data);
       return response.data;
     },
   });

@@ -16,7 +16,7 @@ const ManageUsers = () => {
     queryKey: ["all-users", role, searchText],
     queryFn: async () => {
       const response = await axios.get(`/users?role=${role}&searchText=${searchText}`);
-      console.log(response.data);
+      // console.log(response.data);
       return response.data;
     },
   });
@@ -38,8 +38,8 @@ const ManageUsers = () => {
             Swal.fire("Saved!", "", "success");
             refetchUsers();
           }
-        } catch (err) {
-          console.log(err);
+        } catch {
+          // console.log(err);
           Swal.fire({
             icon: "error",
             title: "Ooops...",

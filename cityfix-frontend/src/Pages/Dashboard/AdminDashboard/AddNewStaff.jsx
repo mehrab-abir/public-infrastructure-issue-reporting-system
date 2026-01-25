@@ -52,8 +52,8 @@ const AddNewStaff = () => {
         });
         navigate("/dashboard/manage-staffs");
       }
-    } catch (error) {
-      console.log(error);
+    } catch {
+      // console.log(error);
       Swal.fire({
         icon: "error",
         text: "Ooops...",

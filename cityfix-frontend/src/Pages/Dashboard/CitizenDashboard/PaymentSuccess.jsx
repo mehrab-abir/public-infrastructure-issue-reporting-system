@@ -18,7 +18,7 @@ const PaymentSuccess = () => {
       axios
         .patch(`/payment-success?session_id=${sessionId}`)
         .then((response) => {
-          console.log(response.data);
+          // console.log(response.data);
           setPaymentInfo({
             transactionId: response.data.transactionId,
             issueTitle: response.data.issueTitle,

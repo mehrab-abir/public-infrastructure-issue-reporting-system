@@ -24,7 +24,7 @@ const LatestPayments = () => {
           const response = await axios.get(
             `/citizen/subscription-payment/${user?.email}`,
           );
-          console.log(response.data);
+          // console.log(response.data);
           return response.data;
         },
       });

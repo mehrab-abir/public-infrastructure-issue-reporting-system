@@ -110,8 +110,8 @@ const ManageIssues = () => {
         Swal.fire({ title: "Staff Assigned" });
       }
       refetchIssues();
-    } catch (error) {
-      console.log(error);
+    } catch {
+      // console.log(error);
       Swal.fire({
         icon: "error",
         tilte: "Ooops...",
@@ -147,8 +147,8 @@ const ManageIssues = () => {
           }
 
           refetchIssues();
-        } catch (err) {
-          console.log(err);
+        } catch(err) {
+          // console.log(err);
           Swal.fire({
             icon: "error",
             title: "Oops...",
@@ -185,8 +185,8 @@ const ManageIssues = () => {
             });
             refetchIssues();
           }
-        } catch (error) {
-          console.log(error);
+        } catch {
+          // console.log(error);
           Swal.fire({
             icon: "error",
             title: "Ooops...",

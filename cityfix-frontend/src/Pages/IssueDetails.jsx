@@ -131,8 +131,8 @@ const IssueDetails = () => {
             });
           }
           navigate("/all-issues");
-        } catch (err) {
-          console.log(err);
+        } catch{
+          // console.log(err);
           Swal.fire({
             title: "Ooops...!",
             text: "Something went wrong!.",
@@ -175,8 +175,8 @@ const IssueDetails = () => {
       setUpvoted(response.data.upvoted);
 
       refetchThisIssue();
-    } catch (error) {
-      console.log(error);
+    } catch{
+      // console.log(error);
     }
   };
 
@@ -199,10 +199,10 @@ const IssueDetails = () => {
         "/create-checkout-session",
         paymentInfo,
       );
-      console.log("Create checkout session response : ", response);
+      // console.log("Create checkout session response : ", response);
       window.location.assign(response.data.url);
-    } catch (error) {
-      console.log(error);
+    } catch {
+      // console.log(error);
       Swal.fire({
         icon: "error",
         title: "Ooop...",

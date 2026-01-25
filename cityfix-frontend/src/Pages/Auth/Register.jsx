@@ -44,8 +44,13 @@ const Register = () => {
           imageFile,
           import.meta.env.VITE_CLOUDINARY_PROFILE_PRESET,
         );
-      } catch (error) {
-        console.log(error);
+      } catch {
+        // console.log(error);
+        Swal.fire({
+          icon : "error",
+          title : "Ooops...",
+          text : "Something went wrong!"
+        })
       }
     }
 
@@ -86,8 +91,8 @@ const Register = () => {
         reset();
         navigate(location.state || "/", { replace: true });
       }
-    } catch (error) {
-      console.log(error);
+    } catch {
+      // console.log(error);
       Swal.fire({
         icon: "error",
         title: "Something went wrong!",

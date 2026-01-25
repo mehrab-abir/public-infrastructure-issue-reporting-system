@@ -107,8 +107,8 @@ const ManageStaffs = () => {
         });
         refetchStaff();
       }
-    } catch (error) {
-      console.log(error);
+    } catch {
+      // console.log(error);
       Swal.fire({
         icon: "error",
         text: "Ooops...",
