@@ -26,13 +26,13 @@ const Footer = () => {
             </p>
             <div className="mt-5 flex items-center gap-4">
               <Link to="https://github.com/mehrab-abir" target="blank">
-                <FiGithub className="text-2xl text-muted" />
+                <FiGithub className="text-2xl text-muted hover:text-blue-500!" />
               </Link>
               <Link>
                 <RiTwitterXFill className="text-2xl text-muted" />
               </Link>
-              <Link>
-                <PiInstagramLogo className="text-2xl text-muted" />
+              <Link to='https://www.instagram.com/mehrab.abir_/' target="blank">
+                <PiInstagramLogo className="text-2xl text-muted hover:text-orange-500!" />
               </Link>
             </div>
           </div>

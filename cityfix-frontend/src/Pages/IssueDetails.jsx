@@ -318,7 +318,7 @@ const IssueDetails = () => {
                     onClick={() => handleUpvote(thisIssue)}
                     disabled={(user?.email === thisIssue?.reporterEmail) || thisUser?.block}
                   >
-                    Upvote
+                    {upvoted ? 'Upvoted':'Upvote'}
                   </button>
                 </div>
               </div>
