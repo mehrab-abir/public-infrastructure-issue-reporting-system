@@ -73,6 +73,7 @@ async function run() {
         const staffCollection = db.collection("staffs");
         const trackingCollection = db.collection("trackingLogs");
         const paymentCollection = db.collection("boost-payments");
+        const subscriptionPayments = db.collection("subscription-payments");
         const resolvedCollection = db.collection("resolved-issues");
 
         //middleware to verify role - admin
@@ -777,7 +778,7 @@ async function run() {
                 const sessionId = req.query.session_id;
                 const session = await stripe.checkout.sessions.retrieve(sessionId);
 
-                console.log("Payment session:", session);
+                // console.log("Payment session:", session);
 
                 const transactionId = session.payment_intent;
 
@@ -855,6 +856,118 @@ async function run() {
             }
         })
 
+
+        //payment api-payment for premium subsription
+        app.post('/subscribe/create-checkout-session',async (req,res)=>{
+            try{
+                const paymentInfo = req.body;
+                const amount = 1000 * 100;
+                
+                const session = await stripe.checkout.sessions.create({
+                    line_items : [
+                        {
+                            price_data : {
+                                unit_amount : amount,
+                                currency : 'USD',
+                                product_data : {
+                                    name : "Premium Subscription - CityFix"
+                                }
+                            },
+                            quantity : 1
+                        }
+                    ],
+                    customer_email : paymentInfo.userEmail,
+                    mode : 'payment',
+                    metadata : {
+                        userEmail : paymentInfo.userEmail,
+                    },
+                    success_url: `${process.env.SITE_DOMAIN}/subscription/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+                    cancel_url: `${process.env.SITE_DOMAIN}/subscription/payment-cancelled`,
+                })
+
+                res.send({
+                    url : session.url
+                })
+            }
+            catch(err){
+                return res.send({message : err.message})
+            }
+        })
+
+
+        //after successfull payment for subscription- update user to Premium
+        app.patch('/subscription/payment-success',async (req,res)=>{
+            try{
+                const sessionId = req.query.session_id;
+                const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+                // console.log("Payment session:", session);
+
+                const transactionId = session.payment_intent;
+
+                const paymentExist = await subscriptionPayments.findOne({ transactionId });
+
+                if (paymentExist) {
+                    return res.send({
+                        message: "Payment already exists",
+                        transactionId,
+                    });
+                }
+
+                if (session.payment_status === 'paid') {
+                    const userEmail = session.metadata.userEmail;
+                    const paymentDate = new Date();
+
+                    const result = await usersCollection.updateOne(
+                        { email: userEmail },
+                        {
+                            $set: {
+                                isPremium: "yes",
+                                subscribed_at: paymentDate
+                            }
+                        }
+                    );
+
+                    //payment info to store to db
+                    const payment = {
+                        transactionId,
+                        paid_at: paymentDate,
+                        paymentPurpose: "Subscription",
+                        userEmail: session.metadata.userEmail,
+                        amount: session.amount_total / 100,
+                        currency: session.currency
+                    }
+
+                    let postPayment;
+
+                    try {
+                        postPayment = await subscriptionPayments.insertOne(payment);
+                    }
+                    catch (err) {
+                        console.log("Payment info post error: ", err);
+                        return res.send({
+                            message: "Payment info post error",
+                            error: err.message
+                        });
+                    }
+
+                    return res.send({
+                        success: true,
+                        updatedUser: result,
+                        postPayment: postPayment,
+                        transactionId: transactionId,
+                    })
+                }
+                else {
+                    return res.send({ message: "Payment not completed" });
+                }
+            }
+            catch (error) {
+                console.log("payment-success error: ", error);
+                return res.status(500).send({ message: "Internal Server Error" });
+            }
+        })
+
         //get all payments - by admin
         app.get("/admin/all-payments", async (req, res) => {
             const allPayments = await paymentCollection.find().toArray();
@@ -877,6 +990,14 @@ async function run() {
             const result = await myPayments.toArray();
 
             res.send(result);
+        })
+
+        //get subscription payment - by citizen
+        app.get('/citizen/subscription-payment/:email',async(req,res)=>{
+            const {email} = req.params;
+
+            const payment = await subscriptionPayments.findOne({userEmail:email});
+            res.send(payment);
         })
 
         //get all latest resolved issues

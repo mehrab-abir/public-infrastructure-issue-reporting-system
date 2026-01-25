@@ -28,8 +28,9 @@ const AllPayments = () => {
       </div>
 
       <div className="mt-5">
+        <h3 className="text-2xl lg:text-3xl font-semibold text-orange-600">Issue Boost Payment</h3>
         <div
-          className={`overflow-x-auto bg-surface rounded-lg w-full ${payments.length < 4 && "h-[50vh]"}`}
+          className={`overflow-x-auto bg-surface rounded-lg w-full ${payments.length < 4 && "h-[40vh]"}`}
         >
           <table className="table table-sm md:table-md">
             {/* head */}

@@ -10,23 +10,36 @@ const PaymentHistory = () => {
   const { user } = useAuth();
   const axios = useAxiosSecured();
 
+  //issue boost payments
   const { data: myPayments = [], isLoading } = useQuery({
     queryKey: ["my-payment", user?.email],
     queryFn: async () => {
       const response = await axios.get(
         `/citizen/payment-history/${user?.email}`,
       );
-      console.log(response.data);
       return response.data;
     },
   });
+
+  //subscription payment
+  const { data: subscription, isLoading: subscriptionPaymentLoading } =
+    useQuery({
+      queryKey: ["subscribe-payment", user?.emasubscription],
+      queryFn: async () => {
+        const response = await axios.get(
+          `/citizen/subscription-payment/${user?.email}`,
+        );
+        return response.data;
+      },
+    });
+
   return (
     <DashboardContainer>
       <div className="flex flex-col md:flex-row md:items-center justify-between">
         <div>
           <h1 className="text-3xl md:text-4xl font-bold">Payment History</h1>
           <p className="text-muted text-sm md:text-lg mt-2">
-            All Your Payment History Here ({myPayments.length})
+            All Your Payment History Here
           </p>
         </div>
       </div>
@@ -59,7 +72,9 @@ const PaymentHistory = () => {
                 {isLoading ? (
                   <tr>
                     <td className="col-span-6">
-                      <LoaderSpinner></LoaderSpinner>
+                      <div>
+                        <LoaderSpinner></LoaderSpinner>
+                      </div>
                     </td>
                   </tr>
                 ) : (
@@ -81,6 +96,23 @@ const PaymentHistory = () => {
                       </tr>
                     );
                   })
+                )}
+                {subscriptionPaymentLoading ? (
+                  <LoaderSpinner />
+                ) : subscription ? (
+                  <tr>
+                    <td className="font-semibold">Upgrade To Premium</td>
+                    <td>
+                      <div className="text-orange-500 font-semibold">
+                        {subscription.paymentPurpose}
+                      </div>
+                    </td>
+                    <td>{subscription.amount}</td>
+                    <td>{subscription.transactionId}</td>
+                    <td>{new Date(subscription.paid_at).toDateString()}</td>
+                  </tr>
+                ) : (
+                  <></>
                 )}
               </tbody>
             </table>

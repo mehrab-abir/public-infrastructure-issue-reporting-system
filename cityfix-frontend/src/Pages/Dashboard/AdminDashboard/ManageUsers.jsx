@@ -97,6 +97,7 @@ const ManageUsers = () => {
                 <th>Email</th>
                 <th>Premium</th>
                 <th>Role</th>
+                <th>Issues Reported</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -124,6 +125,7 @@ const ManageUsers = () => {
                       <td>{user.email}</td>
                       <td>{user.isPremium === "yes" ? "Yes" : "No"}</td>
                       <td>{user.role.toUpperCase()}</td>
+                      <td>{user.issueReported || 'N/A'}</td>
                       <td>
                         <button
                           onClick={() => blockUnblock(user)}

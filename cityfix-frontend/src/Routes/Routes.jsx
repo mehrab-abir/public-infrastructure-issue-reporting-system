@@ -28,6 +28,8 @@ import PrivateRoute from "./PrivateRoute";
 import PaymentSuccess from "../Pages/Dashboard/CitizenDashboard/PaymentSuccess";
 import PaymentCancelled from "../Pages/Dashboard/CitizenDashboard/PaymentCancelled";
 import ResolvedIssues from "../Pages/Dashboard/StaffDashboard.jsx/ResolvedIssues";
+import SubscriptionPaymentSuccess from "../Pages/SubscriptionPaymentSuccess";
+import SubscriptionPaymentCancelled from "../Pages/SubscriptionPaymentCancelled";
 
 const router = createBrowserRouter([
   {
@@ -66,6 +68,15 @@ const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
+      {
+        path : "/subscription/payment-success",
+        Component : SubscriptionPaymentSuccess
+
+      },
+      {
+        path : "/subscription/payment-cancelled",
+        Component : SubscriptionPaymentCancelled
+      }
     ],
   },
   {

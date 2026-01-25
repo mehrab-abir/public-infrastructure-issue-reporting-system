@@ -42,7 +42,7 @@ const Register = () => {
       try {
         photoURL = await uploadToCloudinary(
           imageFile,
-          import.meta.env.VITE_CLOUDINARY_PROFILE_PRESET
+          import.meta.env.VITE_CLOUDINARY_PROFILE_PRESET,
         );
       } catch (error) {
         console.log(error);
@@ -64,13 +64,14 @@ const Register = () => {
 
     //post user to db
     const newUser = {
-      uid : user.uid,
+      uid: user.uid,
       displayName,
       email,
       photoURL,
       created_at: new Date(),
       role: "citizen",
-      isPremium : "no"
+      isPremium: "no",
+      issueReported: 0,
     };
 
     try {

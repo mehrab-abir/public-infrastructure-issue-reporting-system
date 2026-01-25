@@ -17,12 +17,23 @@ const LatestPayments = () => {
         }
     })
 
+    //subscription payment
+      const { data:subscription, isLoading: subscriptionPaymentLoading } = useQuery({
+        queryKey: ["subscribe-payment", user?.emasubscription],
+        queryFn: async () => {
+          const response = await axios.get(
+            `/citizen/subscription-payment/${user?.email}`,
+          );
+          console.log(response.data);
+          return response.data;
+        },
+      });
+    
+
 
     return (
       <div className="mt-10">
-        <h1 className="text-xl md:text-2xl font-bold">
-          Recent Payment(s)
-        </h1>
+        <h1 className="text-xl md:text-2xl font-bold">Recent Payment(s)</h1>
         <div className="">
           <div className={`overflow-x-auto bg-surface rounded-lg w-full`}>
             {payments.length === 0 ? (
@@ -72,6 +83,23 @@ const LatestPayments = () => {
                     })
                   )}
                 </tbody>
+                {subscriptionPaymentLoading ? (
+                  <LoaderSpinner />
+                ) : subscription ? (
+                  <tr>
+                    <td className="font-semibold">Upgrade To Premium</td>
+                    <td>
+                      <div className="text-orange-500 font-semibold">
+                        {subscription.paymentPurpose}
+                      </div>
+                    </td>
+                    <td>{subscription.amount}</td>
+                    <td>{subscription.transactionId}</td>
+                    <td>{new Date(subscription.paid_at).toDateString()}</td>
+                  </tr>
+                ) : (
+                  <></>
+                )}
               </table>
             )}
           </div>

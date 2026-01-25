@@ -173,7 +173,7 @@ const ManageProfile = () => {
             {loading ? (
               <div className="flex items-center justify-center mt-10">
                 <LoaderSpinner></LoaderSpinner>
-              </div>           
+              </div>
             ) : (
               <div className="relative">
                 <img
@@ -199,7 +199,6 @@ const ManageProfile = () => {
                   <span>Premium</span>
                 </div>
               )}
-
             </div>
             <dialog
               ref={imageModalRef}
@@ -237,19 +236,22 @@ const ManageProfile = () => {
                 Member Since:{" "}
               </span>
               <span className="font-semibold text-sm lg:text-base">
-                {
-                  isLoading ? <LoaderSpinner /> :
-                  new Date(thisUser?.created_at).toDateString() || "-Reload Page-"
-                }
+                {isLoading ? (
+                  <LoaderSpinner />
+                ) : (
+                  new Date(thisUser?.created_at).toDateString() ||
+                  "-Reload Page-"
+                )}
               </span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-muted text-sm lg:text-base">Role </span>
               <button className="btn btn-xs rounded-xl">
-                {
-                  isLoading ? <LoaderSpinner /> :
+                {isLoading ? (
+                  <LoaderSpinner />
+                ) : (
                   thisUser?.role?.toUpperCase() || "-Reload Page-"
-                }
+                )}
               </button>
             </div>
           </div>
@@ -325,12 +327,11 @@ const ManageProfile = () => {
                 <div className="flex items-center justify-between mt-4">
                   <span>Premium member since:</span>
                   <span className="font-semibold">
-                    {new Date().toDateString()}
+                    {new Date(thisUser?.subscribed_at).toDateString()}
                   </span>
                 </div>
               </div>
-            ) : (
-              thisUser?.role?.toLowerCase() === "citizen" ?
+            ) : thisUser?.role?.toLowerCase() === "citizen" ? (
               <div className="bg-surface p-4 rounded-xl">
                 <div className="flex items-center gap-2">
                   <div>
@@ -362,8 +363,8 @@ const ManageProfile = () => {
                   Upgrade to Premium
                 </button>
               </div>
-              :
-              ''
+            ) : (
+              ""
             )}
           </div>
         </div>
