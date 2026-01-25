@@ -19,11 +19,13 @@ import { IoChevronForwardCircleOutline } from "react-icons/io5";
 import { IoMdSettings } from "react-icons/io";
 import { CiDark, CiLight } from "react-icons/ci";
 import useRole from "../../Hooks/Role/useRole";
+import defaultAvatar from "../../assets/defaultAvatar.png";
 import useAuth from "../../Hooks/Auth/useAuth";
 import { Bounce, toast } from "react-toastify";
+import LoaderSpinner from "../../Components/LoaderSpinner";
 
 const DashboardLayout = () => {
-  const {signOutUser, setLoading} = useAuth();
+  const { user, signOutUser, setLoading, loading } = useAuth();
   const { role } = useRole();
   const navigate = useNavigate();
 
@@ -57,12 +59,34 @@ const DashboardLayout = () => {
     });
   };
 
+  const profileImg =
+    user?.photoURL || user?.providerData[0]?.photoURL || defaultAvatar;
+
   return (
     <div className="bg-base relative">
       <h1 className="text-2xl font-bold text-cyan-600 text-center lg:text-start lg:ml-78 pt-2">
         {role === "admin" ? "ADMIN" : role === "staff" ? "STAFF" : "CITIZEN"}{" "}
         DASHBOARD
       </h1>
+
+      {loading ? (
+        <LoaderSpinner />
+      ) : (
+        <div className="flex items-center gap-2 ml-12 lg:ml-78 mt-4">
+          <img
+            src={profileImg}
+            className="w-11 h-11 lg:w-12 lg:h-12 object-cover rounded-xl"
+            referrerPolicy="no-referre"
+            alt=""
+          />
+          <div>
+            <h3 className="text xl font-semibold">
+              {user?.displayName || "user"}
+            </h3>
+            <p className="text-sm text-muted">{user?.email}</p>
+          </div>
+        </div>
+      )}
 
       {/* sidebar opener */}
       <div

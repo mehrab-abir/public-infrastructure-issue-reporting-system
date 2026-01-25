@@ -4,6 +4,7 @@ import useAxiosSecured from '../Hooks/Axios/useAxiosSecured';
 import { useState } from 'react';
 import { useSearchParams } from 'react-router';
 import Container from '../Components/Container';
+import confetti from "canvas-confetti";
 
 const SubscriptionPaymentSuccess = () => {
     const [searchParams] = useSearchParams();
@@ -23,6 +24,13 @@ const SubscriptionPaymentSuccess = () => {
             });
           });
       }
+
+      confetti({
+        particleCount: 120,
+        spread: 80,
+        colors: ["#22c55e", "#3b82f6", "#a855f7", "#f59e0b"],
+      });
+
     }, [sessionId, axios]);
 
     return (
@@ -40,7 +48,7 @@ const SubscriptionPaymentSuccess = () => {
 
               <div className="my-5 border-gray-300 rounded-md p-4 flex flex-col items-center space-y-2">
                 <h1 className="text-3xl font-bold text-accent">
-                  Premium Subscription
+                  Premium Subscription Completed!
                 </h1>
                 <p>
                   <span className="font-bold">Transaction ID: </span>

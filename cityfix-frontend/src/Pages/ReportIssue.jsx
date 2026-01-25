@@ -27,7 +27,11 @@ const ReportIssue = () => {
 
   const subscriptionModalRef = useRef();
 
-  const { data: thisUser, isLoading, refetch: refetchUser } = useQuery({
+  const {
+    data: thisUser,
+    isLoading,
+    refetch: refetchUser,
+  } = useQuery({
     queryKey: ["this-user", user?.uid],
     queryFn: async () => {
       const response = await axios.get(`/users/${user?.uid}`);
@@ -99,40 +103,40 @@ const ReportIssue = () => {
     reset();
   };
 
+  const openPaymentModal = () => {
+    subscriptionModalRef.current.showModal();
+  };
 
-  const openPaymentModal = ()=>{
-      subscriptionModalRef.current.showModal();
+  const handleSubscriptionPayment = async () => {
+    try {
+      const paymentInfo = {
+        userEmail: user?.email,
+      };
+
+      const response = await axios.post(
+        "/subscribe/create-checkout-session",
+        paymentInfo,
+      );
+      window.location.assign(response.data.url);
+    } catch (error) {
+      console.log(error);
+      Swal.fire({
+        icon: "error",
+        title: "Ooop...",
+        text: "Something went wrong!",
+      });
+    } finally {
+      subscriptionModalRef.current.close();
+      refetchUser();
     }
-  
-    const handleSubscriptionPayment = async ()=>{
-      try{
-        const paymentInfo = {
-          userEmail : user?.email,
-        }
-  
-        const response = await axios.post('/subscribe/create-checkout-session',paymentInfo);
-        window.location.assign(response.data.url);
-      }
-      catch(error){
-        console.log(error);
-        Swal.fire({
-          icon : "error",
-          title : "Ooop...",
-          text : "Something went wrong!"
-        })
-      }
-      finally{
-        subscriptionModalRef.current.close();
-        refetchUser();
-      }
-    }
+  };
 
   return (
     <div className="bg-base pt-36 pb-24">
       <Container>
         {isLoading ? (
           <LoaderSpinner />
-        ) : (thisUser?.issueReported === 3 && thisUser?.isPremium === "no") ? (
+        ) : thisUser?.issueReported === 3 && thisUser?.isPremium === "no" ? (
           <div className="flex flex-col items-center justify-center w-full">
             <h2 className="text-2xl lg:text-3xl font-bold text-red-500">
               Free Tier Limit Reached
@@ -313,7 +317,7 @@ const ReportIssue = () => {
                     Cancel
                   </button>
                   <button
-                    className={`btn w-1/2  border-none text-white rounded-lg ${thisUser?.block ? 'bg-blue-300 cursor-not-allowed!' : 'bg-primary cursor-pointer'}`}
+                    className={`btn w-1/2  border-none text-white rounded-lg ${thisUser?.block ? "bg-blue-300 cursor-not-allowed!" : "bg-primary cursor-pointer"}`}
                     disabled={submitting || thisUser?.block}
                   >
                     {submitting ? <i>Submitting...</i> : "Submit"}
@@ -335,7 +339,8 @@ const ReportIssue = () => {
           <p className="py-4">
             Premium Users Can Report
             <span className="text-orange-500 font-semibold">
-              {" "}Unlimited Issues
+              {" "}
+              Unlimited Issues
             </span>
           </p>
           <p className="text-lg font-semibold mt-2">Fees : $1000</p>

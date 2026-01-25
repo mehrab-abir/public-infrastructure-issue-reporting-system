@@ -8,8 +8,8 @@ const uri = `${process.env.URI}`;
 const stripe = require('stripe')(process.env.STRIPE_SECRET);
 const admin = require("firebase-admin");
 
-const { configDotenv } = require('dotenv');
-const serviceAccount = require("./cityfix-firebase-service-key.json");
+const decoded = Buffer.from(process.env.FIREBASE_SERVICE_KEY, "base64").toString("utf8");
+const serviceAccount = JSON.parse(decoded);
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
@@ -87,6 +87,25 @@ async function run() {
             next();
         }
 
+        const verifyCitizen = async (req,res,next)=>{
+            const email = req.token_email;
+            const user = await usersCollection.findOne({email});
+
+            if(!user || user.role !== "citizen"){
+                return res.status(403).send({message : "forbidden access"});
+            }
+            next();
+        }
+        const verifyStaff = async (req,res,next)=>{
+            const email = req.token_email;
+            const user = await usersCollection.findOne({email});
+
+            if(!user || user.role !== "staff"){
+                return res.status(403).send({message : "forbidden access"});
+            }
+            next();
+        }
+
         //log tracking
         const logTracking = async (trackingId, issueId, issueStatus, updatedBy) => {
             const log = {
@@ -103,7 +122,7 @@ async function run() {
 
         // apis for users/citizens 
         //post an issue
-        app.post("/issues", async (req, res) => {
+        app.post("/issues", verifyToken, async (req, res) => {
             const newIssue = req.body;
 
             const trackingId = generateTrackingId();
@@ -121,7 +140,7 @@ async function run() {
         })
 
         //edit an issue - by the issue reporter
-        app.patch('/edit-issue/:issueId', async (req, res) => {
+        app.patch('/edit-issue/:issueId',verifyToken, verifyCitizen, async (req, res) => {
             const { issueId } = req.params;
             const { issueTitle, category, description, location, photoURL } = req.body;
             const updatedIssue = await issueCollection.updateOne({ _id: new ObjectId(issueId) }, {
@@ -138,7 +157,7 @@ async function run() {
         })
 
         //get all my issues - issues reported by a citizen
-        app.get("/issues/:email", async (req, res) => {
+        app.get("/issues/:email", verifyToken, verifyCitizen, async (req, res) => {
             const { email } = req.params;
             const {recent} = req.query;
 
@@ -156,7 +175,7 @@ async function run() {
         })
 
         //delete an issue - as citizen -from issueDetails page and My Issues page
-        app.delete('/citizen/delete-issue/:issueId', async (req, res) => {
+        app.delete('/citizen/delete-issue/:issueId',verifyToken, verifyCitizen, async (req, res) => {
             const { issueId } = req.params;
             const deletedIssue = await issueCollection.deleteOne({ _id: new ObjectId(issueId) });
             res.send(deletedIssue);
@@ -164,7 +183,7 @@ async function run() {
 
 
         //upvote issue by citizen
-        app.patch('/upvote-issue', async (req, res) => {
+        app.patch('/upvote-issue', verifyToken, async (req, res) => {
             const { issueId, upvoteBy } = req.body;
 
             const issue = await issueCollection.findOne({ _id: new ObjectId(issueId) }, {
@@ -200,7 +219,7 @@ async function run() {
         })
 
         //get all assigned issue --for staff
-        app.get("/staff/assigned-issues/:email", async (req, res) => {
+        app.get("/staff/assigned-issues/:email",verifyToken,verifyStaff, async (req, res) => {
             const { email } = req.params;
 
             const myAssignedIssues = await issueCollection.find({ staffEmail: email }).sort({ created_at: -1 }).toArray();
@@ -209,7 +228,7 @@ async function run() {
         })
 
         //update issue status by staff - accept/reject, in-progress, working, resolved, closed etc. -- 3rd, 4th, 5th... tracking log here
-        app.patch("/staff/update-issue-status", async (req, res) => {
+        app.patch("/staff/update-issue-status",verifyToken, verifyStaff, async (req, res) => {
             const { staffResponse, staffEmail, issueId, trackingId } = req.body;
 
             let issueStatus = '';
@@ -258,7 +277,7 @@ async function run() {
         })
 
         //get all resolved issues of a staff
-        app.get(`/staff/resolved-issues/:email`,async (req,res)=>{
+        app.get(`/staff/resolved-issues/:email`,verifyToken, verifyStaff,async (req,res)=>{
             const {email} = req.params;
             const {recent} = req.query;
 
@@ -299,7 +318,7 @@ async function run() {
 
         //apis for admin
         //get all users
-        app.get("/users", async (req, res) => {
+        app.get("/users",verifyToken, verifyAdmin, async (req, res) => {
             const { role, searchText, recent } = req.query;
 
             let query = {};
@@ -329,7 +348,7 @@ async function run() {
         })
 
         //reject issue - by admin
-        app.patch('/admin/reject-issue', async (req, res) => {
+        app.patch('/admin/reject-issue',verifyToken,verifyAdmin, async (req, res) => {
             const { issueId, trackingId } = req.query;
 
             const rejectedIssue = await issueCollection.updateOne({ _id: new ObjectId(issueId) }, {
@@ -343,9 +362,8 @@ async function run() {
             res.send(rejectedIssue);
         })
 
-
         //get all staffs --for admin
-        app.get("/all-staffs", async (req, res) => {
+        app.get("/all-staffs",verifyToken, verifyAdmin, async (req, res) => {
             const { searchText, recent } = req.query;
 
             let query = {};
@@ -370,7 +388,7 @@ async function run() {
         })
 
         //assign a staff to an issue --for admin
-        app.patch("/assign-staff", async (req, res) => {
+        app.patch("/assign-staff",verifyToken,verifyAdmin, async (req, res) => {
             const { issueId, trackingId, staffEmail, staffName } = req.body;
 
             const issueStatus = `Staff Assigned`;
@@ -441,7 +459,7 @@ async function run() {
         })
 
         //delete an issue - as admin
-        app.delete("/admin/delete-issue/:issueId", async (req, res) => {
+        app.delete("/admin/delete-issue/:issueId",verifyToken, verifyAdmin, async (req, res) => {
             const { issueId } = req.params;
             const deletedIssue = await issueCollection.deleteOne({ _id: new ObjectId(issueId) });
             res.send(deletedIssue);
@@ -609,7 +627,7 @@ async function run() {
         })
 
         //update user profile -displayName or photURL
-        app.patch("/update-profile/:email", async (req, res) => {
+        app.patch("/update-profile/:email",verifyToken, async (req, res) => {
             const { displayName, photoURL } = req.body;
             const { email } = req.params;
             const { role } = req.query;
@@ -699,7 +717,7 @@ async function run() {
         })
 
         //get one user --for profile info
-        app.get("/users/:uid", async (req, res) => {
+        app.get("/users/:uid",verifyToken, async (req, res) => {
             const { uid } = req.params;
 
             const thisUser = await usersCollection.findOne({ uid: uid });
@@ -707,7 +725,7 @@ async function run() {
         })
 
         //block/unblock a user
-        app.patch('/admin/toggle-block-user/:email', async (req, res) => {
+        app.patch('/admin/toggle-block-user/:email',verifyToken, verifyAdmin, async (req, res) => {
             const { email } = req.params;
 
             const thisUser = await usersCollection.findOne({ email });
@@ -733,7 +751,7 @@ async function run() {
         })
 
         //payment apis -- boost issue payment
-        app.post('/create-checkout-session', async (req, res) => {
+        app.post('/create-checkout-session',verifyToken, async (req, res) => {
             try {
                 const paymentInfo = req.body;
                 const amount = Number(paymentInfo.boostFee) * 100;
@@ -858,7 +876,7 @@ async function run() {
 
 
         //payment api-payment for premium subsription
-        app.post('/subscribe/create-checkout-session',async (req,res)=>{
+        app.post('/subscribe/create-checkout-session',verifyToken,async (req,res)=>{
             try{
                 const paymentInfo = req.body;
                 const amount = 1000 * 100;
@@ -969,18 +987,18 @@ async function run() {
         })
 
         //get all payments - by admin
-        app.get("/admin/all-payments", async (req, res) => {
+        app.get("/admin/all-payments",verifyToken, verifyAdmin, async (req, res) => {
             const allPayments = await paymentCollection.find().sort({paid_at:-1}).toArray();
             res.send(allPayments)
         })
         //get all subscription payments - by admin
-        app.get('/admin/subscription-payments',async (req,res)=>{
+        app.get('/admin/subscription-payments',verifyToken, verifyAdmin,async (req,res)=>{
             const payments = await subscriptionPayments.find().sort({paid_at: -1}).toArray();
             res.send(payments);
         })
 
         //get all payments of a citizen - by citizen/user
-        app.get('/citizen/payment-history/:email', async (req, res) => {
+        app.get('/citizen/payment-history/:email',verifyToken, async (req, res) => {
             const { email } = req.params;
             const {recent} = req.query;
 
@@ -998,7 +1016,7 @@ async function run() {
         })
 
         //get subscription payment - by citizen
-        app.get('/citizen/subscription-payment/:email',async(req,res)=>{
+        app.get('/citizen/subscription-payment/:email',verifyToken,async(req,res)=>{
             const {email} = req.params;
 
             const payment = await subscriptionPayments.findOne({userEmail:email});
@@ -1024,28 +1042,27 @@ async function run() {
             res.send(latestResolved);
         })
 
-
         //dashboard home page apis --admin
         //count total issue
-        app.get('/issue-count', async (req, res) => {
+        app.get('/issue-count', verifyToken,async (req, res) => {
             const issueCount = await issueCollection.countDocuments();
             res.send(issueCount);
         })
 
         //count registered citizens
-        app.get('/citizen-count', async (req, res) => {
+        app.get('/citizen-count',verifyToken, async (req, res) => {
             const citizenCount = await usersCollection.countDocuments({ role: 'citizen' });
             res.send(citizenCount);
         })
 
         //count staff
-        app.get('/staff-count', async (req, res) => {
+        app.get('/staff-count',verifyToken, async (req, res) => {
             const staffCount = await staffCollection.countDocuments();
             res.send(staffCount);
         })
 
         //total revenue
-        app.get('/total-revenue', async (req, res) => {
+        app.get('/total-revenue',verifyToken, verifyAdmin, async (req, res) => {
             const boostIssueRevenue = await paymentCollection.aggregate([
                 {
                     $group: {
@@ -1069,7 +1086,7 @@ async function run() {
         })
 
         //group issues by status
-        app.get('/group-issues-by-status', async (req, res) => {
+        app.get('/group-issues-by-status',verifyToken, async (req, res) => {
             const {email} = req.query;
 
             const matchedStaff = email ? {staffEmail:email} : {};
@@ -1088,7 +1105,7 @@ async function run() {
         })
 
         //group issues by month
-        app.get('/group-issue-by-months', async (req, res) => {
+        app.get('/group-issue-by-months',verifyToken, async (req, res) => {
             const result = await issueCollection.aggregate([
                 {
                     $addFields: {
@@ -1112,7 +1129,7 @@ async function run() {
 
         //dashboard home page apis - Citizens
         //group issues by status and get total count of reported issues
-        app.get('/citizen/issue-count-by-status/:email', async (req, res) => {
+        app.get('/citizen/issue-count-by-status/:email',verifyToken, async (req, res) => {
             const { email } = req.params;
 
             const result = await issueCollection.aggregate([

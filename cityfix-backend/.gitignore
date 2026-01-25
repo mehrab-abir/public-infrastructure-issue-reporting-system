@@ -1,3 +1,4 @@
 node_modules
 .env
 cityfix-firebase-service-key.json
+.vercel

@@ -31,7 +31,9 @@ const ManageProfile = () => {
 
   const [submitting, setSubmitting] = useState(false);
 
-  const { data: thisUser, isLoading } = useQuery({
+  const subscriptionModalRef = useRef();
+
+  const { data: thisUser, isLoading, refetch:refetchUser } = useQuery({
     queryKey: ["user-info", user?.uid],
     queryFn: async () => {
       const response = await axios.get(`/users/${user?.uid}`);
@@ -147,6 +149,34 @@ const ManageProfile = () => {
       imageModalRef.current.close();
     }
   };
+
+  const openPaymentModal = () => {
+      subscriptionModalRef.current.showModal();
+    };
+  
+    const handleSubscriptionPayment = async () => {
+      try {
+        const paymentInfo = {
+          userEmail: user?.email,
+        };
+  
+        const response = await axios.post(
+          "/subscribe/create-checkout-session",
+          paymentInfo,
+        );
+        window.location.assign(response.data.url);
+      } catch (error) {
+        console.log(error);
+        Swal.fire({
+          icon: "error",
+          title: "Ooop...",
+          text: "Something went wrong!",
+        });
+      } finally {
+        subscriptionModalRef.current.close();
+        refetchUser();
+      }
+    };
 
   
   if(roleLoading){
@@ -331,7 +361,7 @@ const ManageProfile = () => {
                   </span>
                 </div>
               </div>
-            ) : thisUser?.role?.toLowerCase() === "citizen" ? (
+            ) : (thisUser?.role?.toLowerCase() === "citizen" && thisUser?.isPremium === "no") ? (
               <div className="bg-surface p-4 rounded-xl">
                 <div className="flex items-center gap-2">
                   <div>
@@ -359,7 +389,10 @@ const ManageProfile = () => {
                     <IoMdCheckmark /> Detailed Analytics Access
                   </li>
                 </ul>
-                <button className="bg-accent w-full btn border-none shadow-none text-white mt-3 hover:bg-orange-500! rounded-lg">
+                <button
+                  onClick={() => openPaymentModal()}
+                  className="bg-accent w-full btn border-none shadow-none text-white mt-3 hover:bg-orange-500! rounded-lg"
+                >
                   Upgrade to Premium
                 </button>
               </div>
@@ -368,6 +401,35 @@ const ManageProfile = () => {
             )}
           </div>
         </div>
+
+        {/* subscription payment modal */}
+        <dialog
+          ref={subscriptionModalRef}
+          className="modal modal-bottom sm:modal-middle"
+        >
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">Upgrade To Premium</h3>
+            <p className="py-4">
+              Premium Users Can Report
+              <span className="text-orange-500 font-semibold">
+                {" "}
+                Unlimited Issues
+              </span>
+            </p>
+            <p className="text-lg font-semibold mt-2">Fees : $1000</p>
+            <button
+              className="mt-3 btn btn-sm text-white border-none bg-primary cursor-pointer"
+              onClick={() => handleSubscriptionPayment()}
+            >
+              Proceed to Payment
+            </button>
+            <div className="modal-action">
+              <form method="dialog">
+                <button className="btn">Close</button>
+              </form>
+            </div>
+          </div>
+        </dialog>
       </div>
     </DashboardContainer>
   );
