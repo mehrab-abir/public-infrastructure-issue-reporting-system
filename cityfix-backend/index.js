@@ -259,9 +259,13 @@ async function run() {
         //get all resolved issues of a staff
         app.get(`/staff/resolved-issues/:email`,async (req,res)=>{
             const {email} = req.params;
+            const {recent} = req.query;
 
-            const result = await resolvedCollection.aggregate([
+            const result = resolvedCollection.aggregate([
                 {$match : {staffEmail : email}},
+                {
+                    $sort : {resolved_at : -1}
+                },
                 {
                     $lookup : {
                         from : 'issues',
@@ -271,12 +275,25 @@ async function run() {
                     }
                 },
                 {$unwind : "$resolved_issue"}
-            ]).toArray();
+            ]);
 
-            console.log(result);
+            const limit = Number(recent);
 
-            res.send(result);
+            if(recent){
+                result.limit(limit);
+            }
+
+            const issues = await result.toArray();
+
+            const resolvedCount = await resolvedCollection.countDocuments({staffEmail: email});
+
+            res.send({
+                resolvedIssue : issues,
+                totalCount : resolvedCount
+            });
         })
+
+        
 
 
         //apis for admin
@@ -918,7 +935,12 @@ async function run() {
 
         //group issues by status
         app.get('/group-issues-by-status', async (req, res) => {
+            const {email} = req.query;
+
+            const matchedStaff = email ? {staffEmail:email} : {};
+
             const result = await issueCollection.aggregate([
+                {$match : matchedStaff},
                 {
                     $group: {
                         _id: "$status",

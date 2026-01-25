@@ -6,7 +6,7 @@ import LoaderSpinner from "../../../../Components/LoaderSpinner";
 
 const IssuesByMonthsBarChart = () => {
   const axios = useAxiosSecured();
-  const { data, isLoading } = useQuery({
+  const { data = [], isLoading } = useQuery({
     queryKey: ["issues-by-month"],
     queryFn: async () => {
       const response = await axios.get("/group-issue-by-months");

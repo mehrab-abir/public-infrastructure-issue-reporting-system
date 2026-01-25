@@ -1,10 +1,16 @@
 import React from 'react';
 import DashboardContainer from '../DashboardContainer';
+import LatestResolvedIssues from './StaffDashComponents/LatestResolvedIssues';
+import IssuesbyStatus from './StaffDashComponents/IssuesbyStatus';
 
 const StaffDashboard = () => {
     return (
       <DashboardContainer>
-        <h1 className="text-2xl font-bold">Staff</h1>
+        <div className='flex items-center justify-center'>
+          <IssuesbyStatus/>
+        </div>
+        
+        <LatestResolvedIssues />
       </DashboardContainer>
     );
 };
