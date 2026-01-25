@@ -1,12 +1,11 @@
 import React from "react";
 import Container from "../Components/Container";
 import { useForm } from "react-hook-form";
-// import useAxiosSecured from "../Hooks/Axios/useAxiosSecured";
+import useAxiosSecured from "../Hooks/Axios/useAxiosSecured";
 import { useState } from "react";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router";
 import uploadToCloudinary from "../Utilities/uploadImage";
-import useAxiosBasic from "../Hooks/Axios/useAxiosBasic";
 import useAuth from "../Hooks/Auth/useAuth";
 import LoaderSpinner from "../Components/LoaderSpinner";
 import { useQuery } from "@tanstack/react-query";
@@ -23,7 +22,7 @@ const ReportIssue = () => {
     reset,
     formState: { errors },
   } = useForm();
-  const axios = useAxiosBasic();
+  const axios = useAxiosSecured();
   const navigate = useNavigate();
 
   const subscriptionModalRef = useRef();
@@ -314,8 +313,8 @@ const ReportIssue = () => {
                     Cancel
                   </button>
                   <button
-                    className="btn w-1/2 bg-primary cursor-pointer border-none text-white rounded-lg"
-                    disabled={submitting}
+                    className={`btn w-1/2  border-none text-white rounded-lg ${thisUser?.block ? 'bg-blue-300 cursor-not-allowed!' : 'bg-primary cursor-pointer'}`}
+                    disabled={submitting || thisUser?.block}
                   >
                     {submitting ? <i>Submitting...</i> : "Submit"}
                   </button>

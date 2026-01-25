@@ -108,7 +108,7 @@ const Counts = () => {
         {revenueLoading ? (
           <LoaderSpinner />
         ) : (
-          <h3 className="text-2xl font-bold mt-3 text-center md:text-start">
+          <h3 className="text-2xl font-bold mt-3 text-center text-emerald-500 md:text-start">
             ${totalRevenue}
           </h3>
         )}

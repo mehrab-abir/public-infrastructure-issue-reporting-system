@@ -34,15 +34,28 @@ const IssueDetails = () => {
 
   const [upvoted, setUpvoted] = useState();
 
-    const paymentModalRef = useRef();
+  const paymentModalRef = useRef();
 
-  const { data: thisIssue, isLoading, refetch : refetchThisIssue } = useQuery({
+  const {
+    data: thisIssue,
+    isLoading,
+    refetch: refetchThisIssue,
+  } = useQuery({
     queryKey: ["issue", issueId],
     queryFn: async () => {
       const response = await axios.get(`/issue/details/${issueId}`);
       return response.data;
     },
   });
+
+  //this user details --from db
+  const { data: thisUser } = useQuery({
+      queryKey: ["this-user", user?.uid],
+      queryFn: async () => {
+        const response = await axios.get(`/users/${user?.uid}`);
+        return response.data;
+      },
+    });
 
   //tracking log of this issue
   const { data: timeline = [], isLoading: timelineLoading } = useQuery({
@@ -77,15 +90,14 @@ const IssueDetails = () => {
   }, [thisIssue?.reporterEmail, thisIssue?.staffEmail, axios]);
 
   //to set initial upvote status - after loading data from database
-  useEffect(()=>{
-    if(!thisIssue || !user){
+  useEffect(() => {
+    if (!thisIssue || !user) {
       return;
     }
 
     const initialUpvoteStatus = thisIssue?.upvoteBy?.includes(user?.email);
     setUpvoted(initialUpvoteStatus);
-
-  },[thisIssue,user])
+  }, [thisIssue, user]);
 
   //delete this issue - by the reporter
   const deleteThisIssue = (issueId) => {
@@ -146,60 +158,60 @@ const IssueDetails = () => {
   };
 
   //upvote an issue by citizen
-  const handleUpvote = async (issue)=>{
-    if(!user){
-      navigate('/auth/register');
+  const handleUpvote = async (issue) => {
+    if (!user) {
+      navigate("/auth/register",{replace : true});
       return;
     }
 
     try {
       const upvoteInfo = {
-        issueId : issue._id,
-        upvoteBy : user?.email
-      }
+        issueId: issue._id,
+        upvoteBy: user?.email,
+      };
 
-      const response = await axios.patch(`/upvote-issue`,upvoteInfo);
-      
+      const response = await axios.patch(`/upvote-issue`, upvoteInfo);
+
       setUpvoted(response.data.upvoted);
 
       refetchThisIssue();
-
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
-   const openPaymentModal = (issue) => {
-     setSelectedIssue(issue);
-     paymentModalRef.current.showModal();
-   };
+  const openPaymentModal = (issue) => {
+    setSelectedIssue(issue);
+    paymentModalRef.current.showModal();
+  };
 
-   const handleBoostPayment = async (issue)=>{
-       try{
-         const paymentInfo = {
-           issueId : issue._id,
-           issueTitle : issue.issueTitle,
-           boostFee : 100,
-           reporterEmail : issue.reporterEmail,
-           trackingId : issue.trackingId
-         }
-   
-         const response = await axios.post('/create-checkout-session',paymentInfo);
-         console.log("Create checkout session response : ", response);
-         window.location.assign(response.data.url);
-       }
-       catch(error){
-         console.log(error);
-         Swal.fire({
-           icon : "error",
-           title : "Ooop...",
-           text : "Something went wrong!"
-         })
-       }
-       finally{
-         paymentModalRef.current.close();
-       }
-     }
+  const handleBoostPayment = async (issue) => {
+    try {
+      const paymentInfo = {
+        issueId: issue._id,
+        issueTitle: issue.issueTitle,
+        boostFee: 100,
+        reporterEmail: issue.reporterEmail,
+        trackingId: issue.trackingId,
+      };
+
+      const response = await axios.post(
+        "/create-checkout-session",
+        paymentInfo,
+      );
+      console.log("Create checkout session response : ", response);
+      window.location.assign(response.data.url);
+    } catch (error) {
+      console.log(error);
+      Swal.fire({
+        icon: "error",
+        title: "Ooop...",
+        text: "Something went wrong!",
+      });
+    } finally {
+      paymentModalRef.current.close();
+    }
+  };
 
   return (
     <div className="bg-base pt-28 pb-24">
@@ -302,9 +314,9 @@ const IssueDetails = () => {
                     </p>
                   </div>
                   <button
-                    className={`btn btn-sm md:btn-md mt-4 rounded-xl sm:mt-0 ${user?.email === thisIssue?.reporterEmail ? "cursor-not-allowed! bg-blue-300! border-none! text-white!" : "cursor-pointer"} ${upvoted ? "bg-primary text-white border-none" : "bg-surface text-accent border-blue-500"}`}
+                    className={`btn btn-sm md:btn-md mt-4 rounded-xl sm:mt-0 ${(user?.email === thisIssue?.reporterEmail) || thisUser?.block ? "cursor-not-allowed! bg-blue-300! border-none! text-white!" : "cursor-pointer"} ${upvoted ? "bg-primary text-white border-none" : "bg-surface text-accent border-blue-500"}`}
                     onClick={() => handleUpvote(thisIssue)}
-                    disabled={user?.email === thisIssue?.reporterEmail}
+                    disabled={(user?.email === thisIssue?.reporterEmail) || thisUser?.block}
                   >
                     Upvote
                   </button>

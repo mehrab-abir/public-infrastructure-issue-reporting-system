@@ -8,15 +8,30 @@ import { CiLight } from "react-icons/ci";
 import { CiDark } from "react-icons/ci";
 import { Link } from "react-router";
 import useAuth from "../../Hooks/Auth/useAuth";
+import { useQuery } from "@tanstack/react-query";
+import useAxiosSecured from "../../Hooks/Axios/useAxiosSecured";
+import LoaderSpinner from "../LoaderSpinner";
 
 const Header = () => {
   const {user,loading} = useAuth();
+  const axios = useAxiosSecured();
 
   const [openMenu, setOpenMenu] = useState(false);
 
   const [theme, setTheme] = useState(
     () => localStorage.getItem("theme") || "light"
   );
+
+   const {
+      data: thisUser,
+      isLoading:thisUserLoading,
+    } = useQuery({
+      queryKey: ["this-user", user?.uid],
+      queryFn: async () => {
+        const response = await axios.get(`/users/${user?.uid}`);
+        return response.data;
+      },
+    });
 
   useEffect(() => {
     const html = document.documentElement;
@@ -54,6 +69,13 @@ const Header = () => {
           ></NavbarLargeDevice>
 
           <div className="flex items-center gap-4">
+            {thisUserLoading ? (
+              <LoaderSpinner />
+            ) : thisUser?.block ? (
+              <i className="bg-red-600 text-white px-1 rounded-xl">Blocked</i>
+            ) : (
+              ""
+            )}
             {theme === "light" ? (
               <CiDark
                 onClick={() => setTheme("dark")}

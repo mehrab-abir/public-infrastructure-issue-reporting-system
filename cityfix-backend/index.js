@@ -173,16 +173,16 @@ async function run() {
 
             const alreadyUpvoted = issue?.upvoteBy?.includes(upvoteBy);
 
-            let afterUpvote;
+            let afterClick;
 
             if (alreadyUpvoted) {
-                afterUpvote = await issueCollection.updateOne({ _id: new ObjectId(issueId) }, {
+                afterClick = await issueCollection.updateOne({ _id: new ObjectId(issueId) }, {
                     $pull: { upvoteBy: upvoteBy },
                     $inc: { upvote: -1 }
                 })
             }
             else {
-                afterUpvote = await issueCollection.updateOne({ _id: new ObjectId(issueId) }, {
+                afterClick = await issueCollection.updateOne({ _id: new ObjectId(issueId) }, {
                     $addToSet: { upvoteBy: upvoteBy },
                     $inc: { upvote: 1 }
                 })
@@ -193,7 +193,7 @@ async function run() {
             });
 
             res.send({
-                modifiedCount: afterUpvote.modifiedCount,
+                modifiedCount: afterClick.modifiedCount,
                 upvote: updated.upvote,
                 upvoted: updated?.upvoteBy?.includes(upvoteBy)
             });
@@ -970,8 +970,13 @@ async function run() {
 
         //get all payments - by admin
         app.get("/admin/all-payments", async (req, res) => {
-            const allPayments = await paymentCollection.find().toArray();
+            const allPayments = await paymentCollection.find().sort({paid_at:-1}).toArray();
             res.send(allPayments)
+        })
+        //get all subscription payments - by admin
+        app.get('/admin/subscription-payments',async (req,res)=>{
+            const payments = await subscriptionPayments.find().sort({paid_at: -1}).toArray();
+            res.send(payments);
         })
 
         //get all payments of a citizen - by citizen/user
@@ -1041,16 +1046,25 @@ async function run() {
 
         //total revenue
         app.get('/total-revenue', async (req, res) => {
-            const result = await paymentCollection.aggregate([
+            const boostIssueRevenue = await paymentCollection.aggregate([
                 {
                     $group: {
                         _id: null,
-                        totalRevenue: { $sum: { $toInt: "$amount" } }
+                        totalBoost: { $sum: { $toInt: "$amount" } }
                     }
                 }
             ]).toArray();
 
-            const revenue = result[0]?.totalRevenue || 0;
+            const subscriptionRevenue = await subscriptionPayments.aggregate([
+                {
+                    $group : {
+                        _id : null,
+                        totalSubscription : {$sum : {$toInt : "$amount"}}
+                    }
+                }
+            ]).toArray();
+
+            const revenue = (boostIssueRevenue[0]?.totalBoost) + (subscriptionRevenue[0]?.totalSubscription) || 0;
             res.send(revenue);
         })
 
