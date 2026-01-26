@@ -308,7 +308,7 @@ async function run() {
             const resolvedCount = await resolvedCollection.countDocuments({staffEmail: email});
 
             res.send({
-                resolvedIssue : issues,
+                resolvedIssues : issues,
                 totalCount : resolvedCount
             });
         })

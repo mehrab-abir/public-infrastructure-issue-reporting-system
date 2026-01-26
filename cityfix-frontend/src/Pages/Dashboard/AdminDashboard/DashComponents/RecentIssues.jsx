@@ -27,7 +27,7 @@ const RecentIssues = () => {
 
       <div className="mt-2">
         <div
-          className={`overflow-x-auto bg-surface rounded-lg w-full ${recentIssues.length < 4 && "h-[50vh]"}`}
+          className={`overflow-x-auto bg-surface rounded-lg w-full ${recentIssues?.issues?.length < 4 && "h-[50vh]"}`}
         >
           <table className="table table-sm md:table-md">
             {/* head */}
@@ -50,7 +50,7 @@ const RecentIssues = () => {
                   </td>
                 </tr>
               ) : (
-                recentIssues.map((issue) => {
+                recentIssues?.issues?.map((issue) => {
                   return (
                     <tr key={issue._id}>
                       <td>

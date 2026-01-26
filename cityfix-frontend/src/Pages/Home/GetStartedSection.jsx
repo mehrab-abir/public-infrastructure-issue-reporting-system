@@ -118,49 +118,51 @@ const GetStartedSection = () => {
           <div className="flex-1 w-full">
             {isLoading ? (
               <LoaderSpinner />
-            ) : (
-              (!user || (user && thisUser?.isPremium === "no")) ? (
-                <div className="flex flex-col space-y-3 bg-primary p-6 sm:w-full lg:w-2/3 lg:justify-self-end rounded-lg mt-10 md:mt-0">
-                  <div className="flex items-center gap-2">
-                    <div>
-                      <LuCrown className="text-3xl text-white" />
-                    </div>
-                    <div>
-                      <h4 className="text-lg font-bold text-white">
-                        Premium Benefits
-                      </h4>
-                      <p className="text-white">Upgrade for more features</p>
-                    </div>
+            ) : !user || (user && thisUser?.isPremium === "no") ? (
+              <div className="flex flex-col space-y-3 bg-primary p-6 sm:w-full lg:w-2/3 lg:justify-self-end rounded-lg mt-10 md:mt-0">
+                <div className="flex items-center gap-2">
+                  <div>
+                    <LuCrown className="text-3xl text-white" />
                   </div>
-                  <ul className="text-white pl-2 space-y-2 text-sm mt-2">
-                    <li className="flex items-center gap-1">
-                      <IoMdCheckmark /> Unlimited Issue Subscription
-                    </li>
-                    <li className="flex items-center gap-1">
-                      <IoMdCheckmark /> Priority Support & Faster Response
-                    </li>
-                    <li className="flex items-center gap-1">
-                      <IoMdCheckmark /> Boost Issue Visibility
-                    </li>
-                    <li className="flex items-center gap-1">
-                      <IoMdCheckmark /> Premium Badge On Profile
-                    </li>
-                    <li className="flex items-center gap-1">
-                      <IoMdCheckmark /> Detailed Analytics Access
-                    </li>
-                  </ul>
-                  <button
-                    onClick={() => openPaymentModal()}
-                    className="bg-accent w-full btn border-none shadow-none text-white mt-3 hover:bg-orange-500! rounded-lg"
-                  >
-                    Upgrade to Premium
-                  </button>
+                  <div>
+                    <h4 className="text-lg font-bold text-white">
+                      Premium Benefits
+                    </h4>
+                    <p className="text-white">Upgrade for more features</p>
+                  </div>
                 </div>
-              )
-              :
+                <ul className="text-white pl-2 space-y-2 text-sm mt-2">
+                  <li className="flex items-center gap-1">
+                    <IoMdCheckmark /> Unlimited Issue Subscription
+                  </li>
+                  <li className="flex items-center gap-1">
+                    <IoMdCheckmark /> Priority Support & Faster Response
+                  </li>
+                  <li className="flex items-center gap-1">
+                    <IoMdCheckmark /> Boost Issue Visibility
+                  </li>
+                  <li className="flex items-center gap-1">
+                    <IoMdCheckmark /> Premium Badge On Profile
+                  </li>
+                  <li className="flex items-center gap-1">
+                    <IoMdCheckmark /> Detailed Analytics Access
+                  </li>
+                </ul>
+                <button
+                  onClick={() => openPaymentModal()}
+                  className="bg-accent w-full btn border-none shadow-none text-white mt-3 hover:bg-orange-500! rounded-lg"
+                >
+                  Upgrade to Premium
+                </button>
+              </div>
+            ) : user && thisUser?.role === "staff" ? (
+              ""
+            ) : (
               <div className="flex-col items-center justify-center hidden md:flex">
                 <LuCrown className="text-4xl text-orange-500" />
-                <h1 className="text-2xl lg:text-3xl text-white font-bold">Premium User</h1>
+                <h1 className="text-2xl lg:text-3xl text-white font-bold">
+                  Premium User
+                </h1>
               </div>
             )}
           </div>

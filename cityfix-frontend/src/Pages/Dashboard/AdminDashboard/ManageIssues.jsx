@@ -36,7 +36,7 @@ const ManageIssues = () => {
 
   // fetching all issues
   const {
-    data: all_issues = [],
+    data: result = [],
     isLoading,
     refetch: refetchIssues,
   } = useQuery({
@@ -206,7 +206,7 @@ const ManageIssues = () => {
             Manage All Reported Issues
           </p>
         </div>
-        <p className="mt-3 md:mt-0">Showing issues: {all_issues.length}</p>
+        <p className="mt-3 md:mt-0">Showing issues: {result?.issues?.length} of {result.totalCount}</p>
       </div>
 
       {/* search by title or assigned staff email */}
@@ -261,7 +261,7 @@ const ManageIssues = () => {
 
       <div className="mt-5">
         <div
-          className={`overflow-x-auto bg-surface rounded-lg w-full ${all_issues.length < 4 && "h-[50vh]"}`}
+          className={`overflow-x-auto bg-surface rounded-lg w-full ${result?.issues?.length < 4 && "h-[50vh]"}`}
         >
           <table className="table table-sm md:table-md">
             {/* head */}
@@ -285,7 +285,7 @@ const ManageIssues = () => {
                   </td>
                 </tr>
               ) : (
-                all_issues.map((issue) => {
+                result?.issues?.map((issue) => {
                   return (
                     <tr key={issue._id}>
                       <td
@@ -385,7 +385,7 @@ const ManageIssues = () => {
             ></IssueDetailsModal>
           </dialog>
 
-          {/* staff modal ro assign staff to an issue */}
+          {/* staff modal to assign staff to an issue */}
           <dialog
             ref={staffModalRef}
             className="modal modal-bottom sm:modal-middle"
