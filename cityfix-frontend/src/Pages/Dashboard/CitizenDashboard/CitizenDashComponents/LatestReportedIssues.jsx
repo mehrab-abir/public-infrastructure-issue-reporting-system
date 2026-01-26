@@ -22,7 +22,12 @@ const LatestReportedIssues = () => {
           Recently Reported Issues
         </h1>
         <div className={`overflow-x-auto bg-surface rounded-lg w-full`}>
-          <table className="table table-sm md:table-md">
+          {
+            latestIssues?.length === 0 ? <div className='py-5'>
+              <p className='text-muted text-center'>-No issue reported yet-</p>
+            </div>
+            :
+            <table className="table table-sm md:table-md">
             {/* head */}
             <thead>
               <tr>
@@ -98,6 +103,8 @@ const LatestReportedIssues = () => {
               )}
             </tbody>
           </table>
+          }
+          
         </div>
       </div>
     );

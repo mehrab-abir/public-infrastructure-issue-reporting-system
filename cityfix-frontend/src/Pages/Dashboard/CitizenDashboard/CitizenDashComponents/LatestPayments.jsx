@@ -36,8 +36,8 @@ const LatestPayments = () => {
         <h1 className="text-xl md:text-2xl font-bold">Recent Payment(s)</h1>
         <div className="">
           <div className={`overflow-x-auto bg-surface rounded-lg w-full`}>
-            {payments.length === 0 ? (
-              <div className="mt-10">
+            {payments?.length === 0 ? (
+              <div className="py-5">
                 <p className="text-muted text-center">
                   -You have not made any payment recently-
                 </p>

@@ -68,7 +68,7 @@ const IssueCountByStatus = () => {
           Total Issues Reported
         </h3>
         <h3 className="text-2xl font-bold mt-3 text-center md:text-start">
-          {issues[0]?.total[0].totalCount}
+          {issues[0]?.total[0]?.totalCount}
         </h3>
       </div>
     </div>

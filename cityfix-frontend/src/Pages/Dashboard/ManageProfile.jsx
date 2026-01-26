@@ -18,7 +18,7 @@ import useRole from "../../Hooks/Role/useRole";
 
 const ManageProfile = () => {
   const { user, loading, setLoading, updateUserProfile, setUser } = useAuth();
-  const {role, roleLoading} = useRole();
+  const { role, roleLoading } = useRole();
 
   const axios = useAxiosSecured();
 
@@ -26,14 +26,18 @@ const ManageProfile = () => {
   const nameRef = useRef(null);
 
   const imageRef = useRef(null);
-  const imageModalRef = useRef(null);
+  const imageModalRef = useRef();
   const [noImageError, setNoImageError] = useState("");
 
   const [submitting, setSubmitting] = useState(false);
 
   const subscriptionModalRef = useRef();
 
-  const { data: thisUser, isLoading, refetch:refetchUser } = useQuery({
+  const {
+    data: thisUser,
+    isLoading,
+    refetch: refetchUser,
+  } = useQuery({
     queryKey: ["user-info", user?.uid],
     queryFn: async () => {
       const response = await axios.get(`/users/${user?.uid}`);
@@ -74,9 +78,12 @@ const ManageProfile = () => {
       }));
 
       //update in mongodb
-      const response = await axios.patch(`/update-profile/${user?.email}?role=${role}`, {
-        displayName,
-      });
+      const response = await axios.patch(
+        `/update-profile/${user?.email}?role=${role}`,
+        {
+          displayName,
+        },
+      );
 
       if (response.data.acknowledge) {
         Swal.fire({
@@ -128,9 +135,12 @@ const ManageProfile = () => {
       }));
 
       //upload in mongodb
-      const response = await axios.patch(`/update-profile/${user?.email}?role=${role}`, {
-        photoURL,
-      });
+      const response = await axios.patch(
+        `/update-profile/${user?.email}?role=${role}`,
+        {
+          photoURL,
+        },
+      );
       if (response.data.acknowledge) {
         Swal.fire({
           title: "Photo updated!",
@@ -146,41 +156,40 @@ const ManageProfile = () => {
     } finally {
       setSubmitting(false);
       setLoading(false);
-      imageModalRef.current.close();
+      imageModalRef?.current?.close();
     }
   };
 
   const openPaymentModal = () => {
-      subscriptionModalRef.current.showModal();
-    };
-  
-    const handleSubscriptionPayment = async () => {
-      try {
-        const paymentInfo = {
-          userEmail: user?.email,
-        };
-  
-        const response = await axios.post(
-          "/subscribe/create-checkout-session",
-          paymentInfo,
-        );
-        window.location.assign(response.data.url);
-      } catch {
-        // console.log(error);
-        Swal.fire({
-          icon: "error",
-          title: "Ooop...",
-          text: "Something went wrong!",
-        });
-      } finally {
-        subscriptionModalRef.current.close();
-        refetchUser();
-      }
-    };
+    subscriptionModalRef.current.showModal();
+  };
 
-  
-  if(roleLoading){
-    return <LoaderSpinner></LoaderSpinner>
+  const handleSubscriptionPayment = async () => {
+    try {
+      const paymentInfo = {
+        userEmail: user?.email,
+      };
+
+      const response = await axios.post(
+        "/subscribe/create-checkout-session",
+        paymentInfo,
+      );
+      window.location.assign(response.data.url);
+    } catch {
+      // console.log(error);
+      Swal.fire({
+        icon: "error",
+        title: "Ooop...",
+        text: "Something went wrong!",
+      });
+    } finally {
+      subscriptionModalRef.current.close();
+      refetchUser();
+    }
+  };
+
+  if (roleLoading) {
+    return <LoaderSpinner></LoaderSpinner>;
   }
 
   const profileImg =
@@ -269,7 +278,8 @@ const ManageProfile = () => {
                 {isLoading ? (
                   <LoaderSpinner />
                 ) : (
-                  new Date(thisUser?.created_at).toDateString() ||
+                  (thisUser?.created_at &&
+                    new Date(thisUser?.created_at).toDateString()) ||
                   "-Reload Page-"
                 )}
               </span>
@@ -361,7 +371,8 @@ const ManageProfile = () => {
                   </span>
                 </div>
               </div>
-            ) : (thisUser?.role?.toLowerCase() === "citizen" && thisUser?.isPremium === "no") ? (
+            ) : thisUser?.role?.toLowerCase() === "citizen" &&
+              thisUser?.isPremium === "no" ? (
               <div className="bg-surface p-4 rounded-xl">
                 <div className="flex items-center gap-2">
                   <div>

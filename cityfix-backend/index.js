@@ -407,7 +407,7 @@ async function run() {
 
         //get all issues
         app.get("/all-issues", async (req, res) => {
-            const { category, status, priority, searchText, recent } = req.query;
+            const { category, status, priority, searchText, recent, skip } = req.query;
 
             const query = {};
 
@@ -433,15 +433,22 @@ async function run() {
 
             const result = issueCollection.find(query).sort({ priorityLevel: 1, created_at: -1 });
 
-            const limit = Number(recent);
+            const limit = Number(recent) || 0;
+            const skipNum = Number(skip) || 0;
 
             if (limit) {
                 result.limit(limit);
             }
 
+            if(skip){
+                result.skip(skipNum);
+            }
+
             const issues = await result.toArray();
 
-            res.send(issues);
+            const totalCount = await issueCollection.countDocuments();
+
+            res.send({issues,totalCount});
         })
 
         //get one issue details
@@ -627,7 +634,7 @@ async function run() {
         })
 
         //update user profile -displayName or photURL
-        app.patch("/update-profile/:email",verifyToken, async (req, res) => {
+        app.patch("/update-profile/:email", async (req, res) => {
             const { displayName, photoURL } = req.body;
             const { email } = req.params;
             const { role } = req.query;

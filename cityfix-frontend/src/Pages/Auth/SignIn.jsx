@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { Bounce, toast } from "react-toastify";
 import logo from "../../assets/logo.png";
@@ -9,7 +9,7 @@ import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const SignIn = () => {
-  const { signInUser, setLoading } = useAuth();
+  const { signInUser, setLoading, forgetPassword } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -17,6 +17,12 @@ const SignIn = () => {
 
   const [submitting, setSubmiting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const forgotPasswordModalRef = useRef();
+  const emailRef = useRef();
+
+  const [noEmailMsg, setNoEmailMsg] = useState('');
+  const [passwordResetMsg, setPasswordResetMsg] = useState('');
 
   const handleSignIn = async (data) => {
     setSubmiting(true);
@@ -58,6 +64,30 @@ const SignIn = () => {
       setSubmiting(false);
     }
   };
+
+
+  const openForgotPasswordModal = ()=>{
+    setNoEmailMsg('');
+    setPasswordResetMsg('');
+    forgotPasswordModalRef.current.showModal();
+  }
+
+  const handleResetPassword = async ()=>{
+    setNoEmailMsg('');
+    
+    const email = emailRef.current.value;
+
+    if(!email){
+      setNoEmailMsg("Please enter your email");
+      return;
+    }
+
+    await forgetPassword(email);
+    
+    setPasswordResetMsg("Password reset link has been sent. Please check your email, check spams too");
+
+    setLoading(false);
+  }
   return (
     <div className="pt-36 pb-24 bg-base">
       <div className="mb-12">
@@ -104,7 +134,10 @@ const SignIn = () => {
               />
             )}
           </div>
-          <p className="mt-1 text-sm hover:text-accent hover:underline cursor-pointer">
+          <p
+            onClick={() => openForgotPasswordModal()}
+            className="mt-1 text-sm hover:text-accent hover:underline cursor-pointer"
+          >
             Forgot Password?
           </p>
 
@@ -126,6 +159,36 @@ const SignIn = () => {
           </Link>
         </p>
       </div>
+
+      {/* forgot password modal  */}
+      <dialog
+        ref={forgotPasswordModalRef}
+        className="modal modal-bottom sm:modal-middle"
+      >
+        <div className="modal-box">
+          <h3 className="font-semibold text-lg">Enter Your Account Email</h3>
+          <input
+            type="email"
+            className="input w-full outline-none"
+            ref={emailRef}
+          />
+          <p className="text-red-500 text-sm italic">{noEmailMsg}</p>
+          <p className="text-blue-500 text-sm italic">{passwordResetMsg}</p>
+
+          <button
+            onClick={() => handleResetPassword()}
+            className="btn btn-sm bg-primary text-white mt-4"
+          >
+            Send Reset Link
+          </button>
+          <div className="modal-action">
+            <form method="dialog">
+              {/* if there is a button in form, it will close the modal */}
+              <button className="btn">Close</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
     </div>
   );
 };

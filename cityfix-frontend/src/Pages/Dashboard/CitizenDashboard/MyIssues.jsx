@@ -62,7 +62,7 @@ const MyIssues = () => {
             });
             refetchMyIssues();
           }
-        } catch{
+        } catch {
           // console.log(err);
           Swal.fire({
             title: "Ooops..",
@@ -81,37 +81,38 @@ const MyIssues = () => {
     editIssueModalRef.current.showModal();
   };
 
-  const openPaymentModal = (issue)=>{
+  const openPaymentModal = (issue) => {
     setSelectedIssue(issue);
     paymentModalRef.current.showModal();
-  }
+  };
 
-  const handleBoostPayment = async (issue)=>{
-    try{
+  const handleBoostPayment = async (issue) => {
+    try {
       const paymentInfo = {
-        issueId : issue._id,
-        issueTitle : issue.issueTitle,
-        boostFee : 100,
-        reporterEmail : issue.reporterEmail,
-        trackingId : issue.trackingId
-      }
+        issueId: issue._id,
+        issueTitle: issue.issueTitle,
+        boostFee: 100,
+        reporterEmail: issue.reporterEmail,
+        trackingId: issue.trackingId,
+      };
 
-      const response = await axios.post('/create-checkout-session',paymentInfo);
+      const response = await axios.post(
+        "/create-checkout-session",
+        paymentInfo,
+      );
       // console.log("Create checkout session response : ", response);
       window.location.assign(response.data.url);
-    }
-    catch{
+    } catch {
       // console.log(error);
       Swal.fire({
-        icon : "error",
-        title : "Ooop...",
-        text : "Something went wrong!"
-      })
-    }
-    finally{
+        icon: "error",
+        title: "Ooop...",
+        text: "Something went wrong!",
+      });
+    } finally {
       paymentModalRef.current.close();
     }
-  }
+  };
 
   return (
     <>
@@ -140,123 +141,134 @@ const MyIssues = () => {
           <div
             className={`overflow-x-auto bg-surface rounded-lg w-full ${myIssues.length < 4 && "h-[50vh]"}`}
           >
-            <table className="table table-zebra table-sm md:table-md">
-              {/* head */}
-              <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Category</th>
-                  <th>Status</th>
-                  <th>Priority</th>
-                  <th>Date</th>
-                  <th>Assigned Staff</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {isLoading ? (
+            {myIssues?.length === 0 ? (
+              <div className="py-5">
+                <p className="text-muted text-center">
+                  -No issue reported yet-
+                </p>
+              </div>
+            ) : (
+              <table className="table table-zebra table-sm md:table-md">
+                {/* head */}
+                <thead>
                   <tr>
-                    <td className="col-span-6">
-                      <LoaderSpinner></LoaderSpinner>
-                    </td>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                    <th>Date</th>
+                    <th>Assigned Staff</th>
+                    <th>Action</th>
                   </tr>
-                ) : (
-                  myIssues.map((issue) => {
-                    return (
-                      <tr key={issue._id}>
-                        <td>
-                          <Link
-                            to={`/issue-details/${issue._id}`}
-                            className="font-semibold hover:underline cursor-pointer"
-                          >
-                            {issue.issueTitle}
-                          </Link>
-                        </td>
-                        <td>{issue.category}</td>
-                        <td>
-                          <span
-                            className={`px-1 text-nowrap text-white rounded-xl text-xs ${
-                              issue.status.toLowerCase() === "pending"
-                                ? "bg-yellow-500"
-                                : issue.status.toLowerCase() ===
-                                    "staff assigned"
-                                  ? "bg-blue-500"
-                                  : issue.status.toLowerCase() === "in progress"
-                                    ? "bg-purple-500"
-                                    : issue.status.toLowerCase() === "working"
-                                      ? "bg-sky-600"
-                                      : issue.status.toLowerCase() ===
-                                          "resolved"
-                                        ? "bg-emerald-500"
-                                        : issue.status.toLowerCase() ===
-                                            "closed"
-                                          ? "bg-slate-500"
-                                          : "bg-red-500"
-                            }`}
-                          >
-                            {issue.status}
-                          </span>
-                        </td>
-                        <td>
-                          <div className="flex flex-col items-center justify-center">
-                            <span
-                              className={`font-semibold ${issue?.priority === "Normal" ? "text-secondary" : "text-red-500"}`}
-                            >
-                              {issue.priority.split(" ")[0].toUpperCase()}
-                            </span>
-                            <button
-                              className={`cursor-pointer bg-orange-500 text-white mt-1 btn btn-xs border-none tooltip ${issue?.priority === "High" && "hidden"}`}
-                              data-tip="Boost issue to get High Priority"
-                              onClick={() => openPaymentModal(issue)}
-                            >
-                              Boost
-                            </button>
-                          </div>
-                        </td>
-                        <td>{new Date(issue.created_at).toDateString()}</td>
-                        <td>
-                          {issue.staffEmail
-                            ? issue.staffEmail
-                            : "Not Assigned Yet"}
-                        </td>
-                        <td>
-                          <div className="flex items-center gap-4">
+                </thead>
+
+                <tbody>
+                  {isLoading ? (
+                    <tr>
+                      <td className="col-span-6">
+                        <LoaderSpinner></LoaderSpinner>
+                      </td>
+                    </tr>
+                  ) : (
+                    myIssues.map((issue) => {
+                      return (
+                        <tr key={issue._id}>
+                          <td>
                             <Link
                               to={`/issue-details/${issue._id}`}
-                              className="cursor-pointer tooltip"
-                              data-tip="View Details"
+                              className="font-semibold hover:underline cursor-pointer"
                             >
-                              <IoEye className="text-xl" />
+                              {issue.issueTitle}
                             </Link>
-                            <button
-                              className={`tooltip ${issue.status !== "Pending" ? "cursor-not-allowed" : "cursor-pointer"}`}
-                              data-tip="Edit"
-                              onClick={() => openEditorModal(issue)}
-                              disabled={issue.status !== "Pending"}
+                          </td>
+                          <td>{issue.category}</td>
+                          <td>
+                            <span
+                              className={`px-1 text-nowrap text-white rounded-xl text-xs ${
+                                issue.status.toLowerCase() === "pending"
+                                  ? "bg-yellow-500"
+                                  : issue.status.toLowerCase() ===
+                                      "staff assigned"
+                                    ? "bg-blue-500"
+                                    : issue.status.toLowerCase() ===
+                                        "in progress"
+                                      ? "bg-purple-500"
+                                      : issue.status.toLowerCase() === "working"
+                                        ? "bg-sky-600"
+                                        : issue.status.toLowerCase() ===
+                                            "resolved"
+                                          ? "bg-emerald-500"
+                                          : issue.status.toLowerCase() ===
+                                              "closed"
+                                            ? "bg-slate-500"
+                                            : "bg-red-500"
+                              }`}
                             >
-                              <BiSolidEdit
-                                className={`text-xl ${issue.status !== "Pending" && "text-gray-400"}`}
-                              />
-                            </button>
-                            <button
-                              className={`tooltip ${issue.status !== "Pending" ? "cursor-not-allowed" : "cursor-pointer"}`}
-                              data-tip="Delete"
-                              disabled={issue.status !== "Pending" || deleting}
-                              onClick={() => deleteReportedIssue(issue._id)}
-                            >
-                              <RiDeleteBin6Line
-                                className={`text-xl ${issue.status !== "Pending" && "text-gray-400"}`}
-                              />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
+                              {issue.status}
+                            </span>
+                          </td>
+                          <td>
+                            <div className="flex flex-col items-center justify-center">
+                              <span
+                                className={`font-semibold ${issue?.priority === "Normal" ? "text-secondary" : "text-red-500"}`}
+                              >
+                                {issue.priority.split(" ")[0].toUpperCase()}
+                              </span>
+                              <button
+                                className={`cursor-pointer bg-orange-500 text-white mt-1 btn btn-xs border-none tooltip ${issue?.priority === "High" && "hidden"}`}
+                                data-tip="Boost issue to get High Priority"
+                                onClick={() => openPaymentModal(issue)}
+                              >
+                                Boost
+                              </button>
+                            </div>
+                          </td>
+                          <td>{new Date(issue.created_at).toDateString()}</td>
+                          <td>
+                            {issue.staffEmail
+                              ? issue.staffEmail
+                              : "Not Assigned Yet"}
+                          </td>
+                          <td>
+                            <div className="flex items-center gap-4">
+                              <Link
+                                to={`/issue-details/${issue._id}`}
+                                className="cursor-pointer tooltip"
+                                data-tip="View Details"
+                              >
+                                <IoEye className="text-xl" />
+                              </Link>
+                              <button
+                                className={`tooltip ${issue.status !== "Pending" ? "cursor-not-allowed" : "cursor-pointer"}`}
+                                data-tip="Edit"
+                                onClick={() => openEditorModal(issue)}
+                                disabled={issue.status !== "Pending"}
+                              >
+                                <BiSolidEdit
+                                  className={`text-xl ${issue.status !== "Pending" && "text-gray-400"}`}
+                                />
+                              </button>
+                              <button
+                                className={`tooltip ${issue.status !== "Pending" ? "cursor-not-allowed" : "cursor-pointer"}`}
+                                data-tip="Delete"
+                                disabled={
+                                  issue.status !== "Pending" || deleting
+                                }
+                                onClick={() => deleteReportedIssue(issue._id)}
+                              >
+                                <RiDeleteBin6Line
+                                  className={`text-xl ${issue.status !== "Pending" && "text-gray-400"}`}
+                                />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            )}
 
             {/* edit issue modal */}
             <dialog
@@ -278,10 +290,19 @@ const MyIssues = () => {
               <div className="modal-box">
                 <h3 className="font-bold text-lg">Boost Issue</h3>
                 <p className="py-4">
-                  Boosted issues get <span className="text-orange-500 font-semibold">high priority</span>, stays top of all other issues.
+                  Boosted issues get{" "}
+                  <span className="text-orange-500 font-semibold">
+                    high priority
+                  </span>
+                  , stays top of all other issues.
                 </p>
                 <p className="text-lg font-semibold mt-2">Fees : $100</p>
-                <button className="mt-3 btn btn-sm text-white border-none bg-primary cursor-pointer" onClick={()=>handleBoostPayment(selectedIssue)}>Proceed to Payment</button>
+                <button
+                  className="mt-3 btn btn-sm text-white border-none bg-primary cursor-pointer"
+                  onClick={() => handleBoostPayment(selectedIssue)}
+                >
+                  Proceed to Payment
+                </button>
                 <div className="modal-action">
                   <form method="dialog">
                     <button className="btn">Close</button>

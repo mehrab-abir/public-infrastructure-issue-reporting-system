@@ -5,6 +5,7 @@ import { IoIosSearch } from "react-icons/io";
 import IssueCard from "../Components/IssueCard";
 import useAxiosSecured from "../Hooks/Axios/useAxiosSecured";
 import LoaderSpinner from "../Components/LoaderSpinner";
+import { useEffect } from "react";
 
 const All_Issues = () => {
   const axios = useAxiosSecured();
@@ -16,13 +17,36 @@ const All_Issues = () => {
   const [priority, setPriority] = useState("");
   const [searchText, setSearchText] = useState('');
 
-  const { data: all_issues = [], isLoading } = useQuery({
-    queryKey: ["all-issues", category, status, priority, searchText],
+
+  //for pagination
+  const [totalCount, setTotalCount] = useState(0);
+  const [totalPage, setTotalPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
+  const limit = 9;
+
+  const { data : result = [], isLoading } = useQuery({
+    queryKey: ["all-issues", category, status, priority, searchText, currentPage],
     queryFn: async () => {
-      const response = await axios.get(`/all-issues?category=${category}&status=${status}&priority=${priority}&searchText=${searchText}`);
+      const response = await axios.get(`/all-issues?category=${category}&status=${status}&priority=${priority}&searchText=${searchText}&recent=${limit}&skip=${currentPage*limit}`);
+      // console.log(response.data);
       return response.data;
     },
   });
+
+  useEffect(()=>{
+    if(!result) return;
+
+    const setPaginationValues = ()=>{
+      const count = Number(result?.totalCount) || 0;
+      setTotalCount(count);
+
+      const pages = Math.ceil(result?.totalCount / limit);
+      setTotalPage(pages);
+    }
+
+    setPaginationValues();
+
+  },[result])
 
   return (
     <div className="bg-base pt-36 pb-24">
@@ -43,13 +67,13 @@ const All_Issues = () => {
             type="text"
             className="input w-full outline-none rounded-lg px-8"
             placeholder="Search by title, location or category"
-            onChange={(e)=>setSearchText(e.target.value)}
+            onChange={(e) => setSearchText(e.target.value)}
           />
           <IoIosSearch className="absolute top-3 left-3 text-muted text-lg" />
         </div>
 
         <p className="text-sm text-muted my-4">
-          Showing {all_issues.length} Issues
+          Showing {result?.issues?.length} of {totalCount} Issues
         </p>
 
         {/* filter issues */}
@@ -97,10 +121,38 @@ const All_Issues = () => {
           {isLoading ? (
             <LoaderSpinner />
           ) : (
-            all_issues.map((issue, index) => {
+            result?.issues?.map((issue, index) => {
               return <IssueCard key={index} issue={issue}></IssueCard>;
             })
           )}
+        </div>
+
+
+        {/* pagination buttons */}
+        <div className="mt-6 flex items-center gap-3 justify-center">
+          <button
+            onClick={() => setCurrentPage((prev) => prev - 1)}
+            className={`btn btn-xs bg-primary text-white ${currentPage === 0 && "hidden"}`}
+          >
+            &lt; Prev
+          </button>
+          {totalPage > 0 && [...Array(totalPage).keys()].map((i) => {
+            return (
+              <button
+                key={i}
+                onClick={() => setCurrentPage(i)}
+                className={`${currentPage === i && "underline text-blue-500 font-semibold"} text-lg cursor-pointer p-1`}
+              >
+                {i}
+              </button>
+            );
+          })}
+          <button
+            onClick={() => setCurrentPage((prev) => prev + 1)}
+            className={`btn btn-xs bg-primary text-white ${currentPage === totalPage - 1 && "hidden"}`}
+          >
+            Next &gt;
+          </button>
         </div>
       </Container>
     </div>
