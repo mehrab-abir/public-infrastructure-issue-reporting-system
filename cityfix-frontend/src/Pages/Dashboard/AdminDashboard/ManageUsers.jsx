@@ -124,7 +124,7 @@ const ManageUsers = () => {
                       </td>
                       <td>{user.email}</td>
                       <td>{user.isPremium === "yes" ? "Yes" : "No"}</td>
-                      <td>{user.role.toUpperCase()}</td>
+                      <td className={`${user?.role === "admin" && 'text-blue-500 font-semibold'}`}>{user.role.toUpperCase()}</td>
                       <td>{user.issueReported || 'N/A'}</td>
                       <td>
                         <button

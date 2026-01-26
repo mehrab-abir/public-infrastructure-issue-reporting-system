@@ -136,6 +136,13 @@ async function run() {
 
             logTracking(trackingId, issueId, "Issue Reported", reporter); //1st tracking log
 
+            //increment reportedIssue count of this user
+            await usersCollection.updateOne({ email: newIssue.reporterEmail }, {
+                $inc: {
+                    issueReported: 1
+                }
+            });
+
             res.send(afterPost);
         })
 
