@@ -10,15 +10,35 @@ const LatestResolvedIssues = () => {
   const { user } = useAuth();
   const axios = useAxiosSecured();
 
-  const { data: issues, isLoading } = useQuery({
-    queryKey: ["latest-resolved", user?.email],
+  const {
+    data = { resolvedIssues: [], totalCount: 0 },
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["staff-resolved-issues", user?.email, 2],
+    enabled: !!user?.email,
     queryFn: async () => {
-      const response = await axios.get(
-        `/staff/resolved-issues/${user?.email}?recent=2`,
-      );
-      return response.data;
+      const res = await axios.get(`/staff/resolved-issues/${user.email}`, {
+        params: { recent: 2 },
+      });
+      return res.data;
     },
   });
+
+  const resolvedIssues = data?.resolvedIssues ?? [];
+  const totalCount = data?.totalCount ?? 0;
+
+  if (isError) {
+    return (
+      <div className="mt-5 bg-surface p-4 rounded-xl border">
+        <p className="font-semibold text-red-500">Failed to load data.</p>
+        <p className="text-sm text-secondary">
+          {error?.message || "Unknown error"}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="mt-5">
@@ -28,17 +48,18 @@ const LatestResolvedIssues = () => {
         <h3 className="text-xl text-secondary font-semibold flex items-center my-2">
           Total Resolved Issues
         </h3>
+
         <h3 className="text-2xl font-bold mt-3 text-center md:text-start">
-          {isLoading ? <LoaderSpinner /> : issues?.totalCount}
+          {isLoading ? <LoaderSpinner /> : totalCount}
         </h3>
       </div>
 
       <h1 className="text-xl md:text-2xl font-bold mt-10">
         Recently Resolved Issues
       </h1>
-      <div className={`overflow-x-auto bg-surface rounded-lg w-full`}>
+
+      <div className="overflow-x-auto bg-surface rounded-lg w-full">
         <table className="table table-sm md:table-md">
-          {/* head */}
           <thead>
             <tr>
               <th>Title</th>
@@ -52,58 +73,68 @@ const LatestResolvedIssues = () => {
           <tbody>
             {isLoading ? (
               <tr>
-                <td className="col-span-6">
-                  <LoaderSpinner></LoaderSpinner>
+                <td colSpan={5} className="py-6 text-center">
+                  <LoaderSpinner />
+                </td>
+              </tr>
+            ) : resolvedIssues.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="py-6 text-center text-secondary">
+                  No resolved issues found.
                 </td>
               </tr>
             ) : (
-              issues.resolvedIssue.map((data) => {
+              resolvedIssues.map((row) => {
+                const issue = row?.resolved_issue;
+
+                const status = (issue?.status || "").toLowerCase();
+                const statusClass =
+                  status === "pending"
+                    ? "bg-yellow-500"
+                    : status === "staff assigned"
+                      ? "bg-blue-500"
+                      : status === "in progress"
+                        ? "bg-purple-500"
+                        : status === "working"
+                          ? "bg-sky-600"
+                          : status === "resolved"
+                            ? "bg-emerald-500"
+                            : status === "closed"
+                              ? "bg-slate-500"
+                              : "bg-red-500";
+
+                const priorityText = issue?.priority || "";
+                const isNormal = priorityText.toLowerCase().includes("normal");
+
                 return (
-                  <tr key={data.resolved_issue._id}>
+                  <tr key={issue?._id || row?._id}>
                     <td>
                       <Link
-                        to={`/issue-details/${data.issueId}`}
+                        to={`/issue-details/${issue?._id}`} // ✅ safest: link by actual issue _id
                         className="font-semibold cursor-pointer hover:underline"
                       >
-                        {data.resolved_issue.issueTitle}
+                        {issue?.issueTitle || "Untitled"}
                       </Link>
                     </td>
-                    <td>{data.resolved_issue.category}</td>
+                    <td>{issue?.category || "-"}</td>
                     <td>
                       <span
-                        className={`px-2 text-nowrap text-white rounded-xl text-xs ${
-                          data.resolved_issue.status.toLowerCase() === "pending"
-                            ? "bg-yellow-500"
-                            : data.resolved_issue.status.toLowerCase() ===
-                                "staff assigned"
-                              ? "bg-blue-500"
-                              : data.resolved_issue.status.toLowerCase() ===
-                                  "in progress"
-                                ? "bg-purple-500"
-                                : data.resolved_issue.status.toLowerCase() ===
-                                    "working"
-                                  ? "bg-sky-600"
-                                  : data.resolved_issue.status.toLowerCase() ===
-                                      "resolved"
-                                    ? "bg-emerald-500"
-                                    : data.resolved_issue.status.toLowerCase() ===
-                                        "closed"
-                                      ? "bg-slate-500"
-                                      : "bg-red-500"
-                        }`}
+                        className={`px-2 text-nowrap text-white rounded-xl text-xs ${statusClass}`}
                       >
-                        {data.resolved_issue.status}
+                        {issue?.status || "Unknown"}
                       </span>
                     </td>
                     <td
-                      className={`font-semibold ${data.resolved_issue.priority === "Normal" ? "text-secondary" : "text-red-500"}`}
+                      className={`font-semibold ${isNormal ? "text-secondary" : "text-red-500"}`}
                     >
-                      {data.resolved_issue?.priority
-                        .split(" ")[0]
-                        .toUpperCase()}
+                      {priorityText
+                        ? priorityText.split(" ")[0].toUpperCase()
+                        : "-"}
                     </td>
                     <td>
-                      {new Date(data.resolved_issue.created_at).toDateString()}
+                      {issue?.created_at
+                        ? new Date(issue.created_at).toDateString()
+                        : "-"}
                     </td>
                   </tr>
                 );

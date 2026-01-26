@@ -320,8 +320,6 @@ async function run() {
             });
         })
 
-        
-
 
         //apis for admin
         //get all users
