@@ -181,6 +181,10 @@ const IssueDetails = () => {
   };
 
   const openPaymentModal = (issue) => {
+    if(issue?.status === "Resolved" || issue?.status === "Closed"){
+      Swal.fire({text: "Boosting is not applicable for this issue any more"});
+      return;
+    }
     setSelectedIssue(issue);
     paymentModalRef.current.showModal();
   };
@@ -224,12 +228,12 @@ const IssueDetails = () => {
             <>
               {/* left side  */}
               <div className="col-span-1 md:col-span-2 bg-surface p-4 space-y-6 rounded-xl">
-                <div className="flex items-center gap-4">
-                  <span className="px-2 text-white bg-gray-500 rounded-xl">
+                <div className="flex items-center flex-wrap gap-2">
+                  <span className="px-2 text-white text-nowrap bg-gray-500 rounded-lg text-sm md:text-base">
                     {thisIssue.category}
                   </span>
                   <span
-                    className={`px-2 text-white rounded-xl ${
+                    className={`px-2 text-white rounded-lg text-nowrap text-sm md:text-base ${
                       thisIssue.status.toLowerCase() === "pending"
                         ? "bg-yellow-500"
                         : thisIssue.status.toLowerCase() === "staff assigned"
@@ -248,7 +252,7 @@ const IssueDetails = () => {
                     {thisIssue.status}
                   </span>
                   <span
-                    className={`text-white rounded-xl px-2 text-sm ${thisIssue?.priority?.toLowerCase().startsWith("normal") ? "bg-indigo-500" : "bg-red-500"}`}
+                    className={`text-white rounded-lg px-2 text-nowrap ${thisIssue?.priority?.toLowerCase().startsWith("normal") ? "bg-indigo-500" : "bg-red-500"} text-sm md:text-base`}
                   >
                     {thisIssue.priority} Priority
                   </span>
