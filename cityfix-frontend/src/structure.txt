@@ -1,0 +1,139 @@
+Folder PATH listing for volume Abir
+Volume serial number is 905A-C374
+F:.
+|   index.css
+|   main.jsx
+|   structure.txt
+|   
++---assets
+|   |   404.png
+|   |   defaultAvatar.png
+|   |   logo.png
+|   |   pothole.jfif
+|   |   staffsImg.png
+|   |   
+|   \---hero-images
+|           img-1.JPG
+|           img-2.jpg
+|           img-3.jpeg
+|           
++---Components
+|   |   Container.jsx
+|   |   EditIssueModal.jsx
+|   |   ErrorPage.jsx
+|   |   Footer.jsx
+|   |   IssueCard.jsx
+|   |   IssueDetailsModal.jsx
+|   |   LoaderSpinner.jsx
+|   |   
+|   \---Header
+|           Header.jsx
+|           NavbarLargeDevice.jsx
+|           NavbarSmallDevice.jsx
+|           UserDropdown.jsx
+|           
++---Context
+|   \---Authentication
+|           AuthContext.jsx
+|           AuthProvider.jsx
+|           firebase.config.js
+|           
++---Hooks
+|   +---Auth
+|   |       useAuth.jsx
+|   |       
+|   +---Axios
+|   |       useAxiosBasic.jsx
+|   |       useAxiosSecured.jsx
+|   |       
+|   \---Role
+|           useRole.jsx
+|           
++---Layouts
+|   +---AuthLayout
+|   |       Auth.jsx
+|   |       
+|   +---DashboardLayout.jsx
+|   |       DashboardLayout.jsx
+|   |       
+|   \---RootLayout
+|           Root.jsx
+|           
++---Pages
+|   |   About.jsx
+|   |   All_Issues.jsx
+|   |   ContactUs.jsx
+|   |   ForbiddenRoute.jsx
+|   |   IssueDetails.jsx
+|   |   ReportIssue.jsx
+|   |   SubscriptionPaymentCancelled.jsx
+|   |   SubscriptionPaymentSuccess.jsx
+|   |   
+|   +---Auth
+|   |       GoogleSignIn.jsx
+|   |       Register.jsx
+|   |       SignIn.jsx
+|   |       
+|   +---Dashboard
+|   |   |   DashboardContainer.jsx
+|   |   |   DashboardHome.jsx
+|   |   |   ManageProfile.jsx
+|   |   |   
+|   |   +---AdminDashboard
+|   |   |   |   AddNewStaff.jsx
+|   |   |   |   AdminDashboard.jsx
+|   |   |   |   AllPayments.jsx
+|   |   |   |   ManageIssues.jsx
+|   |   |   |   ManageStaffs.jsx
+|   |   |   |   ManageUsers.jsx
+|   |   |   |   
+|   |   |   \---DashComponents
+|   |   |           Counts.jsx
+|   |   |           GroupIssuesStatus.jsx
+|   |   |           IssuesByMonthsBarChart.jsx
+|   |   |           IssueStatusPieChart.jsx
+|   |   |           LatestCitizens.jsx
+|   |   |           LatestStaffs.jsx
+|   |   |           RecentIssues.jsx
+|   |   |           
+|   |   +---CitizenDashboard
+|   |   |   |   CitizenDashboard.jsx
+|   |   |   |   MyIssues.jsx
+|   |   |   |   PaymentCancelled.jsx
+|   |   |   |   PaymentHistory.jsx
+|   |   |   |   PaymentSuccess.jsx
+|   |   |   |   
+|   |   |   \---CitizenDashComponents
+|   |   |           IssueCountByStatus.jsx
+|   |   |           LatestPayments.jsx
+|   |   |           LatestReportedIssues.jsx
+|   |   |           
+|   |   \---StaffDashboard.jsx
+|   |       |   AssignedIssues.jsx
+|   |       |   ResolvedIssues.jsx
+|   |       |   StaffDashboard.jsx
+|   |       |   
+|   |       \---StaffDashComponents
+|   |               IssuesbyStatus.jsx
+|   |               LatestResolvedIssues.jsx
+|   |               
+|   \---Home
+|           Banner.jsx
+|           Features.jsx
+|           GetStartedSection.jsx
+|           Home.jsx
+|           HowItWorks.jsx
+|           LatestResolvedIssues.jsx
+|           Stats.jsx
+|           WhyChoose.jsx
+|           
++---Routes
+|       AdminRoute.jsx
+|       CitizenRoute.jsx
+|       PrivateRoute.jsx
+|       Routes.jsx
+|       StaffRoute.jsx
+|       
+\---Utilities
+        uploadImage.js
+        
