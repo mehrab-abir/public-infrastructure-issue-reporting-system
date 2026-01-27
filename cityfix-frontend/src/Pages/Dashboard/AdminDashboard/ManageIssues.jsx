@@ -199,6 +199,7 @@ const ManageIssues = () => {
 
   return (
     <DashboardContainer>
+      <title>Manage Issues</title>
       <div className="flex flex-col md:flex-row md:items-center justify-between">
         <div>
           <h1 className="text-3xl md:text-4xl font-bold">All Issues</h1>

@@ -5,6 +5,7 @@ import { Link } from 'react-router';
 const PaymentCancelled = () => {
     return (
       <DashboardContainer>
+        <title>Payment Cancelled</title>
         <div className='flex flex-col items-center justify-center h-[60vh]'>
           <h1 className="text-center text-red-600 text-xl my-2">
             Payment Cancelled. Please Try again

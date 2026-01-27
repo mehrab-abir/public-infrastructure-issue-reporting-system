@@ -42,8 +42,8 @@ const LatestResolvedIssues = () => {
 
   return (
     <div className="mt-5">
-      <div className="px-4 py-6 bg-surface shadow-md rounded-xl items-center md:items-start w-fit">
-        <HiOutlineDocumentReport className="text-2xl text-accent" />
+      <div className="px-4 py-6 bg-surface shadow-md rounded-xl items-center md:items-start w-fit mx-auto">
+        <HiOutlineDocumentReport className="text-2xl text-accent mx-auto" />
 
         <h3 className="text-xl text-secondary font-semibold flex items-center my-2">
           Total Resolved Issues

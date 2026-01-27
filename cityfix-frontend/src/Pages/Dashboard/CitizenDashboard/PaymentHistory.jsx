@@ -35,6 +35,7 @@ const PaymentHistory = () => {
 
   return (
     <DashboardContainer>
+      <title>Payment History</title>
       <div className="flex flex-col md:flex-row md:items-center justify-between">
         <div>
           <h1 className="text-3xl md:text-4xl font-bold">Payment History</h1>

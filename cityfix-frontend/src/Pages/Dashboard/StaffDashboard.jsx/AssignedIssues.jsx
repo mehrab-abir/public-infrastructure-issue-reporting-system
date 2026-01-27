@@ -103,6 +103,7 @@ const AssignedIssues = () => {
 
   return (
     <DashboardContainer>
+      <title>Assigned Issues</title>
       <div className="flex flex-col space-y-3">
         <div>
           <h1 className="text-3xl md:text-4xl font-bold">Assigned Issues</h1>

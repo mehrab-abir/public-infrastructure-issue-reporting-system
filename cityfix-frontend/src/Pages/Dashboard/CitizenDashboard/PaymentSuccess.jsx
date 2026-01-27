@@ -4,6 +4,7 @@ import { useSearchParams } from "react-router";
 import useAxiosSecured from "../../../Hooks/Axios/useAxiosSecured";
 import { useEffect } from "react";
 import DashboardContainer from "../DashboardContainer";
+import confetti from "canvas-confetti";
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
@@ -24,11 +25,18 @@ const PaymentSuccess = () => {
             issueTitle: response.data.issueTitle,
           });
         });
+
+      confetti({
+        particleCount: 200,
+        spread: 80,
+        colors: ["#22c55e", "#3b82f6", "#a855f7", "#f59e0b"],
+      });
     }
   }, [sessionId, axios]);
 
   return (
     <DashboardContainer>
+      <title>Payment Success</title>
       <div className="bg-surface">
         <title>Payment Successful</title>
         <p className="text-xl text-center font-semibold py-5">Thank you.</p>

@@ -49,7 +49,7 @@ const LatestStaffs = () => {
                       <td>
                         <img
                           src={staff.photoURL}
-                          className="w-10 md:w-14 h-10 md:h-14 object-cover rounded-xl"
+                          className="w-10 h-10 md:w-14 md:h-12 object-cover rounded-xl"
                           referrerPolicy="no-referrer"
                           alt=""
                         />

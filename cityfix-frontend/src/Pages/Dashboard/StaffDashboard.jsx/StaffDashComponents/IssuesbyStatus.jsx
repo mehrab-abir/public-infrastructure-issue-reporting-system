@@ -11,6 +11,12 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import LoaderSpinner from "../../../../Components/LoaderSpinner";
+import { MdOutlinePending } from "react-icons/md";
+import { GrUserWorker } from "react-icons/gr";
+import { TbProgressBolt } from "react-icons/tb";
+import { LiaTimesCircle, LiaToolsSolid } from "react-icons/lia";
+import { GoIssueClosed } from "react-icons/go";
+import { IoCheckmarkDoneCircleOutline } from "react-icons/io5";
 
 const RADIAN = Math.PI / 180;
 const COLORS = [
@@ -65,44 +71,90 @@ const IssuesbyStatus = ({ isAnimationActive = true }) => {
       return response.data;
     },
   });
-  return (
-    <div
-      style={{ width: "100%", maxWidth: 500, height: 380 }}
-      className="self-center"
-    >
-      {isLoading ? (
-        <LoaderSpinner />
-      ) : (
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={data}
-              dataKey="count"
-              nameKey="_id"
-              cx="50%"
-              cy="50%"
-              outerRadius="80%"
-              labelLine={false}
-              label={renderCustomizedLabel}
-              isAnimationActive={isAnimationActive}
-            >
-              {data?.map((entry, index) => (
-                <Cell
-                  key={`cell-${entry._id ?? index}`}
-                  fill={COLORS[index % COLORS.length]}
-                />
-              ))}
-            </Pie>
 
-            <Tooltip
-              formatter={(value, name, props) => [value, props?.payload?._id]}
-            />
-            <Legend
-              formatter={(value) => value === "Staff Assigned" ? "Assigned":value}
-            />
-          </PieChart>
-        </ResponsiveContainer>
+  // console.log(data);
+  return (
+    <div className="flex flex-col w-full">
+      {isLoading ? (
+        "..."
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 mt-4">
+          {data.map((stat) => {
+            return (
+              <div
+                key={stat._id}
+                className="py-3 flex flex-col items-center justify-center bg-surface rounded-xl shadow-md"
+              >
+                {stat._id === "Pending" ? (
+                  <MdOutlinePending className="text-2xl text-yellow-500" />
+                ) : stat._id === "Staff Assigned" ? (
+                  <GrUserWorker className="text-2xl text-blue-500" />
+                ) : stat._id === "In Progress" ? (
+                  <TbProgressBolt className="text-2xl text-purple-500" />
+                ) : stat._id === "Working" ? (
+                  <LiaToolsSolid className="text-2xl text-slate-500" />
+                ) : stat._id === "Resolved" ? (
+                  <GoIssueClosed className="text-2xl text-emerald-500" />
+                ) : stat._id === "Closed" ? (
+                  <IoCheckmarkDoneCircleOutline className="text-2xl text-gray-500" />
+                ) : (
+                  <LiaTimesCircle className="text-2xl mt-2 text-red-500" />
+                )}
+                <div className="my-2 text-3xl font-bold">{stat.count}</div>
+                <div className="text-center text-sm xl:text-lg text-secondary mt-3">
+                  {stat._id}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       )}
+
+      <div
+        style={{ width: "100%", maxWidth: 500, height: 380 }}
+        className="self-center"
+      >
+        {isLoading ? (
+          <LoaderSpinner />
+        ) : (
+          <>
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={data}
+                  dataKey="count"
+                  nameKey="_id"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius="80%"
+                  labelLine={false}
+                  label={renderCustomizedLabel}
+                  isAnimationActive={isAnimationActive}
+                >
+                  {data?.map((entry, index) => (
+                    <Cell
+                      key={`cell-${entry._id ?? index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
+                  ))}
+                </Pie>
+
+                <Tooltip
+                  formatter={(value, name, props) => [
+                    value,
+                    props?.payload?._id,
+                  ]}
+                />
+                <Legend
+                  formatter={(value) =>
+                    value === "Staff Assigned" ? "Assigned" : value
+                  }
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </>
+        )}
+      </div>
     </div>
   );
 };

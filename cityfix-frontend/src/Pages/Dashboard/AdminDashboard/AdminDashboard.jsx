@@ -11,6 +11,7 @@ import IssuesByMonthsBarChart from "./DashComponents/IssuesByMonthsBarChart";
 const AdminDashboard = () => {
   return (
     <DashboardContainer>
+      <title>Dashboard- Admin Panel</title>
       <Counts></Counts>
 
       <GroupIssuesStatus></GroupIssuesStatus>

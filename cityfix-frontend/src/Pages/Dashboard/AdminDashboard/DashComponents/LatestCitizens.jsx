@@ -29,7 +29,6 @@ const LatestCitizens = () => {
                 <th>Photo</th>
                 <th>Email</th>
                 <th>Premium</th>
-                <th>Role</th>
               </tr>
             </thead>
 
@@ -44,18 +43,17 @@ const LatestCitizens = () => {
                 citizens.map((user) => {
                   return (
                     <tr key={user._id}>
-                      <td>{user.displayName}</td>
+                      <td className='font-semibold'>{user.displayName}</td>
                       <td>
                         <img
                           src={user.photoURL}
-                          className="w-10 md:w-14 h-10 md:h-14 object-cover rounded-xl"
+                          className="w-10 h-10 md:w-14 md:h-12 object-cover rounded-xl"
                           referrerPolicy="no-referrer"
                           alt=""
                         />
                       </td>
                       <td>{user.email}</td>
                       <td>{user.isPremium === "yes" ? "Yes" : "No"}</td>
-                      <td>{user.role.toUpperCase()}</td>
                     </tr>
                   );
                 })

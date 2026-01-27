@@ -6,6 +6,7 @@ import IssuesbyStatus from './StaffDashComponents/IssuesbyStatus';
 const StaffDashboard = () => {
     return (
       <DashboardContainer>
+        <title>Dashboard- Staff Panel</title>
         <div className='flex items-center justify-center'>
           <IssuesbyStatus/>
         </div>

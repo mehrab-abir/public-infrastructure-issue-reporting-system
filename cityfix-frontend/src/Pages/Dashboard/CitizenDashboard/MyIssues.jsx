@@ -115,205 +115,199 @@ const MyIssues = () => {
   };
 
   return (
-    <>
-      <DashboardContainer>
-        <div className="flex flex-col md:flex-row md:items-center justify-between">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold">My Issues</h1>
-            <p className="text-muted text-sm md:text-lg mt-2">
-              Manage All Your Reported Issues
-            </p>
-          </div>
-          <div className="my-5 md:my-0">
-            <Link
-              to="/report-issue"
-              className="text-white btn btn-sm md:btn-md bg-primary rounded-lg"
-            >
-              <FiPlus className="text-xl" />
-              Report New Issue
-            </Link>
-          </div>
+    <DashboardContainer>
+      <title>My Issues</title>
+      <div className="flex flex-col md:flex-row md:items-center justify-between">
+        <div>
+          <h1 className="text-3xl md:text-4xl font-bold">My Issues</h1>
+          <p className="text-muted text-sm md:text-lg mt-2">
+            Manage All Your Reported Issues
+          </p>
         </div>
-
-        <p>Showing issues: {myIssues.length}</p>
-
-        <div className="mt-5">
-          <div
-            className={`overflow-x-auto bg-surface rounded-lg w-full ${myIssues.length < 4 && "h-[50vh]"}`}
+        <div className="my-5 md:my-0">
+          <Link
+            to="/report-issue"
+            className="text-white btn btn-sm md:btn-md bg-primary rounded-lg"
           >
-            {myIssues?.length === 0 ? (
-              <div className="py-5">
-                <p className="text-muted text-center">
-                  -No issue reported yet-
-                </p>
-              </div>
-            ) : (
-              <table className="table table-zebra table-sm md:table-md">
-                {/* head */}
-                <thead>
-                  <tr>
-                    <th>Title</th>
-                    <th>Category</th>
-                    <th>Status</th>
-                    <th>Priority</th>
-                    <th>Date</th>
-                    <th>Assigned Staff</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
+            <FiPlus className="text-xl" />
+            Report New Issue
+          </Link>
+        </div>
+      </div>
 
-                <tbody>
-                  {isLoading ? (
-                    <tr>
-                      <td className="col-span-6">
-                        <LoaderSpinner></LoaderSpinner>
-                      </td>
-                    </tr>
-                  ) : (
-                    myIssues.map((issue) => {
-                      return (
-                        <tr key={issue._id}>
-                          <td>
+      <p>Showing issues: {myIssues.length}</p>
+
+      <div className="mt-5">
+        <div
+          className={`overflow-x-auto bg-surface rounded-lg w-full ${myIssues.length < 4 && "h-[50vh]"}`}
+        >
+          {myIssues?.length === 0 ? (
+            <div className="py-5">
+              <p className="text-muted text-center">-No issue reported yet-</p>
+            </div>
+          ) : (
+            <table className="table table-zebra table-sm md:table-md">
+              {/* head */}
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Category</th>
+                  <th>Status</th>
+                  <th>Priority</th>
+                  <th>Date</th>
+                  <th>Assigned Staff</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {isLoading ? (
+                  <tr>
+                    <td className="col-span-6">
+                      <LoaderSpinner></LoaderSpinner>
+                    </td>
+                  </tr>
+                ) : (
+                  myIssues.map((issue) => {
+                    return (
+                      <tr key={issue._id}>
+                        <td>
+                          <Link
+                            to={`/issue-details/${issue._id}`}
+                            className="font-semibold hover:underline cursor-pointer"
+                          >
+                            {issue.issueTitle}
+                          </Link>
+                        </td>
+                        <td>{issue.category}</td>
+                        <td>
+                          <span
+                            className={`px-1 text-nowrap text-white rounded-xl text-xs ${
+                              issue.status.toLowerCase() === "pending"
+                                ? "bg-yellow-500"
+                                : issue.status.toLowerCase() ===
+                                    "staff assigned"
+                                  ? "bg-blue-500"
+                                  : issue.status.toLowerCase() === "in progress"
+                                    ? "bg-purple-500"
+                                    : issue.status.toLowerCase() === "working"
+                                      ? "bg-sky-600"
+                                      : issue.status.toLowerCase() ===
+                                          "resolved"
+                                        ? "bg-emerald-500"
+                                        : issue.status.toLowerCase() ===
+                                            "closed"
+                                          ? "bg-slate-500"
+                                          : "bg-red-500"
+                            }`}
+                          >
+                            {issue.status}
+                          </span>
+                        </td>
+                        <td>
+                          <div className="flex flex-col items-center justify-center">
+                            <span
+                              className={`font-semibold ${issue?.priority === "Normal" ? "text-secondary" : "text-red-500"}`}
+                            >
+                              {issue.priority.split(" ")[0].toUpperCase()}
+                            </span>
+                            <button
+                              className={`cursor-pointer bg-orange-500 text-white mt-1 btn btn-xs border-none tooltip ${issue?.priority === "High" && "hidden"}`}
+                              data-tip="Boost issue to get High Priority"
+                              onClick={() => openPaymentModal(issue)}
+                            >
+                              Boost
+                            </button>
+                          </div>
+                        </td>
+                        <td>{new Date(issue.created_at).toDateString()}</td>
+                        <td>
+                          {issue.staffEmail
+                            ? issue.staffEmail
+                            : "Not Assigned Yet"}
+                        </td>
+                        <td>
+                          <div className="flex items-center gap-4">
                             <Link
                               to={`/issue-details/${issue._id}`}
-                              className="font-semibold hover:underline cursor-pointer"
+                              className="cursor-pointer tooltip"
+                              data-tip="View Details"
                             >
-                              {issue.issueTitle}
+                              <IoEye className="text-xl" />
                             </Link>
-                          </td>
-                          <td>{issue.category}</td>
-                          <td>
-                            <span
-                              className={`px-1 text-nowrap text-white rounded-xl text-xs ${
-                                issue.status.toLowerCase() === "pending"
-                                  ? "bg-yellow-500"
-                                  : issue.status.toLowerCase() ===
-                                      "staff assigned"
-                                    ? "bg-blue-500"
-                                    : issue.status.toLowerCase() ===
-                                        "in progress"
-                                      ? "bg-purple-500"
-                                      : issue.status.toLowerCase() === "working"
-                                        ? "bg-sky-600"
-                                        : issue.status.toLowerCase() ===
-                                            "resolved"
-                                          ? "bg-emerald-500"
-                                          : issue.status.toLowerCase() ===
-                                              "closed"
-                                            ? "bg-slate-500"
-                                            : "bg-red-500"
-                              }`}
+                            <button
+                              className={`tooltip ${issue.status !== "Pending" ? "cursor-not-allowed" : "cursor-pointer"}`}
+                              data-tip="Edit"
+                              onClick={() => openEditorModal(issue)}
+                              disabled={issue.status !== "Pending"}
                             >
-                              {issue.status}
-                            </span>
-                          </td>
-                          <td>
-                            <div className="flex flex-col items-center justify-center">
-                              <span
-                                className={`font-semibold ${issue?.priority === "Normal" ? "text-secondary" : "text-red-500"}`}
-                              >
-                                {issue.priority.split(" ")[0].toUpperCase()}
-                              </span>
-                              <button
-                                className={`cursor-pointer bg-orange-500 text-white mt-1 btn btn-xs border-none tooltip ${issue?.priority === "High" && "hidden"}`}
-                                data-tip="Boost issue to get High Priority"
-                                onClick={() => openPaymentModal(issue)}
-                              >
-                                Boost
-                              </button>
-                            </div>
-                          </td>
-                          <td>{new Date(issue.created_at).toDateString()}</td>
-                          <td>
-                            {issue.staffEmail
-                              ? issue.staffEmail
-                              : "Not Assigned Yet"}
-                          </td>
-                          <td>
-                            <div className="flex items-center gap-4">
-                              <Link
-                                to={`/issue-details/${issue._id}`}
-                                className="cursor-pointer tooltip"
-                                data-tip="View Details"
-                              >
-                                <IoEye className="text-xl" />
-                              </Link>
-                              <button
-                                className={`tooltip ${issue.status !== "Pending" ? "cursor-not-allowed" : "cursor-pointer"}`}
-                                data-tip="Edit"
-                                onClick={() => openEditorModal(issue)}
-                                disabled={issue.status !== "Pending"}
-                              >
-                                <BiSolidEdit
-                                  className={`text-xl ${issue.status !== "Pending" && "text-gray-400"}`}
-                                />
-                              </button>
-                              <button
-                                className={`tooltip ${issue.status !== "Pending" ? "cursor-not-allowed" : "cursor-pointer"}`}
-                                data-tip="Delete"
-                                disabled={
-                                  issue.status !== "Pending" || deleting
-                                }
-                                onClick={() => deleteReportedIssue(issue._id)}
-                              >
-                                <RiDeleteBin6Line
-                                  className={`text-xl ${issue.status !== "Pending" && "text-gray-400"}`}
-                                />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
-            )}
+                              <BiSolidEdit
+                                className={`text-xl ${issue.status !== "Pending" && "text-gray-400"}`}
+                              />
+                            </button>
+                            <button
+                              className={`tooltip ${issue.status !== "Pending" ? "cursor-not-allowed" : "cursor-pointer"}`}
+                              data-tip="Delete"
+                              disabled={issue.status !== "Pending" || deleting}
+                              onClick={() => deleteReportedIssue(issue._id)}
+                            >
+                              <RiDeleteBin6Line
+                                className={`text-xl ${issue.status !== "Pending" && "text-gray-400"}`}
+                              />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          )}
 
-            {/* edit issue modal */}
-            <dialog
-              ref={editIssueModalRef}
-              className="modal modal-bottom sm:modal-middle"
-            >
-              <EditIssueModal
-                selectedIssue={selectedIssue}
-                refetchMyIssues={refetchMyIssues}
-                editIssueModalRef={editIssueModalRef}
-              ></EditIssueModal>
-            </dialog>
+          {/* edit issue modal */}
+          <dialog
+            ref={editIssueModalRef}
+            className="modal modal-bottom sm:modal-middle"
+          >
+            <EditIssueModal
+              selectedIssue={selectedIssue}
+              refetchMyIssues={refetchMyIssues}
+              editIssueModalRef={editIssueModalRef}
+            ></EditIssueModal>
+          </dialog>
 
-            {/* boost issue payment confirmation modal */}
-            <dialog
-              ref={paymentModalRef}
-              className="modal modal-bottom sm:modal-middle"
-            >
-              <div className="modal-box">
-                <h3 className="font-bold text-lg">Boost Issue</h3>
-                <p className="py-4">
-                  Boosted issues get{" "}
-                  <span className="text-orange-500 font-semibold">
-                    high priority
-                  </span>
-                  , stays top of all other issues.
-                </p>
-                <p className="text-lg font-semibold mt-2">Fees : $100</p>
-                <button
-                  className="mt-3 btn btn-sm text-white border-none bg-primary cursor-pointer"
-                  onClick={() => handleBoostPayment(selectedIssue)}
-                >
-                  Proceed to Payment
-                </button>
-                <div className="modal-action">
-                  <form method="dialog">
-                    <button className="btn">Close</button>
-                  </form>
-                </div>
+          {/* boost issue payment confirmation modal */}
+          <dialog
+            ref={paymentModalRef}
+            className="modal modal-bottom sm:modal-middle"
+          >
+            <div className="modal-box">
+              <h3 className="font-bold text-lg">Boost Issue</h3>
+              <p className="py-4">
+                Boosted issues get{" "}
+                <span className="text-orange-500 font-semibold">
+                  high priority
+                </span>
+                , stays top of all other issues.
+              </p>
+              <p className="text-lg font-semibold mt-2">Fees : $100</p>
+              <button
+                className="mt-3 btn btn-sm text-white border-none bg-primary cursor-pointer"
+                onClick={() => handleBoostPayment(selectedIssue)}
+              >
+                Proceed to Payment
+              </button>
+              <div className="modal-action">
+                <form method="dialog">
+                  <button className="btn">Close</button>
+                </form>
               </div>
-            </dialog>
-          </div>
+            </div>
+          </dialog>
         </div>
-      </DashboardContainer>
-    </>
+      </div>
+    </DashboardContainer>
   );
 };
 

@@ -4,6 +4,7 @@ import Container from '../Components/Container';
 const ContactUs = () => {
     return (
       <div className="bg-base py-36">
+        <title>Contact Us</title>
         <Container>
           <h1 className="text-3xl lg:text-4xl font-bold">Contact Us</h1>
           <p className="text-secondary my-5">

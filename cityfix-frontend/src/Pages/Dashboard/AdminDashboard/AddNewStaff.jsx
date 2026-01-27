@@ -68,6 +68,7 @@ const AddNewStaff = () => {
 
   return (
     <DashboardContainer>
+    <title>Register New Staff</title>
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-12">
         <div>
           <h1 className="text-3xl md:text-4xl font-bold">Add New Staff</h1>

@@ -50,6 +50,7 @@ const All_Issues = () => {
 
   return (
     <div className="bg-base pt-36 pb-24">
+      <title>All Issues</title>
       <Container>
         <div className="mb-12">
           <h1 className="text-3xl md:text-4xl font-bold text-center">

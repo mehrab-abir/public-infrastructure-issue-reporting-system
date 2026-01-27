@@ -8,6 +8,7 @@ const CitizenDashboard = () => {
   
   return (
     <DashboardContainer>
+      <title>Dashboard- Citizen Panel</title>
       <IssueCountByStatus></IssueCountByStatus>
       <LatestReportedIssues></LatestReportedIssues>
       <LatestPayments></LatestPayments>

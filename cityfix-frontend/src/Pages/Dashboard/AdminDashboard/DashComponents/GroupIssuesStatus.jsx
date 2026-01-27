@@ -25,13 +25,13 @@ const GroupIssuesStatus = () => {
   return (
     <div className="mt-6">
       <h1 className="text-xl md:text-2xl font-bold mb-2">Issue Stats Overview</h1>
-      <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-7 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
         {isLoading ? (
           <LoaderSpinner />
         ) : (
           data.map((stat) => {
             return (
-              <div key={stat._id} className="py-3 flex flex-col items-center justify-center bg-surface rounded-xl">
+              <div key={stat._id} className="py-3 flex flex-col items-center justify-center bg-surface rounded-xl shadow-md">
                 {
                     stat._id === "Pending" ? <MdOutlinePending className="text-2xl text-yellow-500" />
                     :

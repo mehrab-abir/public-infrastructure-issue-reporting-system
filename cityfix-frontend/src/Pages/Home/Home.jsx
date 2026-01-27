@@ -10,6 +10,7 @@ import LatestResolvedIssues from './LatestResolvedIssues';
 const Home = () => {
     return (
         <>
+        <title>CityFix - Home</title>
             <Banner></Banner>
             <Stats></Stats>
             <LatestResolvedIssues></LatestResolvedIssues>

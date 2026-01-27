@@ -196,6 +196,7 @@ const ManageProfile = () => {
     user?.photoURL || user?.providerData[0]?.photoURL || defaultAvatar;
   return (
     <DashboardContainer>
+      <title>Profile</title>
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-10">
         <div>
           <h1 className="text-2xl md:text-4xl font-bold">Profile</h1>

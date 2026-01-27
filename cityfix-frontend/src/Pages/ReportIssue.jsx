@@ -133,6 +133,7 @@ const ReportIssue = () => {
 
   return (
     <div className="bg-base pt-36 pb-24">
+      <title>Report Issue</title>
       <Container>
         {isLoading ? (
           <LoaderSpinner />

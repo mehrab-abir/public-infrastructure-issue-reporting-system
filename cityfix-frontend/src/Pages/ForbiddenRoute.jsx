@@ -8,6 +8,7 @@ import { IoWarningOutline } from "react-icons/io5";
 const ForbiddenRoute = () => {
     return (
         <>
+        <title>Forbidden Page</title>
         <Container>
             <div className='flex flex-col items-center justify-center py-36 lg:ml-10'>
                 <h2 className="text-3xl tetx-center font-bold flex items-center gap-2 text-red-500">Unauthorized Access <IoWarningOutline /></h2>

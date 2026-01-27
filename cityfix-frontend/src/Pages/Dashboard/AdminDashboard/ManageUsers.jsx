@@ -55,6 +55,7 @@ const ManageUsers = () => {
 
   return (
     <DashboardContainer>
+      <title>Manage Users</title>
       <div className="flex flex-col md:flex-row md:items-center justify-between">
         <div>
           <h1 className="text-3xl md:text-4xl font-bold">All Users</h1>
@@ -123,7 +124,7 @@ const ManageUsers = () => {
                         />
                       </td>
                       <td>{user.email}</td>
-                      <td>{user.isPremium === "yes" ? "Yes" : "No"}</td>
+                      <td className={`${user.isPremium === "yes" && "text-orange-500 font-semibold"}`}>{user.isPremium === "yes" ? "Yes" : "No"}</td>
                       <td className={`${user?.role === "admin" && 'text-blue-500 font-semibold'}`}>{user.role.toUpperCase()}</td>
                       <td>{user.issueReported || 'N/A'}</td>
                       <td>

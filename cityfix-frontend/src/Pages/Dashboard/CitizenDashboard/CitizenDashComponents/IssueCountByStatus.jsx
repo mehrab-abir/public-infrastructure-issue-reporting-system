@@ -28,13 +28,13 @@ const IssueCountByStatus = () => {
   });
 
   return (
-    <div className="flex flex-col md:flex-row items-center gap-10">
+    <div className="grid grid-cols-2 lg:grid-cols-4 items-center gap-10">
       {isLoading ? (
         <LoaderSpinner />
       ) : (
         issues[0].byStatus.map((data) => {
           return (
-            <div className="pl-4 py-6 bg-surface shadow-md flex flex-col space-y-3 rounded-xl items-center md:items-start w-full">
+            <div className="pl-4 lg:py-6 bg-surface shadow-md flex flex-col space-y-3 rounded-xl items-center md:items-start w-full">
               {data._id === "Pending" ? (
                 <MdOutlinePending className="text-2xl text-yellow-500" />
               ) : data._id === "Staff Assigned" ? (
@@ -61,10 +61,10 @@ const IssueCountByStatus = () => {
           );
         })
       )}
-      <div className="pl-4 py-6 bg-surface shadow-md flex flex-col space-y-3 rounded-xl items-center md:items-start w-full">
+      <div className="pl-4 py-6 bg-surface shadow-md flex flex-col space-y-3 rounded-xl items-center md:items-start w-full text-center md:text-start">
         <HiOutlineDocumentReport className="text-2xl text-accent" />
 
-        <h3 className="text-xl text-secondary font-semibold flex items-center my-2">
+        <h3 className="text-lg md:text-xl text-secondary font-semibold flex items-center my-2">
           Total Issues Reported
         </h3>
         <h3 className="text-2xl font-bold mt-3 text-center md:text-start">

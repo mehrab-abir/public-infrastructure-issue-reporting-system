@@ -50,12 +50,12 @@ const IssueDetails = () => {
 
   //this user details --from db
   const { data: thisUser } = useQuery({
-      queryKey: ["this-user", user?.uid],
-      queryFn: async () => {
-        const response = await axios.get(`/users/${user?.uid}`);
-        return response.data;
-      },
-    });
+    queryKey: ["this-user", user?.uid],
+    queryFn: async () => {
+      const response = await axios.get(`/users/${user?.uid}`);
+      return response.data;
+    },
+  });
 
   //tracking log of this issue
   const { data: timeline = [], isLoading: timelineLoading } = useQuery({
@@ -131,7 +131,7 @@ const IssueDetails = () => {
             });
           }
           navigate("/all-issues");
-        } catch{
+        } catch {
           // console.log(err);
           Swal.fire({
             title: "Ooops...!",
@@ -160,7 +160,7 @@ const IssueDetails = () => {
   //upvote an issue by citizen
   const handleUpvote = async (issue) => {
     if (!user) {
-      navigate("/auth/register",{replace : true});
+      navigate("/auth/register", { replace: true });
       return;
     }
 
@@ -175,7 +175,7 @@ const IssueDetails = () => {
       setUpvoted(response.data.upvoted);
 
       refetchThisIssue();
-    } catch{
+    } catch {
       // console.log(error);
     }
   };
@@ -215,6 +215,7 @@ const IssueDetails = () => {
 
   return (
     <div className="bg-base pt-28 pb-24">
+      <title>{isLoading ? <LoaderSpinner /> : thisIssue?.issueTitle}</title>
       <Container>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {isLoading ? (
@@ -314,11 +315,14 @@ const IssueDetails = () => {
                     </p>
                   </div>
                   <button
-                    className={`btn btn-sm md:btn-md mt-4 rounded-xl sm:mt-0 ${(user?.email === thisIssue?.reporterEmail) || thisUser?.block ? "cursor-not-allowed! bg-blue-300! border-none! text-white!" : "cursor-pointer"} ${upvoted ? "bg-primary text-white border-none" : "bg-surface text-accent border-blue-500"}`}
+                    className={`btn btn-sm md:btn-md mt-4 rounded-xl sm:mt-0 ${user?.email === thisIssue?.reporterEmail || thisUser?.block ? "cursor-not-allowed! bg-blue-300! border-none! text-white!" : "cursor-pointer"} ${upvoted ? "bg-primary text-white border-none" : "bg-surface text-accent border-blue-500"}`}
                     onClick={() => handleUpvote(thisIssue)}
-                    disabled={(user?.email === thisIssue?.reporterEmail) || thisUser?.block}
+                    disabled={
+                      user?.email === thisIssue?.reporterEmail ||
+                      thisUser?.block
+                    }
                   >
-                    {upvoted ? 'Upvoted':'Upvote'}
+                    {upvoted ? "Upvoted" : "Upvote"}
                   </button>
                 </div>
               </div>

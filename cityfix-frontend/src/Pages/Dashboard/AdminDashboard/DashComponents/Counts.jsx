@@ -47,7 +47,7 @@ const Counts = () => {
   });
 
   return (
-    <div className="flex flex-col md:flex-row items-center gap-10">
+    <div className="grid grid-cols-2 lg:grid-cols-4 items-center gap-10">
       <div className="pl-4 py-6 bg-surface shadow-md flex flex-col space-y-3 rounded-xl items-center md:items-start w-full">
         <span className="bg-primary-soft p-2 w-fit rounded-lg">
           <HiOutlineDocumentReport className="text-2xl text-accent" />

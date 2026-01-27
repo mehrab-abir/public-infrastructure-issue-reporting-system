@@ -4,6 +4,7 @@ import Container from '../Components/Container';
 const About = () => {
     return (
       <div className="bg-base py-36">
+        <title>About</title>
         <Container>
           <h1 className="text-3xl lg:text-4xl font-bold text-center">
             About CityFix

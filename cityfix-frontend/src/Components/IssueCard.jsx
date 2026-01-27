@@ -61,7 +61,7 @@ const IssueCard = ({issue}) => {
             </button>
             <Link
               to={`/issue-details/${issue._id}`}
-              className="btn btn-xs lg:btn-sm hover:bg-primary-hover hover:text-white! text-sm lg:text-base border-base"
+              className="btn btn-sm hover:bg-primary-hover hover:text-white! text-sm lg:text-base border-base"
             >
               View Details
             </Link>
