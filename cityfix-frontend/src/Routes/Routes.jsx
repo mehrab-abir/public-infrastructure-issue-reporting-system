@@ -46,11 +46,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/issue-details/:issueId",
-        element: (
-          <PrivateRoute>
-            <IssueDetails></IssueDetails>
-          </PrivateRoute>
-        ),
+        element: <IssueDetails></IssueDetails>,
       },
       {
         path: "/about",
@@ -69,14 +65,13 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path : "/subscription/payment-success",
-        Component : SubscriptionPaymentSuccess
-
+        path: "/subscription/payment-success",
+        Component: SubscriptionPaymentSuccess,
       },
       {
-        path : "/subscription/payment-cancelled",
-        Component : SubscriptionPaymentCancelled
-      }
+        path: "/subscription/payment-cancelled",
+        Component: SubscriptionPaymentCancelled,
+      },
     ],
   },
   {
@@ -175,9 +170,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/dashboard/resolved-issues",
-        element : <StaffRoute>
-          <ResolvedIssues></ResolvedIssues>
-        </StaffRoute>
+        element: (
+          <StaffRoute>
+            <ResolvedIssues></ResolvedIssues>
+          </StaffRoute>
+        ),
       },
       {
         path: "/dashboard/manage-profile",

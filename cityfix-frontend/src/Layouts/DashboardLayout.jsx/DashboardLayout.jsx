@@ -129,6 +129,7 @@ const DashboardLayout = () => {
           <NavLink
             to="/dashboard"
             className={`font-semibold flex items-center gap-4 text-sm md:text-base py-1 px-2`}
+            end
             onClick={() => setShowSideBar(!showSideBar)}
           >
             <LuLayoutDashboard className="text-xl" /> <span>Dashboard</span>
