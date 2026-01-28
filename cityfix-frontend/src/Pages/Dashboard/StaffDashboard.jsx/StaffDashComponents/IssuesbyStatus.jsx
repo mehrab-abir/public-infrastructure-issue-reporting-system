@@ -102,7 +102,7 @@ const IssuesbyStatus = ({ isAnimationActive = true }) => {
                 )}
                 <div className="my-2 text-3xl font-bold">{stat.count}</div>
                 <div className="text-center text-sm xl:text-lg text-secondary mt-3">
-                  {stat._id}
+                  {stat._id === "Staff Assigned" ? "Assinged" : stat._id}
                 </div>
               </div>
             );

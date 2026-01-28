@@ -7,7 +7,7 @@ import { IoEye } from "react-icons/io5";
 import LoaderSpinner from "../../../Components/LoaderSpinner";
 import { useState } from "react";
 import { useRef } from "react";
-import { IoMdCheckmark } from "react-icons/io";
+import { IoIosSearch, IoMdCheckmark } from "react-icons/io";
 import { LiaTimesSolid } from "react-icons/lia";
 import { useEffect } from "react";
 import Swal from "sweetalert2";
@@ -26,15 +26,19 @@ const AssignedIssues = () => {
   const [updating, setUpdating] = useState(false);
   const [currentStatus, setCurrentStatus] = useState("");
 
+  //search and filter
+  const [searchText,setSearchText] = useState('');
+  const [priority, setPriority] = useState('');
+
   //all assigned issues
   const {
     data: assignedIssues = [],
     isLoading,
     refetch: refetchAssignedIssues,
   } = useQuery({
-    queryKey: ["assigned-issues", user?.email],
+    queryKey: ["assigned-issues", user?.email,searchText, priority],
     queryFn: async () => {
-      const response = await axios.get(`/staff/assigned-issues/${user?.email}`);
+      const response = await axios.get(`/staff/assigned-issues/${user?.email}?searchText=${searchText}&priority=${priority}`);
       return response.data;
     },
   });
@@ -115,11 +119,33 @@ const AssignedIssues = () => {
         <p>Showing issues: {assignedIssues.length}</p>
       </div>
 
-      {
-        assignedIssues.length === 0 && <p className="text-secondary text-center my-4">
+      {/* search and filter */}
+      <div className="flex gap-4 flex-col md:flex-row my-4">
+        <div className="relative w-full">
+          <input
+            className="input outline-none w-full px-8 rounded-lg"
+            placeholder="Search by issue title"
+            onChange={(e) => setSearchText(e.target.value)}
+          />
+          <IoIosSearch className="absolute top-3 left-3 text-muted text-lg" />
+        </div>
+
+        <select
+          className="select focus:outline-2 focus:outline-blue-600 cursor-pointer w-full mt-2 md:mt-0 rounded-lg"
+          value={priority}
+          onChange={(e) => setPriority(e.target.value)}
+        >
+          <option value="">All Priorities</option>
+          <option value="High">High Priority</option>
+          <option value="Normal">Normal Priority</option>
+        </select>
+      </div>
+
+      {assignedIssues.length === 0 && (
+        <p className="text-secondary text-center my-4">
           -You do not have any assigned issue at this moment-
         </p>
-      }
+      )}
 
       <div>
         <div
@@ -193,7 +219,7 @@ const AssignedIssues = () => {
                           </button>
 
                           <div
-                            className={`flex items-center gap-3 ${issue.status !== "Staff Assigned" && "hidden"} mx-1`}
+                            className={`flex items-center ml-4 gap-6 ${issue.status !== "Staff Assigned" && "hidden"} mx-1`}
                           >
                             <button
                               className="cursor-pointer tooltip"

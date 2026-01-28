@@ -228,15 +228,30 @@ async function run() {
         //get all assigned issue --for staff
         app.get("/staff/assigned-issues/:email",verifyToken,verifyStaff, async (req, res) => {
             const { email } = req.params;
+            const {searchText,priority} = req.query;
+            
+            let query = {
+                staffEmail : email
+            };
 
-            const myAssignedIssues = await issueCollection.find({ staffEmail: email }).sort({ created_at: -1 }).toArray();
+            if(priority){
+                query.priority = priority;
+            }
+
+            if(searchText){
+                query.$or = [
+                    {issueTitle : {$regex : searchText, $options: 'i'}}
+                ]
+            }
+
+            const myAssignedIssues = await issueCollection.find(query).sort({ created_at: -1 }).toArray();
 
             res.send(myAssignedIssues);
         })
 
         //update issue status by staff - accept/reject, in-progress, working, resolved, closed etc. -- 3rd, 4th, 5th... tracking log here
         app.patch("/staff/update-issue-status",verifyToken, verifyStaff, async (req, res) => {
-            const { staffResponse, staffEmail, issueId, trackingId } = req.body;
+            let { staffResponse, staffEmail, issueId, trackingId } = req.body;
 
             let issueStatus = '';
 
