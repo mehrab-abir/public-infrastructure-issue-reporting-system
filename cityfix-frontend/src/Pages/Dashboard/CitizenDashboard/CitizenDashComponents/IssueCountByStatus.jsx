@@ -21,8 +21,8 @@ const IssueCountByStatus = () => {
       const response = await axios.get(
         `/citizen/issue-count-by-status/${user?.email}`,
       );
-      /* console.log(response.data[0].byStatus)
-      console.log("Total Count",response.data[0]?.total[0].totalCount) */
+      /* console.log(response.data[0])
+      console.log("Total Count",response.data[0]?.total[0]) */
       return response.data;
     },
   });
@@ -55,7 +55,7 @@ const IssueCountByStatus = () => {
                 {data._id}
               </h3>
               <h3 className="text-2xl font-bold mt-3">
-                {data.count}
+                {data.count || 0}
               </h3>
             </div>
           );
@@ -68,7 +68,7 @@ const IssueCountByStatus = () => {
           Issues Reported
         </h3>
         <h3 className="text-2xl font-bold mt-3 text-center md:text-start">
-          {issues[0]?.total[0]?.totalCount}
+          {issues[0]?.total[0]?.totalCount || 0}
         </h3>
       </div>
     </div>

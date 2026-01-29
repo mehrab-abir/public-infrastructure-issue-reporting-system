@@ -77,6 +77,8 @@ const IssuesbyStatus = ({ isAnimationActive = true }) => {
     <div className="flex flex-col w-full">
       {isLoading ? (
         "..."
+      ) : data.length === 0 ? (
+        ""
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 mt-4">
           {data.map((stat) => {
@@ -110,51 +112,49 @@ const IssuesbyStatus = ({ isAnimationActive = true }) => {
         </div>
       )}
 
-      <div
-        style={{ width: "100%", maxWidth: 500, height: 380 }}
-        className="self-center"
-      >
-        {isLoading ? (
-          <LoaderSpinner />
-        ) : (
-          <>
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={data}
-                  dataKey="count"
-                  nameKey="_id"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius="80%"
-                  labelLine={false}
-                  label={renderCustomizedLabel}
-                  isAnimationActive={isAnimationActive}
-                >
-                  {data?.map((entry, index) => (
-                    <Cell
-                      key={`cell-${entry._id ?? index}`}
-                      fill={COLORS[index % COLORS.length]}
-                    />
-                  ))}
-                </Pie>
+      {isLoading ? (
+        ""
+      ) : data.length === 0 ? (
+        <p className="text-center text-muted my-4">"No Data Available. Analytics will be available once you are assigned at least on task"</p>
+        
+      ) : (
+        <div
+          style={{ width: "100%", maxWidth: 500, height: 380 }}
+          className="self-center"
+        >
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={data}
+                dataKey="count"
+                nameKey="_id"
+                cx="50%"
+                cy="50%"
+                outerRadius="80%"
+                labelLine={false}
+                label={renderCustomizedLabel}
+                isAnimationActive={isAnimationActive}
+              >
+                {data?.map((entry, index) => (
+                  <Cell
+                    key={`cell-${entry._id ?? index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
 
-                <Tooltip
-                  formatter={(value, name, props) => [
-                    value,
-                    props?.payload?._id,
-                  ]}
-                />
-                <Legend
-                  formatter={(value) =>
-                    value === "Staff Assigned" ? "Assigned" : value
-                  }
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          </>
-        )}
-      </div>
+              <Tooltip
+                formatter={(value, name, props) => [value, props?.payload?._id]}
+              />
+              <Legend
+                formatter={(value) =>
+                  value === "Staff Assigned" ? "Assigned" : value
+                }
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      )}
     </div>
   );
 };
