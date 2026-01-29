@@ -12,7 +12,7 @@ This project focuses on **real-world workflow design**, **role-based access cont
 
 - Role-based system: **Citizen, Staff, and Admin** with separate dashboards  
 - Complete **issue lifecycle tracking**  
-- Interactive **issue timeline** with audit history (status, message, role, timestamp)  
+- Interactive **issue timeline** with audit history 
 - **Upvote system** to highlight public importance (one vote per user, persistent)  
 - **Priority boosting via payment** — boosted issues appear higher in listings  
 - Admin tools to **assign staff, reject issues, manage users & staff, and view payments**  
@@ -21,6 +21,28 @@ This project focuses on **real-world workflow design**, **role-based access cont
 - Secure **private routes** with login persistence after refresh  
 - Fully **responsive UI** (mobile, tablet, desktop)
 
+---
+
+## Demo Account Credentials to Explore Each Role:
+
+### Admin  
+Email : admin@cityfix.com  
+Password: Admin*26+  
+
+### Citizen  
+Email : citizen@cityfix.com  
+Password: Citizen*26+  
+
+### Satff  
+Email : staff@cityfix.com  
+Password: Staff*26+ 
+
+
+### 👥 User Roles
+
+- **Citizen**: Report issues, track status, view history  
+- **Staff**: Manage assigned issues, update progress  
+- **Admin**: Manage users, staff assignments, analytics
 ---
 
 ## 🛠️ Tech Stack
