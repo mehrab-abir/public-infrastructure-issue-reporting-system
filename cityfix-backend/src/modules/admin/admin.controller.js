@@ -45,6 +45,18 @@ exports.toggleBlockUser = async (req, res, next) => {
     catch (e) { next(e); }
 };
 
+exports.toggleAdminRole = async(req,res,next)=>{
+    const {email} = req.params;
+    const {newRole} = req.body;
+
+    try{
+        res.send(await service.toggleAdminRole(email, newRole));
+    }
+    catch(e){
+        next(e);
+    }
+}
+
 exports.allPayments = async (req, res, next) => {
     try { res.send(await service.allPayments()); }
     catch (e) { next(e); }

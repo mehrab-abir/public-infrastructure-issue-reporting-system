@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const controller = require("./admin.controller");
 const { verifyToken, verifyAdmin } = require("../../middlewares/auth.middleware");
+const { checkRouteHit } = require("../../middlewares/checkRouteHit");
 
 router.get("/users", verifyToken, verifyAdmin, controller.getAllUsers);
 
@@ -16,6 +17,7 @@ router.patch("/admin/update-staff/:uid", verifyToken, verifyAdmin, controller.up
 router.delete("/admin/delete-staff/:uid", verifyToken, verifyAdmin, controller.deleteStaff);
 
 router.patch("/admin/toggle-block-user/:email", verifyToken, verifyAdmin, controller.toggleBlockUser);
+router.patch("/admin/toggle-admin-role/:email", verifyToken, verifyAdmin, controller.toggleAdminRole);
 
 router.get("/admin/all-payments", verifyToken, verifyAdmin, controller.allPayments);
 router.get("/admin/subscription-payments", verifyToken, verifyAdmin, controller.subscriptionPayments);

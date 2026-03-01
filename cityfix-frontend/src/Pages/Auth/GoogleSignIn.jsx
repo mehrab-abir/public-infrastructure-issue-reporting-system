@@ -30,6 +30,7 @@ const GoogleSignIn = () => {
         role: "citizen",
         created_at: new Date(),
         isPremium: "no",
+        issueReported: 0
       };
 
       const response = await axios.post("/users", newUser);

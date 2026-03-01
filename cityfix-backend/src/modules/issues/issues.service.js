@@ -103,8 +103,12 @@ exports.getAllIssues = async (queryParams) => {
     const limit = Number(recent) || 0;
     const skipNum = Number(skip) || 0;
 
-    if (limit) cursor.limit(limit);
-    if (skipNum) cursor.skip(skipNum);
+    if (limit) {
+        cursor.limit(limit);
+    }
+    if (skipNum){
+        cursor.skip(skipNum)
+    };
 
     const issues = await cursor.toArray();
     const totalCount = await issueCollection.countDocuments();

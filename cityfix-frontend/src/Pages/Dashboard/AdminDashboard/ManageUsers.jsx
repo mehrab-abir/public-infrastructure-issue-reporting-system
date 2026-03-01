@@ -3,19 +3,27 @@ import React from "react";
 import useAxiosSecured from "../../../Hooks/Axios/useAxiosSecured";
 import DashboardContainer from "../DashboardContainer";
 import LoaderSpinner from "../../../Components/LoaderSpinner";
+import { HiMiniChevronDown } from "react-icons/hi2";
 import Swal from "sweetalert2";
 import { IoIosSearch } from "react-icons/io";
 import { useState } from "react";
 
 const ManageUsers = () => {
   const axios = useAxiosSecured();
-  const [role, setRole] = useState('');
-  const [searchText, setSearchText] = useState('');
+  const [role, setRole] = useState("");
+  const [searchText, setSearchText] = useState("");
+  // const [switchRole, setSwitchRole] = useState(false);
 
-  const { data: users = [], isLoading, refetch : refetchUsers } = useQuery({
+  const {
+    data: users = [],
+    isLoading,
+    refetch: refetchUsers,
+  } = useQuery({
     queryKey: ["all-users", role, searchText],
     queryFn: async () => {
-      const response = await axios.get(`/users?role=${role}&searchText=${searchText}`);
+      const response = await axios.get(
+        `/users?role=${role}&searchText=${searchText}`,
+      );
       // console.log(response.data);
       return response.data;
     },
@@ -53,6 +61,42 @@ const ManageUsers = () => {
   };
 
 
+  const toggleAdmin = async(user)=>{
+
+    if(user?.role === 'staff') return;
+
+    let newRole = user?.role === 'admin' ? 'citizen' : 'admin';
+
+    Swal.fire({
+      title: `${user.role === 'admin'? 'Do you want to remove this user from admin?':"Do you want to change this user's role to 'Admin'?"}
+      `,
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: `Yes, ${user.role === 'admin' ? "Remove From Admin" : "Make Admin"}`,
+      denyButtonText: `${user.role === 'admin' ? "Keep Admin" : "Don't Change"}`,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await axios.patch(
+            `/admin/toggle-admin-role/${user?.email}`,{newRole}
+          );
+          if (response.data.modifiedCount) {
+            Swal.fire("Saved!", "", "success");
+            refetchUsers();
+          }
+        } catch {
+          Swal.fire({
+            icon: "error",
+            title: "Ooops...",
+            text: "Something went worng!",
+          });
+        }
+      } else if (result.isDenied) {
+        Swal.fire("Nothing changed", "", "info");
+      }
+    });
+  }
+
   return (
     <DashboardContainer>
       <title>Manage Users</title>
@@ -64,14 +108,13 @@ const ManageUsers = () => {
         <p>Showing users: {users.length}</p>
       </div>
 
-
       {/* search and filter users  */}
       <div className="flex flex-col md:flex-row gap-2 md:gap-4 relative mt-4">
         <input
           type="text"
           className="input w-full outline-none px-8 rounded-lg"
           placeholder="Search by name or email"
-          onChange={(e)=>setSearchText(e.target.value)}
+          onChange={(e) => setSearchText(e.target.value)}
         />
         <IoIosSearch className="absolute top-3 left-3 text-muted text-lg" />
         <select
@@ -124,9 +167,26 @@ const ManageUsers = () => {
                         />
                       </td>
                       <td>{user.email}</td>
-                      <td className={`${user.isPremium === "yes" && "text-orange-500 font-semibold"}`}>{user.isPremium === "yes" ? "Yes" : "No"}</td>
-                      <td className={`${user?.role === "admin" && 'text-blue-500 font-semibold'}`}>{user.role.toUpperCase()}</td>
-                      <td>{user.issueReported || 'N/A'}</td>
+                      <td
+                        className={`${user.isPremium === "yes" && "text-orange-500 font-semibold"}`}
+                      >
+                        {user.isPremium === "yes" ? "Yes" : "No"}
+                      </td>
+                      <td
+                        className={`${user?.role === "admin" && "text-blue-500 font-semibold"} relative`}
+                      >
+                        <span
+                          onClick={() => toggleAdmin(user)}
+                          className={`flex items-center ${user?.role !== "staff" && "cursor-pointer"} tooltip`}
+                          data-tip={`${user?.role !== "staff" ? "change role" : "staff"}`}
+                        >
+                          {user.role.toUpperCase()}
+                          <HiMiniChevronDown
+                            className={`${user?.role === "staff" && "hidden"}`}
+                          />
+                        </span>
+                      </td>
+                      <td>{user.issueReported || "N/A"}</td>
                       <td>
                         <button
                           onClick={() => blockUnblock(user)}

@@ -155,6 +155,24 @@ exports.toggleBlockUser = async (email) => {
     );
 };
 
+exports.toggleAdminRole = async(email, newRole)=>{
+    const {usersCollection} = getCollections();
+
+    const thisUser = await usersCollection.findOne({email});
+    const currentRole = thisUser?.role;
+
+    const updatedRole = newRole;
+
+    const afterUpdate = await usersCollection.updateOne({email},{
+        $set : {
+            role : updatedRole,
+            previousRole : currentRole
+        }
+    })
+
+    return afterUpdate;
+}
+
 exports.allPayments = async () => {
     const { paymentCollection } = getCollections();
     return paymentCollection.find().sort({ paid_at: -1 }).toArray();
