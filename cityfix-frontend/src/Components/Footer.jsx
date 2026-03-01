@@ -31,7 +31,7 @@ const Footer = () => {
               <Link>
                 <RiTwitterXFill className="text-2xl text-muted" />
               </Link>
-              <Link to='https://www.instagram.com/mehrab.abir_/' target="blank">
+              <Link to="https://www.instagram.com/mehrab.abir_/" target="blank">
                 <PiInstagramLogo className="text-2xl text-muted hover:text-orange-500!" />
               </Link>
             </div>
@@ -66,7 +66,7 @@ const Footer = () => {
               <Link to="/premium-plan" className="hover:underline">
                 Premium Plan
               </Link>
-              <Link to="" className="hover:underline">
+              <Link to="/faq" className="hover:underline">
                 FAQ
               </Link>
             </div>
@@ -107,9 +107,8 @@ const Footer = () => {
           </div>
 
           <div className="flex items-center gap-6 text-muted text-sm mt-4 md:mt-0">
-            <Link>Privacy Policy</Link>
-            <Link>Terms of Service</Link>
-            <Link>Accessibility</Link>
+            <Link to='/privacy-policy'>Privacy Policy</Link>
+            <Link to="/terms-of-services">Terms of Service</Link>
           </div>
         </div>
       </Container>

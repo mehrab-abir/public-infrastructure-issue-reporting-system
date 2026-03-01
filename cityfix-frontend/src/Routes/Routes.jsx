@@ -31,6 +31,9 @@ import ResolvedIssues from "../Pages/Dashboard/StaffDashboard.jsx/ResolvedIssues
 import SubscriptionPaymentSuccess from "../Pages/SubscriptionPaymentSuccess";
 import SubscriptionPaymentCancelled from "../Pages/SubscriptionPaymentCancelled";
 import PremiumPlan from "../Pages/Home/PremiumPlan";
+import TermsOfService from "../Pages/TermsOfService";
+import PrivacyPolicy from "../Pages/PrivacyPolicy";
+import FAQ from "../Pages/FAQ";
 
 const router = createBrowserRouter([
   {
@@ -47,7 +50,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/issue-details/:issueId",
-        element: <IssueDetails></IssueDetails>
+        element: <IssueDetails></IssueDetails>,
       },
       {
         path: "/about",
@@ -66,8 +69,20 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path : '/premium-plan',
-        Component : PremiumPlan
+        path: "/premium-plan",
+        Component: PremiumPlan,
+      },
+      {
+        path: "/terms-of-services",
+        Component: TermsOfService,
+      },
+      {
+        path: "/privacy-policy",
+        Component : PrivacyPolicy
+      },
+      {
+        path : '/faq',
+        Component : FAQ
       },
       {
         path: "/subscription/payment-success",
