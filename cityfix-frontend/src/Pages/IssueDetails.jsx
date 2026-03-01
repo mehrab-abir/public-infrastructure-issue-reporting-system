@@ -181,8 +181,8 @@ const IssueDetails = () => {
   };
 
   const openPaymentModal = (issue) => {
-    if(issue?.status === "Resolved" || issue?.status === "Closed"){
-      Swal.fire({text: "Boosting is not applicable for this issue any more"});
+    if (issue?.status === "Resolved" || issue?.status === "Closed") {
+      Swal.fire({ text: "Boosting is not applicable for this issue any more" });
       return;
     }
     setSelectedIssue(issue);
@@ -312,10 +312,16 @@ const IssueDetails = () => {
                   <div>
                     <h4 className="text-xl font-semibold">Community Support</h4>
                     <p className="text-muted">
-                      <span className="text-base md:text-lg font-semibold px-2 border border-blue-500 rounded-lg">
-                        {thisIssue.upvote}
-                      </span>{" "}
-                      People have upvoted this issue
+                      {thisIssue.upvote === 0 ? (
+                        "Upvote this issue to enforce urgency"
+                      ) : (
+                        <>
+                          <span className="text-base md:text-lg font-semibold px-2 border border-blue-500 rounded-lg">
+                            {thisIssue.upvote}
+                          </span>{" "}
+                          <span>People have upvoted this issue</span>
+                        </>
+                      )}
                     </p>
                   </div>
                   <button
@@ -432,7 +438,7 @@ const IssueDetails = () => {
                     </div>
                   </div>
 
-                  <div className="timeline-end timeline-box p-3">
+                  <div className="timeline-end timeline-box p-3 border border-blue-300">
                     <h3
                       className={`text-base font-semibold text-white px-2 rounded-lg mb-2 w-fit ${
                         log.issueStatus.toLowerCase().includes("issue reported")
