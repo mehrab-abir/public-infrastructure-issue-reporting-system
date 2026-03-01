@@ -12,7 +12,7 @@ import { CiMail } from "react-icons/ci";
 
 const Footer = () => {
   return (
-    <footer className="bg-surface pt-10 pb-5 border-t border-base">
+    <footer className="bg-surface pt-10 pb-5 border-t border-base mt-10">
       <Container>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 items-center md:items-start justify-between border-b border-base pb-10">
           <div className="flex-1 text-center md:text-start flex flex-col items-center md:items-start justify-center">
@@ -63,7 +63,7 @@ const Footer = () => {
               <Link to="/all-issues" className="hover:underline">
                 All Issues
               </Link>
-              <Link to="" className="hover:underline">
+              <Link to="/premium-plan" className="hover:underline">
                 Premium Plan
               </Link>
               <Link to="" className="hover:underline">

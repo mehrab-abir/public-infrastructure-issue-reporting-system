@@ -44,7 +44,7 @@ const IssueCard = ({issue}) => {
               {issue.status}
             </span>
           </div>
-          <h2 className="text-xl lg:text-2xl font-semibold h-18">
+          <h2 className="text-lg lg:text-xl 2xl:text-2xl font-semibold h-18">
             {issue.issueTitle}
           </h2>
           <p className="flex items-center gap-1 text-muted text-sm md:text-base">

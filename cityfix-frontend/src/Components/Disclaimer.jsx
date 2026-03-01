@@ -3,7 +3,7 @@ import Container from './Container';
 
 const Disclaimer = () => {
     return (
-      <div className='bg-base py-10'>
+      <div className='bg-base'>
         <Container>
           <div className="mt-10 bg-surface-alt p-4 rounded-xl space-y-2">
             <span className="text-warning font-bold text-lg">Disclaimer:</span>

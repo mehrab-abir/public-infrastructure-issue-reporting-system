@@ -30,6 +30,7 @@ import PaymentCancelled from "../Pages/Dashboard/CitizenDashboard/PaymentCancell
 import ResolvedIssues from "../Pages/Dashboard/StaffDashboard.jsx/ResolvedIssues";
 import SubscriptionPaymentSuccess from "../Pages/SubscriptionPaymentSuccess";
 import SubscriptionPaymentCancelled from "../Pages/SubscriptionPaymentCancelled";
+import PremiumPlan from "../Pages/Home/PremiumPlan";
 
 const router = createBrowserRouter([
   {
@@ -63,6 +64,10 @@ const router = createBrowserRouter([
             <ReportIssue></ReportIssue>
           </PrivateRoute>
         ),
+      },
+      {
+        path : '/premium-plan',
+        Component : PremiumPlan
       },
       {
         path: "/subscription/payment-success",

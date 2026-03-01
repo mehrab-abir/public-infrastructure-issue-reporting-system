@@ -1,10 +1,11 @@
 import React from "react";
 import Container from "../Components/Container";
 import Disclaimer from "../Components/Disclaimer";
+import HowItWorks from "../Pages/Home/HowItWorks";
 
 const About = () => {
   return (
-    <div className="bg-base py-36">
+    <div className="bg-base pt-36 pb-18">
       <title>About</title>
       <Container>
         <h1 className="text-3xl lg:text-4xl font-bold text-center">
@@ -19,6 +20,8 @@ const About = () => {
           providing government staff and administrators with efficient tools to
           manage and resolve these issues.
         </p>
+
+        <HowItWorks></HowItWorks>
       </Container>
       <Disclaimer></Disclaimer>
     </div>
