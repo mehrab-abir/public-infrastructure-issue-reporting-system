@@ -2,21 +2,20 @@ import React from "react";
 import Container from "../../Components/Container";
 import { SlLocationPin } from "react-icons/sl";
 import { Link } from "react-router";
-import fin from "../../assets/hero-images/img-1.JPG";
-import george from "../../assets/hero-images/img-2.JPG";
-import cn from "../../assets/hero-images/img-3.jpeg";
 import useRole from "../../Hooks/Role/useRole";
 import LoaderSpinner from "../../Components/LoaderSpinner";
 import useAuth from "../../Hooks/Auth/useAuth";
+import BannerSlider from "./BannerSlider";
 
 const Banner = () => {
-  const {user} = useAuth();
+  const { user } = useAuth();
   const { role, roleLoading } = useRole();
 
   return (
-    <div className="bg-hero pt-36 md:pt-42 pb-10 md:pb-42">
+    <div className="bg-hero pt-36 md:pt-42 pb-10 ">
       <Container>
-        <div className="grid grid-cols-1 md:grid-cols-2 items-center justify-between">
+        <div className="grid grid-cols-1 md:grid-cols-2 items-center justify-between space-y-8 md:space-y-0">
+          {/* left side  */}
           <div className="flex flex-col space-y-3.5 flex-1 px-4">
             <span className="text-sm md:text-base flex items-center px-3 py-1 rounded-full text-accent bg-base w-fit">
               <SlLocationPin className="md:text-xl" />
@@ -87,20 +86,8 @@ const Banner = () => {
             </div>
           </div>
 
-          <div className="hidden flex-1 md:relative md:flex mt-10 lg:mt-0">
-            <div
-              className="p-1 bg-primary-soft w-1/3 md:absolute 
-             md:-top-50 md:right-20 lg:-top-50 lg:right-20 z-15 rounded-xl"
-            >
-              <img src={george} alt="" className="object-cover rounded-xl" />
-            </div>
-            <div className="p-1 bg-primary-soft w-1/3 md:absolute md:left-30 md:-top-20 lg:left-40 lg:-top-20 z-19 rounded-xl">
-              <img src={cn} alt="" className="object-cover rounded-xl" />
-            </div>
-            <div className="p-1 bg-primary-soft w-1/3 md:absolute md:-top-15 md:right-0 lg:top-0 lg:right-0 z-10 rounded-xl">
-              <img src={fin} alt="" className="object-cover rounded-xl" />
-            </div>
-          </div>
+          {/* image slider here */}
+          <BannerSlider></BannerSlider>
         </div>
       </Container>
     </div>

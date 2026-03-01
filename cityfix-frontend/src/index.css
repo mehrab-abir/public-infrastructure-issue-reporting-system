@@ -16,6 +16,16 @@ body{
   font-family: "Poppins", sans-serif;
 }
 
+/* Swiper pagination theming for Tailwind/DaisyUI */
+.swiper-pagination-bullet {
+  opacity: 0.4;
+}
+
+.swiper-pagination-bullet-active {
+  opacity: 1;
+  background: hsl(var(--a)); /* DaisyUI accent */
+}
+
 /* LIGHT THEME */
 [data-theme="light"] {
   /* ===== Backgrounds ===== */
