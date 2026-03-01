@@ -189,7 +189,7 @@ const TermsOfService = () => {
             <p>
               If you have questions about these Terms, please contact us at:
             </p>
-            <p className="mt-1 font-medium">support@cityfix.example</p>
+            <p className="mt-1 font-medium">support@cityfix.com</p>
           </section>
 
           <section className="pt-6 border-t text-xs text-muted">

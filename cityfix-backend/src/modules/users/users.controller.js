@@ -6,7 +6,9 @@ exports.getUserRole = async (req, res, next) => {
 };
 
 exports.createUser = async (req, res, next) => {
-    try { res.send(await service.createUser(req.body)); }
+    try { 
+        res.send(await service.createUser(req.body)); 
+    }
     catch (e) { next(e); }
 };
 

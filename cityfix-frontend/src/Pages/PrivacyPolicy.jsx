@@ -211,7 +211,7 @@ const PrivacyPolicy = () => {
           <section>
             <h2 className="text-lg font-semibold mb-2">12. Contact</h2>
             <p>If you have questions about this Privacy Policy, contact:</p>
-            <p className="mt-1 font-medium">support@cityfix.example</p>
+            <p className="mt-1 font-medium">support@cityfix.com</p>
           </section>
 
           <section className="pt-6 border-t text-xs text-muted">

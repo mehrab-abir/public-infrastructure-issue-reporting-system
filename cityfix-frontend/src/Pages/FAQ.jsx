@@ -127,9 +127,8 @@ const FAQ = () => {
           <p className="text-sm text-muted">
             Still stuck? Email us at{" "}
             <span className="font-medium text-base-content">
-              support@cityfix.example
+              support@cityfix.com
             </span>{" "}
-            (replace with your real support email).
           </p>
         </div>
       </Container>
